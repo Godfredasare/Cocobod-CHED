@@ -47,5 +47,7 @@ test
 prompt
 
 server.log
-# Skills directory
-/skills/upload/
+
+# Folders to ignore
+/skills/
+/upload/
