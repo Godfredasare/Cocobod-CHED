@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Menu, X, ChevronDown, Home, Users, Briefcase, 
-  Handshake, Newspaper, Image, Phone, Leaf
+  Handshake, Newspaper, Image as ImageIcon, Phone, Leaf
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -19,7 +19,7 @@ const aboutDropdown = [
 
 const mediaDropdown = [
   { name: 'News', href: '/news', icon: Newspaper, description: 'Latest updates' },
-  { name: 'Gallery', href: '/gallery', icon: Image, description: 'Photo gallery' },
+  { name: 'Gallery', href: '/gallery', icon: ImageIcon, description: 'Photo gallery' },
 ];
 
 const navItems = [
