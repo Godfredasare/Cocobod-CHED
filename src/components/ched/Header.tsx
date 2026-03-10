@@ -59,26 +59,21 @@ export default function Header() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <motion.div 
-                whileHover={{ scale: 1.05 }}
-                className="relative w-10 h-10 lg:w-12 lg:h-12 rounded-full overflow-hidden ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all"
-              >
-                <Image
-                  src="/images/ched-logo.png"
-                  alt="CHED Logo"
-                  fill
-                  className="object-cover"
-                />
-              </motion.div>
-              <div className="hidden sm:block">
-                <h1 className="text-base lg:text-lg font-bold text-primary leading-tight group-hover:text-primary/80 transition-colors">
-                  Cocoa Health & Extension
-                </h1>
-                <p className="text-xs text-muted-foreground">Division (CHED)</p>
-              </div>
+            {/* Desktop: Show only text, Mobile: Show menu button */}
+            <Link href="/" className="hidden lg:block">
+              <h1 className="text-xl font-bold text-primary">
+                CHED Ghana
+              </h1>
             </Link>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="lg:hidden p-2 text-foreground hover:text-primary hover:bg-primary/5 rounded-lg transition-colors"
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
@@ -224,15 +219,6 @@ export default function Header() {
                 Get in Touch
               </Link>
             </nav>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-foreground hover:text-primary hover:bg-primary/5 rounded-lg transition-colors"
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
           </div>
         </div>
       </header>
@@ -259,6 +245,26 @@ export default function Header() {
               className="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl overflow-y-auto"
             >
               <div className="p-6 pt-20 space-y-2">
+                {/* Logo in Mobile Menu */}
+                <Link
+                  href="/"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 mb-4"
+                >
+                  <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/20">
+                    <Image
+                      src="/images/ched-logo.png"
+                      alt="CHED Logo"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h1 className="font-bold text-primary">CHED Ghana</h1>
+                    <p className="text-xs text-muted-foreground">Cocoa Health & Extension</p>
+                  </div>
+                </Link>
+
                 {/* Home */}
                 <Link
                   href="/"

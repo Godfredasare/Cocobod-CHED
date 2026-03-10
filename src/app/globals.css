@@ -43,200 +43,28 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* ============================================
-   🎨 COLOR SCHEMES - Uncomment to test
-   ============================================ */
-
-/* 🔵 SCHEME 1: Cocoa Brown (CURRENT - DEFAULT) */
+/* 🌿 CHED Green & Gold Theme (Active) */
 :root {
   --radius: 0.5rem;
-  --background: #FFFFFF;
-  --foreground: #1C1917;
+  --background: #FAFEFA;
+  --foreground: #1a2e1a;
   --card: #FFFFFF;
-  --card-foreground: #1C1917;
+  --card-foreground: #1a2e1a;
   --popover: #FFFFFF;
-  --popover-foreground: #1C1917;
-  --primary: #8B4513;
+  --popover-foreground: #1a2e1a;
+  --primary: #1e5631;
   --primary-foreground: #FFFFFF;
-  --secondary: #F5F5F4;
-  --secondary-foreground: #8B4513;
-  --muted: #F5F5F4;
-  --muted-foreground: #78716C;
-  --accent: #B8860B;
-  --accent-foreground: #1C1917;
+  --secondary: #f0f7f0;
+  --secondary-foreground: #1e5631;
+  --muted: #f0f7f0;
+  --muted-foreground: #5a7d5a;
+  --accent: #D4A017;
+  --accent-foreground: #1a2e1a;
   --destructive: #DC2626;
-  --border: #E7E5E4;
-  --input: #E7E5E4;
-  --ring: #B8860B;
+  --border: #d8e9d8;
+  --input: #d8e9d8;
+  --ring: #D4A017;
 }
-
-/* 🟢 SCHEME 2: Forest Green 
-:root {
-  --radius: 0.5rem;
-  --background: #FFFFFF;
-  --foreground: #1a1a2e;
-  --card: #FFFFFF;
-  --card-foreground: #1a1a2e;
-  --popover: #FFFFFF;
-  --popover-foreground: #1a1a2e;
-  --primary: #2d6a4f;
-  --primary-foreground: #FFFFFF;
-  --secondary: #f0f7f4;
-  --secondary-foreground: #2d6a4f;
-  --muted: #f0f7f4;
-  --muted-foreground: #5a7d6e;
-  --accent: #95d5b2;
-  --accent-foreground: #1a1a2e;
-  --destructive: #DC2626;
-  --border: #d8e9e1;
-  --input: #d8e9e1;
-  --ring: #95d5b2;
-}
-*/
-
-/* 🔴 SCHEME 3: Ghana Red & Gold 
-:root {
-  --radius: 0.5rem;
-  --background: #FFFFFF;
-  --foreground: #1a1a2e;
-  --card: #FFFFFF;
-  --card-foreground: #1a1a2e;
-  --popover: #FFFFFF;
-  --popover-foreground: #1a1a2e;
-  --primary: #c1272d;
-  --primary-foreground: #FFFFFF;
-  --secondary: #fef3f3;
-  --secondary-foreground: #c1272d;
-  --muted: #fef3f3;
-  --muted-foreground: #7a6b6b;
-  --accent: #f2b705;
-  --accent-foreground: #1a1a2e;
-  --destructive: #DC2626;
-  --border: #f5e0e0;
-  --input: #f5e0e0;
-  --ring: #f2b705;
-}
-*/
-
-/* 🟠 SCHEME 4: Cocoa & Cream 
-:root {
-  --radius: 0.5rem;
-  --background: #FFFBF5;
-  --foreground: #3D2C29;
-  --card: #FFFFFF;
-  --card-foreground: #3D2C29;
-  --popover: #FFFFFF;
-  --popover-foreground: #3D2C29;
-  --primary: #6B3E26;
-  --primary-foreground: #FFFFFF;
-  --secondary: #F5EBE0;
-  --secondary-foreground: #6B3E26;
-  --muted: #F5EBE0;
-  --muted-foreground: #7D6B5D;
-  --accent: #D4A574;
-  --accent-foreground: #3D2C29;
-  --destructive: #DC2626;
-  --border: #E8D5C4;
-  --input: #E8D5C4;
-  --ring: #D4A574;
-}
-*/
-
-/* 🟣 SCHEME 5: Royal Purple 
-:root {
-  --radius: 0.5rem;
-  --background: #FFFFFF;
-  --foreground: #1e1b4b;
-  --card: #FFFFFF;
-  --card-foreground: #1e1b4b;
-  --popover: #FFFFFF;
-  --popover-foreground: #1e1b4b;
-  --primary: #5b21b6;
-  --primary-foreground: #FFFFFF;
-  --secondary: #f5f3ff;
-  --secondary-foreground: #5b21b6;
-  --muted: #f5f3ff;
-  --muted-foreground: #6b7280;
-  --accent: #c084fc;
-  --accent-foreground: #1e1b4b;
-  --destructive: #DC2626;
-  --border: #e9e5ff;
-  --input: #e9e5ff;
-  --ring: #c084fc;
-}
-*/
-
-/* 🔵 SCHEME 6: Ocean Blue 
-:root {
-  --radius: 0.5rem;
-  --background: #FFFFFF;
-  --foreground: #0c4a6e;
-  --card: #FFFFFF;
-  --card-foreground: #0c4a6e;
-  --popover: #FFFFFF;
-  --popover-foreground: #0c4a6e;
-  --primary: #0369a1;
-  --primary-foreground: #FFFFFF;
-  --secondary: #f0f9ff;
-  --secondary-foreground: #0369a1;
-  --muted: #f0f9ff;
-  --muted-foreground: #64748b;
-  --accent: #38bdf8;
-  --accent-foreground: #0c4a6e;
-  --destructive: #DC2626;
-  --border: #e0f2fe;
-  --input: #e0f2fe;
-  --ring: #38bdf8;
-}
-*/
-
-/* ⚫ SCHEME 7: Modern Dark Cocoa 
-:root {
-  --radius: 0.5rem;
-  --background: #FAFAFA;
-  --foreground: #18181b;
-  --card: #FFFFFF;
-  --card-foreground: #18181b;
-  --popover: #FFFFFF;
-  --popover-foreground: #18181b;
-  --primary: #7c2d12;
-  --primary-foreground: #FFFFFF;
-  --secondary: #f4f4f5;
-  --secondary-foreground: #7c2d12;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --accent: #fb923c;
-  --accent-foreground: #18181b;
-  --destructive: #DC2626;
-  --border: #e4e4e7;
-  --input: #e4e4e7;
-  --ring: #fb923c;
-}
-*/
-
-/* 🟡 SCHEME 8: Golden Harvest 
-:root {
-  --radius: 0.5rem;
-  --background: #FFFEF7;
-  --foreground: #422006;
-  --card: #FFFFFF;
-  --card-foreground: #422006;
-  --popover: #FFFFFF;
-  --popover-foreground: #422006;
-  --primary: #a16207;
-  --primary-foreground: #FFFFFF;
-  --secondary: #fef9c3;
-  --secondary-foreground: #a16207;
-  --muted: #fef9c3;
-  --muted-foreground: #713f12;
-  --accent: #f59e0b;
-  --accent-foreground: #422006;
-  --destructive: #DC2626;
-  --border: #fde68a;
-  --input: #fde68a;
-  --ring: #f59e0b;
-}
-*/
 
 @layer base {
   * {
@@ -270,7 +98,7 @@
 
 /* Selection */
 ::selection {
-  background: rgba(139, 69, 19, 0.2);
+  background: rgba(30, 86, 49, 0.2);
 }
 
 /* Line Clamp */

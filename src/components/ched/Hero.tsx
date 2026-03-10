@@ -41,7 +41,7 @@ export default function Hero() {
     
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 6000); // Increased from 5000ms to 6000ms
+    }, 6000);
     
     return () => clearInterval(interval);
   }, [isAutoPlaying]);
@@ -63,7 +63,7 @@ export default function Hero() {
 
   return (
     <section id="home" className="relative min-h-[90vh] lg:min-h-screen flex items-center pt-16 lg:pt-20 overflow-hidden">
-      {/* Background Images Slideshow - Crossfade approach */}
+      {/* Background Images Slideshow */}
       {slides.map((slide, index) => (
         <motion.div
           key={index}
@@ -80,7 +80,8 @@ export default function Hero() {
             className="object-cover"
             priority={index === 0}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/85 to-primary/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-primary/75" />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/50 via-transparent to-transparent" />
         </motion.div>
       ))}
 
@@ -92,7 +93,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <span className="inline-block px-3 py-1 bg-accent/20 text-accent text-sm font-medium rounded-full mb-4">
+            <span className="inline-block px-4 py-1.5 bg-accent/20 text-accent text-sm font-semibold rounded-full mb-6 backdrop-blur-sm border border-accent/30">
               Ghana Cocoa Board
             </span>
           </motion.div>
@@ -102,10 +103,10 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight mb-6"
+            className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight mb-6"
           >
             {slides[currentSlide].title}
-            <span className="block text-accent">{slides[currentSlide].subtitle}</span>
+            <span className="block text-accent mt-2">{slides[currentSlide].subtitle}</span>
           </motion.h1>
 
           <motion.p
@@ -113,7 +114,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-base sm:text-lg text-white/85 mb-8 max-w-xl"
+            className="text-lg sm:text-xl text-white/85 mb-10 max-w-xl leading-relaxed"
           >
             {slides[currentSlide].description}
           </motion.p>
@@ -126,14 +127,14 @@ export default function Hero() {
           >
             <a
               href="/operations"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent text-primary font-semibold rounded-lg hover:bg-accent/90 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent text-foreground font-semibold rounded-xl hover:bg-accent/90 transition-all shadow-lg hover:shadow-xl"
             >
               Our Services
               <ArrowRight size={18} />
             </a>
             <a
               href="/about"
-              className="inline-flex items-center justify-center px-6 py-3 bg-white/10 text-white font-medium rounded-lg hover:bg-white/20 transition-colors border border-white/20"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-all border border-white/20 backdrop-blur-sm"
             >
               Learn More
             </a>
@@ -145,7 +146,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="mt-16 lg:mt-24 grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
+          className="mt-20 lg:mt-28 grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12"
         >
           {[
             { value: '50+', label: 'Years of Service' },
@@ -154,10 +155,10 @@ export default function Hero() {
             { value: '1M+', label: 'Hectares Monitored' },
           ].map((stat) => (
             <div key={stat.label} className="text-center lg:text-left">
-              <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-accent">
+              <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-accent">
                 {stat.value}
               </p>
-              <p className="text-sm text-white/70 mt-1">{stat.label}</p>
+              <p className="text-sm text-white/70 mt-2 font-medium">{stat.label}</p>
             </div>
           ))}
         </motion.div>
@@ -166,7 +167,7 @@ export default function Hero() {
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4">
           <button
             onClick={prevSlide}
-            className="p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+            className="p-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
             aria-label="Previous slide"
           >
             <ChevronLeft size={20} />
@@ -177,10 +178,10 @@ export default function Hero() {
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`w-2 h-2 rounded-full transition-all ${
+                className={`rounded-full transition-all ${
                   index === currentSlide 
-                    ? 'w-6 bg-accent' 
-                    : 'bg-white/50 hover:bg-white/70'
+                    ? 'w-8 h-2.5 bg-accent' 
+                    : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/60'
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
@@ -189,7 +190,7 @@ export default function Hero() {
           
           <button
             onClick={nextSlide}
-            className="p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+            className="p-2.5 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
             aria-label="Next slide"
           >
             <ChevronRight size={20} />
