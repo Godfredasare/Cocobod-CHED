@@ -74,10 +74,14 @@ export default function NewsSection() {
           .order('date', { ascending: false })
           .limit(3);
 
-        if (error) throw error;
-        setNews(data || []);
+        if (error) {
+          console.error('Error fetching news:', error.message || error);
+          setNews([]);
+        } else {
+          setNews(data || []);
+        }
       } catch (error) {
-        console.error('Error fetching news:', error);
+        console.error('Error fetching news:', error instanceof Error ? error.message : error);
       } finally {
         setLoading(false);
       }
