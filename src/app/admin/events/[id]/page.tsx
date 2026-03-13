@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import AdminShell from '@/components/admin/AdminShell';
+import ImageUpload from '@/components/admin/ImageUpload';
 import { supabase } from '@/lib/supabase';
 
 const categories = ['Festival', 'Workshop', 'Meeting', 'Celebration', 'Conference', 'Training'];
@@ -184,13 +185,11 @@ export default function EventFormPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Image URL</label>
-                <input
-                  type="url"
+                <ImageUpload
+                  label="Event Image"
                   value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                  placeholder="https://example.com/image.jpg"
+                  onChange={(url) => setFormData({ ...formData, image: url })}
+                  folder="events"
                 />
               </div>
             </div>

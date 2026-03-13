@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Save, Loader2, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import AdminShell from '@/components/admin/AdminShell';
+import ImageUpload from '@/components/admin/ImageUpload';
 import { supabase } from '@/lib/supabase';
 
 const categories = [
@@ -46,6 +47,7 @@ export default function NewsFormPage() {
       const { data, error } = await supabase.from('news').select('*').eq('id', newsId).single();
 
       if (error) throw error;
+
       if (data) {
         setFormData({
           title: data.title,
@@ -117,10 +119,7 @@ export default function NewsFormPage() {
     <AdminShell>
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
-          <Link
-            href="/admin/news"
-            className="p-2 text-muted-foreground hover:text-foreground hover:bg-gray-100 rounded-lg transition-colors"
-          >
+          <Link href="/admin/news" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
@@ -192,19 +191,13 @@ export default function NewsFormPage() {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Featured Image URL</label>
-              <div className="relative">
-                <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
-            </div>
+            <ImageUpload
+              value={formData.image}
+              onChange={(url) => setFormData({ ...formData, image: url })}
+              folder="news"
+              label="Featured Image"
+              preview={true}
+            />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>

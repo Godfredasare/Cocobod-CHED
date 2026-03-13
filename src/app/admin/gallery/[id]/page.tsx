@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import AdminShell from '@/components/admin/AdminShell';
+import ImageUpload from '@/components/admin/ImageUpload';
 import { supabase } from '@/lib/supabase';
 
 const categories = ['Training', 'Extension', 'Disease Control', 'Partnership', 'Events', 'Farm Visit'];
@@ -90,19 +91,13 @@ export default function GalleryFormPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Image URL <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="url"
-                value={formData.src}
-                onChange={(e) => setFormData({ ...formData, src: e.target.value })}
-                required
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                placeholder="https://example.com/image.jpg"
-              />
-            </div>
+            <ImageUpload
+              value={formData.src}
+              onChange={(url) => setFormData({ ...formData, src: url })}
+              folder="gallery"
+              label="Image"
+              required
+            />
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
@@ -133,20 +128,6 @@ export default function GalleryFormPage() {
                 ))}
               </select>
             </div>
-
-            {formData.src && (
-              <div className="p-4 bg-gray-50 rounded-xl">
-                <p className="text-sm font-medium text-foreground mb-2">Preview:</p>
-                <img
-                  src={formData.src}
-                  alt={formData.alt}
-                  className="w-full max-w-md rounded-lg object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
-                  }}
-                />
-              </div>
-            )}
           </div>
 
           <div className="flex items-center justify-end gap-4">
