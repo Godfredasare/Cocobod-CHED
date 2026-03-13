@@ -162,9 +162,9 @@ export default function VideoSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <span className="inline-block px-3 py-1 bg-red-500/10 text-red-500 text-sm font-medium rounded-full mb-3 flex items-center gap-1.5 w-fit">
-              <Youtube size={14} />
-              Watch & Learn
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500/10 text-red-500 text-sm font-medium rounded-full mb-3">
+              <Youtube size={14} className="flex-shrink-0" />
+              <span>Watch & Learn</span>
             </span>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
               Featured Videos

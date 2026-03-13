@@ -45,9 +45,9 @@ export default function Header() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Logo - Visible on all devices */}
-            <Link href="/" className="flex items-center gap-3">
-              <div className="relative w-10 h-12 lg:w-12 lg:h-14 overflow-hidden">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+              <div className="relative w-9 h-11 sm:w-10 sm:h-12 lg:w-12 lg:h-14 overflow-hidden">
                 <Image
                   src="/images/ched-logo.png"
                   alt="CHED Logo"
@@ -56,22 +56,22 @@ export default function Header() {
                 />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-base lg:text-lg font-bold text-primary leading-tight">
+                <h1 className="text-sm sm:text-base lg:text-lg font-bold text-primary leading-tight">
                   Cocoa Health & Extension
                 </h1>
-                <p className="text-xs text-muted-foreground">Division (CHED)</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Division (CHED)</p>
               </div>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-1">
+            <nav className="hidden lg:flex items-center gap-1 flex-shrink-0">
               {/* Home */}
               <Link
                 href="/"
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+                className="flex items-center gap-2 px-3 xl:px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
               >
-                <Home size={16} />
-                Home
+                <Home size={16} className="flex-shrink-0" />
+                <span>Home</span>
               </Link>
 
               {/* About Us Dropdown */}
@@ -80,19 +80,14 @@ export default function Header() {
                 onMouseEnter={() => setHoveredMenu('about')}
                 onMouseLeave={() => setHoveredMenu(null)}
               >
-                <div className="flex items-center gap-0.5 cursor-pointer">
-                  <Link
-                    href="/about"
-                    className="flex items-center gap-2 px-2 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
-                  >
-                    <Users size={16} />
-                    About Us
-                  </Link>
+                <button className="flex items-center gap-1 px-3 xl:px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors">
+                  <Users size={16} className="flex-shrink-0" />
+                  <span>About Us</span>
                   <ChevronDown 
                     size={14} 
-                    className={`text-foreground transition-transform duration-200 ${hoveredMenu === 'about' ? 'rotate-180' : ''}`} 
+                    className={`flex-shrink-0 transition-transform duration-200 ${hoveredMenu === 'about' ? 'rotate-180' : ''}`} 
                   />
-                </div>
+                </button>
                 
                 <AnimatePresence>
                   {hoveredMenu === 'about' && (
@@ -111,8 +106,8 @@ export default function Header() {
                             item.name === 'Overview' ? 'font-semibold border-b border-border mb-1' : ''
                           }`}
                         >
-                          <item.icon size={14} />
-                          {item.name}
+                          <item.icon size={14} className="flex-shrink-0" />
+                          <span>{item.name}</span>
                         </Link>
                       ))}
                     </motion.div>
@@ -123,28 +118,28 @@ export default function Header() {
               {/* Management */}
               <Link
                 href="/management"
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+                className="flex items-center gap-2 px-3 xl:px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
               >
-                <Briefcase size={16} />
-                Management
+                <Briefcase size={16} className="flex-shrink-0" />
+                <span>Management</span>
               </Link>
 
               {/* Operations */}
               <Link
                 href="/operations"
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+                className="flex items-center gap-2 px-3 xl:px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
               >
-                <Briefcase size={16} />
-                Operations
+                <Briefcase size={16} className="flex-shrink-0" />
+                <span>Operations</span>
               </Link>
 
               {/* Partnership */}
               <Link
                 href="/partnership"
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+                className="flex items-center gap-2 px-3 xl:px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
               >
-                <Handshake size={16} />
-                Partnership
+                <Handshake size={16} className="flex-shrink-0" />
+                <span>Partnership</span>
               </Link>
 
               {/* Media Dropdown */}
@@ -153,19 +148,14 @@ export default function Header() {
                 onMouseEnter={() => setHoveredMenu('media')}
                 onMouseLeave={() => setHoveredMenu(null)}
               >
-                <div className="flex items-center gap-0.5 cursor-pointer">
-                  <Link
-                    href="/news"
-                    className="flex items-center gap-2 px-2 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
-                  >
-                    <Newspaper size={16} />
-                    Media
-                  </Link>
+                <button className="flex items-center gap-1 px-3 xl:px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors">
+                  <Newspaper size={16} className="flex-shrink-0" />
+                  <span>Media</span>
                   <ChevronDown 
                     size={14} 
-                    className={`text-foreground transition-transform duration-200 ${hoveredMenu === 'media' ? 'rotate-180' : ''}`} 
+                    className={`flex-shrink-0 transition-transform duration-200 ${hoveredMenu === 'media' ? 'rotate-180' : ''}`} 
                   />
-                </div>
+                </button>
                 
                 <AnimatePresence>
                   {hoveredMenu === 'media' && (
@@ -182,8 +172,8 @@ export default function Header() {
                           href={item.href}
                           className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:text-primary hover:bg-muted transition-colors"
                         >
-                          <item.icon size={14} />
-                          {item.name}
+                          <item.icon size={14} className="flex-shrink-0" />
+                          <span>{item.name}</span>
                         </Link>
                       ))}
                     </motion.div>
@@ -194,17 +184,17 @@ export default function Header() {
               {/* Get in Touch Button */}
               <Link
                 href="/contact"
-                className="ml-4 flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
+                className="ml-2 xl:ml-4 flex items-center gap-2 px-4 xl:px-5 py-2 xl:py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-sm flex-shrink-0"
               >
-                <Phone size={16} />
-                Get in Touch
+                <Phone size={16} className="flex-shrink-0" />
+                <span>Get in Touch</span>
               </Link>
             </nav>
 
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-foreground hover:text-primary transition-colors"
+              className="lg:hidden p-2 text-foreground hover:text-primary transition-colors flex-shrink-0"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -259,8 +249,8 @@ export default function Header() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center gap-3 px-4 py-3 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
                 >
-                  <Home size={18} />
-                  Home
+                  <Home size={18} className="flex-shrink-0" />
+                  <span>Home</span>
                 </Link>
 
                 {/* About Us */}
@@ -270,8 +260,8 @@ export default function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="flex items-center gap-3 px-4 py-2 text-base font-semibold text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
                   >
-                    <Users size={18} />
-                    About Us
+                    <Users size={18} className="flex-shrink-0" />
+                    <span>About Us</span>
                   </Link>
                   <div className="pl-4 space-y-1">
                     {aboutDropdown.map((item) => (
@@ -281,8 +271,8 @@ export default function Header() {
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
                       >
-                        <item.icon size={14} />
-                        {item.name}
+                        <item.icon size={14} className="flex-shrink-0" />
+                        <span>{item.name}</span>
                       </Link>
                     ))}
                   </div>
@@ -294,8 +284,8 @@ export default function Header() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center gap-3 px-4 py-3 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
                 >
-                  <Briefcase size={18} />
-                  Management
+                  <Briefcase size={18} className="flex-shrink-0" />
+                  <span>Management</span>
                 </Link>
 
                 {/* Operations */}
@@ -304,8 +294,8 @@ export default function Header() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center gap-3 px-4 py-3 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
                 >
-                  <Briefcase size={18} />
-                  Operations
+                  <Briefcase size={18} className="flex-shrink-0" />
+                  <span>Operations</span>
                 </Link>
 
                 {/* Partnership */}
@@ -314,8 +304,8 @@ export default function Header() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center gap-3 px-4 py-3 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
                 >
-                  <Handshake size={18} />
-                  Partnership
+                  <Handshake size={18} className="flex-shrink-0" />
+                  <span>Partnership</span>
                 </Link>
 
                 {/* Media */}
@@ -325,8 +315,8 @@ export default function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="flex items-center gap-3 px-4 py-2 text-base font-semibold text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
                   >
-                    <Newspaper size={18} />
-                    Media
+                    <Newspaper size={18} className="flex-shrink-0" />
+                    <span>Media</span>
                   </Link>
                   <div className="pl-4 space-y-1">
                     {mediaDropdown.map((item) => (
@@ -336,8 +326,8 @@ export default function Header() {
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
                       >
-                        <item.icon size={14} />
-                        {item.name}
+                        <item.icon size={14} className="flex-shrink-0" />
+                        <span>{item.name}</span>
                       </Link>
                     ))}
                   </div>
@@ -350,8 +340,8 @@ export default function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-primary text-white text-center font-medium rounded-lg"
                   >
-                    <Phone size={18} />
-                    Get in Touch
+                    <Phone size={18} className="flex-shrink-0" />
+                    <span>Get in Touch</span>
                   </Link>
                 </div>
               </div>
