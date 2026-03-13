@@ -49,4 +49,7 @@ prompt
 server.log
 # Skills directory
 /skills/
-/upload/
+
+# Upload directory - store uploaded images but don't track in git
+/public/uploads/
+!public/uploads/**/
