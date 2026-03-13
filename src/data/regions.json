@@ -1,0 +1,71 @@
+{
+  "regions": [
+    {
+      "name": "Greater Accra Region",
+      "location": "Swanzy Arcade, Kwame Nkrumah Avenue",
+      "digitalAddress": "GA-105-9815",
+      "tel": ["+233 302 666 946", "0302 666 947"],
+      "fax": ["+233 302 666 948", "0302 666 949"],
+      "email": "info@ched.com.gh",
+      "isHeadquarters": true
+    },
+    {
+      "name": "Ashanti Region",
+      "location": "Kumasi Bantama",
+      "digitalAddress": "AK-066-8749",
+      "tel": ["+233 302 666 946", "0302 666 947"],
+      "email": "info@ched.com.gh"
+    },
+    {
+      "name": "Brong Ahafo Region",
+      "location": "Sunyani",
+      "digitalAddress": "EN-095-4463",
+      "tel": ["+233 302 666 946", "0302 666 947"],
+      "email": "info@ched.com.gh"
+    },
+    {
+      "name": "Central Region",
+      "location": "Agona Swedru",
+      "digitalAddress": "CO-0037-3802",
+      "tel": ["+233 302 666 946", "0302 666 947"],
+      "email": "info@ched.com.gh"
+    },
+    {
+      "name": "Eastern Region",
+      "location": "Koforidua",
+      "digitalAddress": "EN-095-4463",
+      "tel": ["+233 302 666 946", "0302 666 947"],
+      "email": "info@ched.com.gh"
+    },
+    {
+      "name": "Volta Region",
+      "location": "Hohoe",
+      "digitalAddress": "VC-0031-2905",
+      "tel": ["+233 302 666 946", "0302 666 947"],
+      "email": "info@ched.com.gh"
+    },
+    {
+      "name": "Western North Region",
+      "location": "Sefwi Wiaso",
+      "digitalAddress": "WG-0010-0319",
+      "tel": ["+233 302 666 946", "0302 666 947"],
+      "email": "info@ched.com.gh"
+    },
+    {
+      "name": "Western South Region",
+      "location": "Dunkwa",
+      "digitalAddress": "CU-0013-3216",
+      "tel": ["+233 302 666 946", "0302 666 947"],
+      "email": "info@ched.com.gh"
+    },
+    {
+      "name": "Bunso Cocoa College",
+      "location": "Bunso",
+      "digitalAddress": "EE-1772-5029",
+      "tel": ["055 813 0863", "027 344 8529"],
+      "email": "info@bunsococoacollege.edu.gh",
+      "isCollege": true
+    }
+  ],
+  "coverageAreas": ["Greater Accra", "Ashanti", "Bono", "Central", "Eastern", "Volta", "Western"]
+}

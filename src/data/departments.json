@@ -1,0 +1,94 @@
+{
+  "technicalSubDepts": [
+    {
+      "name": "Cartography",
+      "icon": "Map",
+      "description": "The Department is responsible for collating data on field operations and also developing appropriate management information to support CSSVD control, rehabilitation and extension activities.",
+      "functions": [
+        "Prepare suitable plan/maps and charts using GIS (Geographic Information System) and other technology for decision making.",
+        "Convert stored data into a geo-database file for manipulation, analysis, management, and storage in ArcGIS Environment.",
+        "Design and manage electronic database system on farmers' farms treated and rehabilitated.",
+        "Process field data, organize training, monitoring and maintenance of GPS (Global Positioning System) equipment used in data capturing.",
+        "Use hand held GPS for capturing data on farms.",
+        "Use Arc Pad application software to process the captured data and stored or saved as a standard storage format (SSF) file."
+      ]
+    },
+    {
+      "name": "Extension",
+      "icon": "Leaf",
+      "description": "The new cocoa extension was launched in 2010 as the cocoa extension public-private partnership (CEPPP). The new system operates under the principle of lean staff members who are professionally trained and highly qualified and motivated to provide cost-effective and efficient cocoa extension services to business-oriented farmers.",
+      "objectives": [
+        "To provide efficient and cost-effective extension to cocoa farmers to increase their productivity, improve income and enhance their livelihood.",
+        "To assist farmers to acquire knowledge and skills to be able to adopt good agricultural practices (GAPs).",
+        "To orientate and train cocoa farmers in basic farm economics for them to consider cocoa farming as a rewarding business.",
+        "To encourage and educate farmers to own cocoa extension.",
+        "To encourage the youth to take to cocoa cultivation.",
+        "To strengthen Farmer Groups (FGs) to mobilize savings, access credit and inputs.",
+        "To build the capacity of extension staff to deliver training to farmers.",
+        "To build capacities for effective monitoring and evaluation."
+      ]
+    },
+    {
+      "name": "Operations",
+      "icon": "Settings",
+      "description": "Responsible for overseeing field operations and CSSVD control activities across all regions."
+    },
+    {
+      "name": "Monitoring & Evaluation",
+      "icon": "BarChart3",
+      "description": "Tracks and assesses the effectiveness of programs and interventions."
+    },
+    {
+      "name": "CODAPEC/HITECH",
+      "icon": "Leaf",
+      "description": "Manages high-tech cocoa production programs and disease control initiatives."
+    }
+  ],
+  "departments": [
+    {
+      "name": "Technical Department",
+      "icon": "Settings",
+      "color": "bg-blue-50 text-blue-600",
+      "description": "Technical is made up of 5 departments namely: Cartography, Operations, Extension, Monitoring & Evaluation, and CODAPEC/HITECH.",
+      "hasSubDepts": true
+    },
+    {
+      "name": "Accounts Department",
+      "icon": "DollarSign",
+      "color": "bg-green-50 text-green-600",
+      "description": "The Accounts department is made up of five (5) units: Salaries, Cash Office, Claims, Stores, and Procurement.",
+      "units": [
+        { "name": "Salaries", "desc": "Handles salary processing and administration." },
+        { "name": "Cash Office", "desc": "Responsible for processing of payments." },
+        { "name": "Claims", "desc": "Manages claims processing and verification." },
+        { "name": "Stores", "desc": "Responsible for receiving and issuing of goods, prompting procurement signals for stock replenishment, keeping items in stock under ideal temperature, maintaining of stock integrity and ensuring it is safe and secure." },
+        { "name": "Procurement", "desc": "The procurement unit is responsible for every procurement as well as management of contracts of the Division. Other activities include, acquisition of goods." }
+      ]
+    },
+    {
+      "name": "Human Resource Department",
+      "icon": "Users",
+      "color": "bg-purple-50 text-purple-600",
+      "description": "The mission of the Human Resource department is to attract, develop, motivate and retain the right mix of talent and superior workforce for CHED through effective state-of-the art systems and processes for the achievement of corporate objectives."
+    },
+    {
+      "name": "Information Systems Department",
+      "icon": "Monitor",
+      "color": "bg-orange-50 text-orange-600",
+      "description": "The Information Systems department manages the IT infrastructure of the company. The department also delivers effective levels of service and support to the business for on-going operational services, new services and projects and also manage the hardware and software assets and ensure compliance with policies and licensing requirements."
+    },
+    {
+      "name": "Audit Department",
+      "icon": "ClipboardCheck",
+      "color": "bg-red-50 text-red-600",
+      "description": "The Audit department exists to provide independent, objective assurance and consulting services to protect, add value and improve the operations of CHED. The department performs pre-audit and post audit activities with much emphasis on the latter.",
+      "vision": "To be a driver of innovative change in the management of governance, risk and control issues whilst striving to be the best in class audit."
+    },
+    {
+      "name": "Estates Department",
+      "icon": "Building",
+      "color": "bg-teal-50 text-teal-600",
+      "description": "The Estates Department is in charge of the infrastructure of the company in addition to the office equipment including but not limited to the desks, chairs and cabinets."
+    }
+  ]
+}
