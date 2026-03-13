@@ -22,15 +22,18 @@ export default function CocoaPriceChart() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [timeRange, setTimeRange] = useState<'1W' | '1M' | '3M' | '1Y'>('1M');
 
+  // Conversion: 1 bag = 64kg, 1 tonne = 1000kg = 15.625 bags
+  const BAGS_PER_TONNE = 15.625;
+
   // Generate realistic cocoa price data
   useEffect(() => {
     const generatePriceData = () => {
       // Current cocoa price ~$3,424 per metric ton
-      const basePrice = 3424;
+      const basePricePerTonne = 3424;
       const days = timeRange === '1W' ? 7 : timeRange === '1M' ? 30 : timeRange === '3M' ? 90 : 365;
       
       const history = [];
-      let price = basePrice - 200;
+      let price = basePricePerTonne - 200;
       
       for (let i = days - 1; i >= 0; i--) {
         const date = new Date();
@@ -41,9 +44,12 @@ export default function CocoaPriceChart() {
         const trend = (Math.random() * 20 - 8);
         price = Math.max(3000, Math.min(4000, price + volatility + trend));
         
+        // Store price per bag (divide by bags per tonne)
+        const pricePerBag = price / BAGS_PER_TONNE;
+        
         history.push({
           date: date.toISOString().split('T')[0],
-          price: Math.round(price * 100) / 100
+          price: Math.round(pricePerBag * 100) / 100
         });
       }
 
@@ -87,8 +93,8 @@ export default function CocoaPriceChart() {
     fetchExchangeRate();
   }, []);
 
-  // Calculate price per tonne in GHS
-  const pricePerTonne = useMemo(() => {
+  // Calculate price per bag in GHS
+  const pricePerBag = useMemo(() => {
     if (!priceData) return { usd: 0, ghs: 0 };
     return {
       usd: priceData.currentPrice,
@@ -202,7 +208,7 @@ export default function CocoaPriceChart() {
             viewport={{ once: true }}
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4"
           >
-            Cocoa Futures Price
+            Cocoa Price per Bag
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -210,7 +216,7 @@ export default function CocoaPriceChart() {
             viewport={{ once: true }}
             className="text-muted-foreground text-lg max-w-2xl mx-auto"
           >
-            Live cocoa prices from ICE Futures US - displayed per metric tonne
+            Live cocoa prices from ICE Futures US - displayed per 64kg bag
           </motion.p>
         </div>
 
@@ -230,7 +236,7 @@ export default function CocoaPriceChart() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-foreground">Cocoa Futures</h3>
-                  <p className="text-sm text-muted-foreground">ICE US - USD per Metric Tonne</p>
+                  <p className="text-sm text-muted-foreground">ICE US - USD per 64kg Bag</p>
                 </div>
               </div>
 
@@ -259,10 +265,10 @@ export default function CocoaPriceChart() {
                   <span className="text-4xl lg:text-5xl font-bold text-foreground">
                     ${formatNumber(priceData?.currentPrice || 0)}
                   </span>
-                  <span className="text-muted-foreground text-lg">/ Tonne</span>
+                  <span className="text-muted-foreground text-lg">/ Bag (64kg)</span>
                 </div>
                 <p className="text-base text-primary font-medium mt-1">
-                  {formatCurrency(pricePerTonne.ghs, 'GHS')} per tonne
+                  {formatCurrency(pricePerBag.ghs, 'GHS')} per bag
                 </p>
               </div>
 
@@ -430,10 +436,10 @@ export default function CocoaPriceChart() {
                       </span>
                     </div>
                     <p className="font-bold text-foreground text-lg">
-                      ${formatNumber(priceData.history[hoveredIndex].price)}
+                      ${formatNumber(priceData.history[hoveredIndex].price)}/bag
                     </p>
                     <p className="text-primary text-sm font-medium">
-                      {formatCurrency(priceData.history[hoveredIndex].price * exchangeRate, 'GHS')}/tonne
+                      {formatCurrency(priceData.history[hoveredIndex].price * exchangeRate, 'GHS')}/bag
                     </p>
                   </div>
                 )}
@@ -479,7 +485,9 @@ export default function CocoaPriceChart() {
             {/* Price info */}
             <div className="mt-4 pt-4 border-t border-gray-200 flex flex-wrap items-center justify-between gap-4 text-sm">
               <div className="flex items-center gap-4 text-muted-foreground">
-                <span>1 Tonne = 1,000 kg</span>
+                <span>1 Bag = 64 kg</span>
+                <span>•</span>
+                <span>1 Tonne = 15.625 Bags</span>
                 <span>•</span>
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
