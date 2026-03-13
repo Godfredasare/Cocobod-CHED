@@ -4,19 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Youtube, Clock, Calendar, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import videosData from '@/data/videos.json';
-import { useState } from 'react';
-
-// Video type
-interface VideoType {
-  id: string;
-  title: string;
-  description: string;
-  youtubeId: string;
-  thumbnail: string;
-  duration: string;
-  publishedAt: string;
-}
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import type { Video } from '@/types/database';
 
 // Animation variants
 const cardVariants = {
@@ -80,7 +70,7 @@ function VideoModal({
   isOpen,
   onClose
 }: {
-  video: VideoType | null;
+  video: Video | null;
   isOpen: boolean;
   onClose: () => void;
 }) {
@@ -112,7 +102,7 @@ function VideoModal({
             {/* Video Player */}
             <div className="relative pt-[56.25%] bg-black">
               <iframe
-                src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&rel=0`}
+                src={`https://www.youtube.com/embed/${video.youtube_id}?autoplay=1&rel=0`}
                 title={video.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -138,7 +128,7 @@ function VideoCard({
   index,
   onClick
 }: {
-  video: VideoType;
+  video: Video;
   index: number;
   onClick: () => void;
 }) {
@@ -163,13 +153,13 @@ function VideoCard({
             className="absolute inset-0"
           >
             <Image
-              src={`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`}
+              src={`https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg`}
               alt={video.title}
               fill
               className="object-cover"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+                target.src = `https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`;
               }}
             />
           </motion.div>
@@ -213,7 +203,7 @@ function VideoCard({
             </div>
             <div className="flex items-center gap-1.5">
               <Calendar size={12} className="text-primary" />
-              <span>{new Date(video.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+              <span>{new Date(video.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
             </div>
           </div>
         </div>
@@ -223,11 +213,35 @@ function VideoCard({
 }
 
 export default function VideoSection() {
-  const { videos, channelUrl } = videosData;
-  const [selectedVideo, setSelectedVideo] = useState<VideoType | null>(null);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const openModal = (video: VideoType) => {
+  const channelUrl = "https://www.youtube.com/@CHEDGhanaCocoaBoard";
+
+  useEffect(() => {
+    async function fetchVideos() {
+      try {
+        const { data, error } = await supabase
+          .from('videos')
+          .select('*')
+          .order('published_at', { ascending: false })
+          .limit(3);
+
+        if (error) throw error;
+        setVideos(data || []);
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchVideos();
+  }, []);
+
+  const openModal = (video: Video) => {
     setSelectedVideo(video);
     setIsModalOpen(true);
   };
@@ -236,9 +250,6 @@ export default function VideoSection() {
     setIsModalOpen(false);
     setTimeout(() => setSelectedVideo(null), 300);
   };
-
-  // Show only first 3 videos
-  const displayVideos = videos.slice(0, 3);
 
   return (
     <section className="py-20 lg:py-24 bg-gradient-to-b from-white to-muted/20 relative overflow-hidden">
@@ -272,31 +283,57 @@ export default function VideoSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
+            className="flex items-center gap-4"
           >
-            <a
-              href={channelUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/videos"
               className="group inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
             >
-              <span>Visit Our Channel</span>
+              <span>View All Videos</span>
               <ExternalLink size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </a>
+            </Link>
           </motion.div>
         </div>
 
         {/* Videos Grid */}
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {displayVideos.map((video, index) => (
-            <VideoCard key={video.id} video={video} index={index} onClick={() => openModal(video)} />
-          ))}
-        </motion.div>
+        {loading ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="animate-pulse">
+                <div className="rounded-2xl overflow-hidden bg-muted">
+                  <div className="pt-[56.25%] bg-muted" />
+                  <div className="p-5 bg-white">
+                    <div className="h-5 bg-muted rounded w-3/4 mb-3" />
+                    <div className="h-4 bg-muted rounded w-1/2" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : videos.length > 0 ? (
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {videos.map((video, index) => (
+              <VideoCard key={video.id} video={video} index={index} onClick={() => openModal(video)} />
+            ))}
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="text-center py-16 bg-white rounded-3xl border border-border shadow-sm"
+          >
+            <Youtube className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
+            <h3 className="font-semibold text-xl text-foreground mb-2">No Videos Available</h3>
+            <p className="text-muted-foreground">Check back soon for new video content.</p>
+          </motion.div>
+        )}
 
         {/* Subscribe CTA */}
         <motion.div

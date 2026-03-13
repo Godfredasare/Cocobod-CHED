@@ -2,13 +2,12 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, ImageIcon } from 'lucide-react';
 import Header from '@/components/ched/Header';
 import Footer from '@/components/ched/Footer';
-import galleryData from '@/data/gallery.json';
-
-const categories = ['All', ...new Set(galleryData.map(img => img.category))];
+import { supabase } from '@/lib/supabase';
+import type { GalleryImage } from '@/types/database';
 
 // Animation variants
 const fadeInUp = {
@@ -53,13 +52,40 @@ const gridItemVariants = {
 };
 
 export default function GalleryPageContent() {
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<string[]>(['All']);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  useEffect(() => {
+    async function fetchGallery() {
+      try {
+        const { data, error } = await supabase
+          .from('gallery')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setImages(data || []);
+        
+        // Extract unique categories
+        const uniqueCategories = [...new Set(data?.map(img => img.category) || [])];
+        setCategories(['All', ...uniqueCategories]);
+      } catch (error) {
+        console.error('Error fetching gallery:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchGallery();
+  }, []);
+
   const filteredImages = selectedCategory === 'All' 
-    ? galleryData 
-    : galleryData.filter(img => img.category === selectedCategory);
+    ? images 
+    : images.filter(img => img.category === selectedCategory);
 
   const openLightbox = (index: number) => {
     setCurrentImageIndex(index);
@@ -158,64 +184,86 @@ export default function GalleryPageContent() {
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl -translate-x-1/2" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <motion.div
-            layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
-          >
-            <AnimatePresence mode="popLayout">
-              {filteredImages.map((image, index) => (
-                <motion.div
-                  key={`${image.src}-${index}`}
-                  layout
-                  custom={index}
-                  variants={gridItemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  whileHover="hover"
-                  onClick={() => openLightbox(index)}
-                  className="group relative aspect-video rounded-2xl overflow-hidden cursor-pointer bg-muted shadow-sm hover:shadow-xl transition-shadow"
-                >
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                      <p className="text-white text-sm font-semibold">{image.alt}</p>
-                      <span className="text-white/70 text-xs">{image.category}</span>
-                    </div>
-                  </div>
-                  
-                  {/* Zoom icon on hover */}
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileHover={{ opacity: 1, scale: 1 }}
-                    className="absolute top-4 right-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <ImageIcon className="w-5 h-5 text-white" />
-                  </motion.div>
-                </motion.div>
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="aspect-video rounded-2xl bg-muted" />
+                </div>
               ))}
-            </AnimatePresence>
-          </motion.div>
+            </div>
+          ) : filteredImages.length > 0 ? (
+            <motion.div
+              layout
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredImages.map((image, index) => (
+                  <motion.div
+                    key={image.id}
+                    layout
+                    custom={index}
+                    variants={gridItemVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                    whileHover="hover"
+                    onClick={() => openLightbox(index)}
+                    className="group relative aspect-video rounded-2xl overflow-hidden cursor-pointer bg-muted shadow-sm hover:shadow-xl transition-shadow"
+                  >
+                    <Image
+                      src={image.src}
+                      alt={image.alt}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <p className="text-white text-sm font-semibold">{image.alt}</p>
+                        <span className="text-white/70 text-xs">{image.category}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Zoom icon on hover */}
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      whileHover={{ opacity: 1, scale: 1 }}
+                      className="absolute top-4 right-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <ImageIcon className="w-5 h-5 text-white" />
+                    </motion.div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-20"
+            >
+              <ImageIcon className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
+              <h3 className="font-semibold text-xl text-foreground mb-2">No Photos Available</h3>
+              <p className="text-muted-foreground">Check back soon for new gallery updates.</p>
+            </motion.div>
+          )}
           
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="text-center text-sm text-muted-foreground mt-10"
-          >
-            Showing {filteredImages.length} photo{filteredImages.length !== 1 ? 's' : ''}
-          </motion.p>
+          {!loading && filteredImages.length > 0 && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-center text-sm text-muted-foreground mt-10"
+            >
+              Showing {filteredImages.length} photo{filteredImages.length !== 1 ? 's' : ''}
+            </motion.p>
+          )}
         </div>
       </section>
 
       {/* Lightbox */}
       <AnimatePresence>
-        {lightboxOpen && (
+        {lightboxOpen && filteredImages.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

@@ -4,19 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Clock, MapPin, ArrowRight, X } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import eventsData from '@/data/events.json';
-import { useState } from 'react';
-
-// Event type
-interface EventType {
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  venue: string;
-  category: string;
-  image: string;
-}
+import { supabase } from '@/lib/supabase';
+import type { Event } from '@/types/database';
+import { useState, useEffect } from 'react';
 
 // Format date to readable string
 function formatDate(dateString: string): string {
@@ -101,7 +91,7 @@ function EventModal({
   isOpen,
   onClose
 }: {
-  event: EventType | null;
+  event: Event | null;
   isOpen: boolean;
   onClose: () => void;
 }) {
@@ -237,7 +227,7 @@ function EventCard({
   index,
   onClick
 }: {
-  event: EventType;
+  event: Event;
   index: number;
   onClick: () => void;
 }) {
@@ -330,23 +320,39 @@ function EventCard({
 }
 
 export default function EventsSection() {
-  const { events } = eventsData;
-  const [selectedEvent, setSelectedEvent] = useState<EventType | null>(null);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Sort events by date (upcoming first)
-  const sortedEvents = [...events].sort((a, b) =>
-    new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const { data, error } = await supabase
+          .from('events')
+          .select('*')
+          .order('date', { ascending: true });
+
+        if (error) throw error;
+        setEvents(data || []);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchEvents();
+  }, []);
 
   // Filter to show only upcoming events
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const upcomingEvents = sortedEvents.filter(event =>
+  const upcomingEvents = events.filter(event =>
     new Date(event.date) >= today
   ).slice(0, 4);
 
-  const openModal = (event: EventType) => {
+  const openModal = (event: Event) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
   };
@@ -399,7 +405,23 @@ export default function EventsSection() {
         </div>
 
         {/* Events Grid */}
-        {upcomingEvents.length > 0 ? (
+        {loading ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="animate-pulse">
+                <div className="bg-white rounded-2xl border border-border overflow-hidden">
+                  <div className="h-56 bg-muted" />
+                  <div className="p-5">
+                    <div className="h-5 bg-muted rounded w-3/4 mb-3" />
+                    <div className="h-4 bg-muted rounded w-full mb-2" />
+                    <div className="h-4 bg-muted rounded w-1/2 mb-4" />
+                    <div className="h-10 bg-muted rounded" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : upcomingEvents.length > 0 ? (
           <motion.div
             variants={staggerContainer}
             initial="hidden"
@@ -408,7 +430,7 @@ export default function EventsSection() {
             className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             {upcomingEvents.map((event, index) => (
-              <EventCard key={event.title} event={event} index={index} onClick={() => openModal(event)} />
+              <EventCard key={event.id} event={event} index={index} onClick={() => openModal(event)} />
             ))}
           </motion.div>
         ) : (

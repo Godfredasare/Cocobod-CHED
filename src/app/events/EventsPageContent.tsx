@@ -5,19 +5,9 @@ import { Calendar, Clock, MapPin, ArrowRight, Filter, ChevronDown, X } from 'luc
 import Image from 'next/image';
 import Header from '@/components/ched/Header';
 import Footer from '@/components/ched/Footer';
-import eventsData from '@/data/events.json';
-import { useState } from 'react';
-
-// Event type
-interface EventType {
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  venue: string;
-  category: string;
-  image: string;
-}
+import { supabase } from '@/lib/supabase';
+import type { Event } from '@/types/database';
+import { useState, useEffect } from 'react';
 
 // Animation variants
 const fadeInUp = {
@@ -114,7 +104,7 @@ function EventModal({
   isOpen,
   onClose
 }: {
-  event: EventType | null;
+  event: Event | null;
   isOpen: boolean;
   onClose: () => void;
 }) {
@@ -246,7 +236,7 @@ function EventCard({
   isPast = false,
   onClick
 }: {
-  event: EventType;
+  event: Event;
   index: number;
   isPast?: boolean;
   onClick: () => void;
@@ -364,7 +354,7 @@ function FeaturedEvent({
   event,
   onClick
 }: {
-  event: EventType;
+  event: Event;
   onClick: () => void;
 }) {
   const [imgError, setImgError] = useState(false);
@@ -468,13 +458,34 @@ function FeaturedEvent({
 }
 
 export default function EventsPageContent() {
-  const { events } = eventsData;
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [showPastEvents, setShowPastEvents] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<EventType | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const openModal = (event: EventType) => {
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const { data, error } = await supabase
+          .from('events')
+          .select('*')
+          .order('date', { ascending: true });
+
+        if (error) throw error;
+        setEvents(data || []);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchEvents();
+  }, []);
+
+  const openModal = (event: Event) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
   };
@@ -487,20 +498,15 @@ export default function EventsPageContent() {
   // Get unique categories
   const categories = ['All', ...new Set(events.map(e => e.category))];
 
-  // Sort events by date
-  const sortedEvents = [...events].sort((a, b) =>
-    new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
-
   // Filter upcoming and past events
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const upcomingEvents = sortedEvents.filter(event =>
+  const upcomingEvents = events.filter(event =>
     new Date(event.date) >= today
   );
 
-  const pastEvents = sortedEvents.filter(event =>
+  const pastEvents = events.filter(event =>
     new Date(event.date) < today
   );
 
@@ -572,113 +578,129 @@ export default function EventsPageContent() {
         </div>
       </section>
 
-      {/* Featured Event */}
-      {featuredEvent && (
+      {/* Loading State */}
+      {loading ? (
         <section className="py-10 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <FeaturedEvent event={featuredEvent} onClick={() => openModal(featuredEvent)} />
+          <div className="animate-pulse">
+            <div className="h-[400px] bg-muted rounded-3xl mb-8" />
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-[350px] bg-muted rounded-2xl" />
+              ))}
+            </div>
+          </div>
         </section>
-      )}
+      ) : (
+        <>
+          {/* Featured Event */}
+          {featuredEvent && (
+            <section className="py-10 sm:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+              <FeaturedEvent event={featuredEvent} onClick={() => openModal(featuredEvent)} />
+            </section>
+          )}
 
-      {/* Category Filter */}
-      <section className="py-6 sm:py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <div className="flex items-center gap-2 text-muted-foreground mr-2">
-            <Filter size={18} />
-            <span className="font-medium hidden sm:inline">Filter:</span>
-          </div>
-          {categories.map((category, i) => (
-            <motion.button
-              key={category}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.03 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-sm font-medium transition-all ${
-                selectedCategory === category
-                  ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
-              }`}
+          {/* Category Filter */}
+          <section className="py-6 sm:py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <div className="flex items-center gap-2 text-muted-foreground mr-2">
+                <Filter size={18} />
+                <span className="font-medium hidden sm:inline">Filter:</span>
+              </div>
+              {categories.map((category, i) => (
+                <motion.button
+                  key={category}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.03 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-sm font-medium transition-all ${
+                    selectedCategory === category
+                      ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  {category}
+                </motion.button>
+              ))}
+            </div>
+          </section>
+
+          {/* Upcoming Events */}
+          <section className="py-8 sm:py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <motion.div
+              variants={fadeInUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="flex items-center justify-between mb-8"
             >
-              {category}
-            </motion.button>
-          ))}
-        </div>
-      </section>
+              <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Upcoming Events</h2>
+              <span className="text-sm text-muted-foreground font-medium">
+                {filteredUpcoming.length} event{filteredUpcoming.length !== 1 ? 's' : ''}
+              </span>
+            </motion.div>
 
-      {/* Upcoming Events */}
-      <section className="py-8 sm:py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <motion.div
-          variants={fadeInUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="flex items-center justify-between mb-8"
-        >
-          <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Upcoming Events</h2>
-          <span className="text-sm text-muted-foreground font-medium">
-            {filteredUpcoming.length} event{filteredUpcoming.length !== 1 ? 's' : ''}
-          </span>
-        </motion.div>
-
-        {filteredUpcoming.length > 0 ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
-            {filteredUpcoming.slice(featuredEvent ? 1 : 0).map((event, index) => (
-              <EventCard key={event.title} event={event} index={index} onClick={() => openModal(event)} />
-            ))}
-          </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-16 bg-gradient-to-br from-muted/40 to-muted/20 rounded-3xl border border-border"
-          >
-            <Calendar className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
-            <h3 className="font-semibold text-xl text-foreground mb-2">No Upcoming Events</h3>
-            <p className="text-muted-foreground text-lg">
-              {selectedCategory !== 'All'
-                ? `No upcoming ${selectedCategory.toLowerCase()} events. Try a different category.`
-                : 'Check back soon for new events and activities.'}
-            </p>
-          </motion.div>
-        )}
-      </section>
-
-      {/* Past Events Toggle */}
-      {pastEvents.length > 0 && (
-        <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <motion.button
-            whileHover={{ x: 5 }}
-            onClick={() => setShowPastEvents(!showPastEvents)}
-            className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-6"
-          >
-            <span className="font-medium text-lg">
-              {showPastEvents ? 'Hide' : 'Show'} Past Events ({pastEvents.length})
-            </span>
-            <ChevronDown
-              size={20}
-              className={`transition-transform ${showPastEvents ? 'rotate-180' : ''}`}
-            />
-          </motion.button>
-
-          <AnimatePresence>
-            {showPastEvents && (
+            {filteredUpcoming.length > 0 ? (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+                {filteredUpcoming.slice(featuredEvent ? 1 : 0).map((event, index) => (
+                  <EventCard key={event.id} event={event} index={index} onClick={() => openModal(event)} />
+                ))}
+              </div>
+            ) : (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.4, ease: 'easeInOut' }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center py-16 bg-gradient-to-br from-muted/40 to-muted/20 rounded-3xl border border-border"
               >
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6 pt-4">
-                  {filteredPast.map((event, index) => (
-                    <EventCard key={event.title} event={event} index={index} isPast onClick={() => openModal(event)} />
-                  ))}
-                </div>
+                <Calendar className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
+                <h3 className="font-semibold text-xl text-foreground mb-2">No Upcoming Events</h3>
+                <p className="text-muted-foreground text-lg">
+                  {selectedCategory !== 'All'
+                    ? `No upcoming ${selectedCategory.toLowerCase()} events. Try a different category.`
+                    : 'Check back soon for new events and activities.'}
+                </p>
               </motion.div>
             )}
-          </AnimatePresence>
-        </section>
+          </section>
+
+          {/* Past Events Toggle */}
+          {pastEvents.length > 0 && (
+            <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+              <motion.button
+                whileHover={{ x: 5 }}
+                onClick={() => setShowPastEvents(!showPastEvents)}
+                className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-6"
+              >
+                <span className="font-medium text-lg">
+                  {showPastEvents ? 'Hide' : 'Show'} Past Events ({pastEvents.length})
+                </span>
+                <ChevronDown
+                  size={20}
+                  className={`transition-transform ${showPastEvents ? 'rotate-180' : ''}`}
+                />
+              </motion.button>
+
+              <AnimatePresence>
+                {showPastEvents && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.4, ease: 'easeInOut' }}
+                  >
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6 pt-4">
+                      {filteredPast.map((event, index) => (
+                        <EventCard key={event.id} event={event} index={index} isPast onClick={() => openModal(event)} />
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </section>
+          )}
+        </>
       )}
 
       {/* Newsletter / Stay Updated */}

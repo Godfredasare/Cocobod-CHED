@@ -7,7 +7,9 @@ import { Calendar, ArrowRight } from 'lucide-react';
 import Header from '@/components/ched/Header';
 import Footer from '@/components/ched/Footer';
 import VideoSection from '@/components/ched/VideoSection';
-import newsData from '@/data/news.json';
+import { supabase } from '@/lib/supabase';
+import type { News } from '@/types/database';
+import { useState, useEffect } from 'react';
 
 // Animation variants
 const fadeInUp = {
@@ -51,6 +53,29 @@ const cardVariants = {
 };
 
 export default function NewsPageContent() {
+  const [news, setNews] = useState<News[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchNews() {
+      try {
+        const { data, error } = await supabase
+          .from('news')
+          .select('*')
+          .order('date', { ascending: false });
+
+        if (error) throw error;
+        setNews(data || []);
+      } catch (error) {
+        console.error('Error fetching news:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchNews();
+  }, []);
+
   return (
     <main className="min-h-screen">
       <Header />
@@ -113,65 +138,93 @@ export default function NewsPageContent() {
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <motion.div
-            layout
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 lg:gap-8"
-          >
-            {newsData.map((article, index) => (
-              <motion.article
-                key={article.id}
-                custom={index}
-                variants={cardVariants}
-                initial="hidden"
-                whileInView="visible"
-                whileHover="hover"
-                viewport={{ once: true, margin: "-30px" }}
-                className="group bg-white rounded-2xl overflow-hidden border border-border shadow-sm hover:shadow-xl transition-shadow"
-              >
-                <Link href={`/news/${article.slug}`}>
-                  <div className="relative h-56 overflow-hidden">
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ duration: 0.6, ease: 'easeOut' }}
-                      className="w-full h-full"
-                    >
-                      <Image
-                        src={article.image}
-                        alt={article.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </motion.div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-primary text-xs font-semibold rounded-full shadow-md">
-                        {article.category}
-                      </span>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 lg:gap-8">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="bg-white rounded-2xl overflow-hidden border border-border">
+                    <div className="h-56 bg-muted" />
+                    <div className="p-6">
+                      <div className="h-4 bg-muted rounded w-1/4 mb-3" />
+                      <div className="h-6 bg-muted rounded w-3/4 mb-3" />
+                      <div className="h-4 bg-muted rounded w-full mb-2" />
+                      <div className="h-4 bg-muted rounded w-1/2" />
                     </div>
                   </div>
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-                      <Calendar size={14} className="text-primary" />
-                      <span>{article.date}</span>
+                </div>
+              ))}
+            </div>
+          ) : news.length > 0 ? (
+            <motion.div
+              layout
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 lg:gap-8"
+            >
+              {news.map((article, index) => (
+                <motion.article
+                  key={article.id}
+                  custom={index}
+                  variants={cardVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  whileHover="hover"
+                  viewport={{ once: true, margin: "-30px" }}
+                  className="group bg-white rounded-2xl overflow-hidden border border-border shadow-sm hover:shadow-xl transition-shadow"
+                >
+                  <Link href={`/news/${article.slug}`}>
+                    <div className="relative h-56 overflow-hidden">
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                        className="w-full h-full"
+                      >
+                        <Image
+                          src={article.image}
+                          alt={article.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </motion.div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute top-4 left-4">
+                        <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-primary text-xs font-semibold rounded-full shadow-md">
+                          {article.category}
+                        </span>
+                      </div>
                     </div>
-                    <h3 className="font-bold text-xl text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
-                      {article.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4 leading-relaxed">
-                      {article.excerpt}
-                    </p>
-                    <motion.div
-                      whileHover={{ x: 5 }}
-                      className="inline-flex items-center gap-2 text-sm font-semibold text-primary"
-                    >
-                      Read more
-                      <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                    </motion.div>
-                  </div>
-                </Link>
-              </motion.article>
-            ))}
-          </motion.div>
+                    <div className="p-6">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                        <Calendar size={14} className="text-primary" />
+                        <span>{new Date(article.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                      </div>
+                      <h3 className="font-bold text-xl text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
+                        {article.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4 leading-relaxed">
+                        {article.excerpt}
+                      </p>
+                      <motion.div
+                        whileHover={{ x: 5 }}
+                        className="inline-flex items-center gap-2 text-sm font-semibold text-primary"
+                      >
+                        Read more
+                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                      </motion.div>
+                    </div>
+                  </Link>
+                </motion.article>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-20"
+            >
+              <Calendar className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
+              <h3 className="font-semibold text-xl text-foreground mb-2">No News Available</h3>
+              <p className="text-muted-foreground">Check back soon for the latest updates.</p>
+            </motion.div>
+          )}
         </div>
       </section>
 

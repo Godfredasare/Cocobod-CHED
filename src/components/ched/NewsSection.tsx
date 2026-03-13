@@ -4,8 +4,9 @@ import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Calendar } from 'lucide-react';
-import newsData from '@/data/news.json';
-import { useRef } from 'react';
+import { supabase } from '@/lib/supabase';
+import type { News } from '@/types/database';
+import { useRef, useState, useEffect } from 'react';
 
 // Animation variants
 const cardVariants = {
@@ -61,9 +62,29 @@ const imageVariants = {
 export default function NewsSection() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+  const [news, setNews] = useState<News[]>([]);
+  const [loading, setLoading] = useState(true);
   
-  // Get only the first 3 news articles for the homepage
-  const featuredNews = newsData.slice(0, 3);
+  useEffect(() => {
+    async function fetchNews() {
+      try {
+        const { data, error } = await supabase
+          .from('news')
+          .select('*')
+          .order('date', { ascending: false })
+          .limit(3);
+
+        if (error) throw error;
+        setNews(data || []);
+      } catch (error) {
+        console.error('Error fetching news:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchNews();
+  }, []);
 
   return (
     <section ref={sectionRef} id="news" className="py-20 lg:py-28 bg-white relative overflow-hidden">
@@ -104,82 +125,111 @@ export default function NewsSection() {
         </div>
 
         {/* News Grid */}
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 lg:gap-8"
-        >
-          {featuredNews.map((article, index) => (
-            <motion.article
-              key={article.id}
-              custom={index}
-              variants={cardVariants}
-              whileHover="hover"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-30px" }}
-              className="group bg-card rounded-2xl overflow-hidden border border-border shadow-sm hover:shadow-xl transition-shadow duration-300"
-            >
-              <Link href={`/news/${article.slug}`}>
-                <div className="relative h-56 overflow-hidden">
-                  <motion.div
-                    variants={imageVariants}
-                    initial="rest"
-                    whileHover="hover"
-                    className="w-full h-full"
-                  >
-                    <Image
-                      src={article.image}
-                      alt={article.title}
-                      fill
-                      className="object-cover"
-                    />
-                  </motion.div>
-                  
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  
-                  {/* Category Badge */}
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="absolute top-4 left-4"
-                  >
-                    <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-primary text-xs font-semibold rounded-full shadow-md">
-                      {article.category}
-                    </span>
-                  </motion.div>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 lg:gap-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="animate-pulse">
+                <div className="bg-card rounded-2xl overflow-hidden border border-border">
+                  <div className="h-56 bg-muted" />
+                  <div className="p-6">
+                    <div className="h-4 bg-muted rounded w-1/4 mb-3" />
+                    <div className="h-6 bg-muted rounded w-3/4 mb-3" />
+                    <div className="h-4 bg-muted rounded w-full mb-2" />
+                    <div className="h-4 bg-muted rounded w-1/2" />
+                  </div>
                 </div>
-                
-                <div className="p-6">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-                    <Calendar size={14} className="text-primary" />
-                    <span>{article.date}</span>
+              </div>
+            ))}
+          </div>
+        ) : news.length > 0 ? (
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 lg:gap-8"
+          >
+            {news.map((article, index) => (
+              <motion.article
+                key={article.id}
+                custom={index}
+                variants={cardVariants}
+                whileHover="hover"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-30px" }}
+                className="group bg-card rounded-2xl overflow-hidden border border-border shadow-sm hover:shadow-xl transition-shadow duration-300"
+              >
+                <Link href={`/news/${article.slug}`}>
+                  <div className="relative h-56 overflow-hidden">
+                    <motion.div
+                      variants={imageVariants}
+                      initial="rest"
+                      whileHover="hover"
+                      className="w-full h-full"
+                    >
+                      <Image
+                        src={article.image}
+                        alt={article.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </motion.div>
+                    
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    
+                    {/* Category Badge */}
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      className="absolute top-4 left-4"
+                    >
+                      <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-primary text-xs font-semibold rounded-full shadow-md">
+                        {article.category}
+                      </span>
+                    </motion.div>
                   </div>
                   
-                  <h3 className="font-bold text-xl text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
-                    {article.title}
-                  </h3>
-                  
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4 leading-relaxed">
-                    {article.excerpt}
-                  </p>
-                  
-                  <motion.div
-                    whileHover={{ x: 5 }}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-primary"
-                  >
-                    Read more
-                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                  </motion.div>
-                </div>
-              </Link>
-            </motion.article>
-          ))}
-        </motion.div>
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                      <Calendar size={14} className="text-primary" />
+                      <span>{new Date(article.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    </div>
+                    
+                    <h3 className="font-bold text-xl text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
+                      {article.title}
+                    </h3>
+                    
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4 leading-relaxed">
+                      {article.excerpt}
+                    </p>
+                    
+                    <motion.div
+                      whileHover={{ x: 5 }}
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-primary"
+                    >
+                      Read more
+                      <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    </motion.div>
+                  </div>
+                </Link>
+              </motion.article>
+            ))}
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="text-center py-16 bg-white rounded-3xl border border-border shadow-sm"
+          >
+            <Calendar className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
+            <h3 className="font-semibold text-xl text-foreground mb-2">No News Available</h3>
+            <p className="text-muted-foreground">Check back soon for the latest updates.</p>
+          </motion.div>
+        )}
 
         {/* View All */}
         <motion.div
