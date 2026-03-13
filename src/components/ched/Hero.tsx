@@ -36,8 +36,8 @@ const slides = [
 const textVariants = {
   hidden: { 
     opacity: 0, 
-    y: 40,
-    filter: 'blur(10px)'
+    y: 30,
+    filter: 'blur(8px)'
   },
   visible: { 
     opacity: 1, 
@@ -45,17 +45,17 @@ const textVariants = {
     filter: 'blur(0px)',
     transition: {
       type: 'spring',
-      stiffness: 100,
-      damping: 15,
+      stiffness: 80,
+      damping: 20,
       mass: 1
     }
   },
   exit: {
     opacity: 0,
-    y: -30,
-    filter: 'blur(8px)',
+    y: -20,
+    filter: 'blur(6px)',
     transition: {
-      duration: 0.4,
+      duration: 0.5,
       ease: 'easeInOut'
     }
   }
@@ -66,8 +66,8 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.2
+      staggerChildren: 0.12,
+      delayChildren: 0.15
     }
   }
 };
@@ -132,7 +132,7 @@ export default function Hero() {
             scale: index === currentSlide ? 1.05 : 1
           }}
           transition={{ 
-            opacity: { duration: 1.2, ease: 'easeInOut' },
+            opacity: { duration: 1.5, ease: 'easeInOut' },
             scale: { duration: 8, ease: 'linear' }
           }}
           className="absolute inset-0 z-0"
@@ -206,27 +206,30 @@ export default function Hero() {
               >
                 {slides[currentSlide].description}
               </motion.p>
-
-              <motion.div
-                variants={textVariants}
-                className="flex flex-col sm:flex-row gap-4"
-              >
-                <a
-                  href="/operations"
-                  className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent text-primary font-semibold rounded-xl hover:bg-accent/90 transition-all duration-300 hover:shadow-lg hover:shadow-accent/20 hover:-translate-y-0.5"
-                >
-                  Our Services
-                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                </a>
-                <a
-                  href="/about"
-                  className="group inline-flex items-center justify-center px-8 py-4 bg-white/10 text-white font-medium rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20 backdrop-blur-sm hover:-translate-y-0.5"
-                >
-                  Learn More
-                </a>
-              </motion.div>
             </motion.div>
           </AnimatePresence>
+
+          {/* Buttons - Static, not part of slide transition */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+            className="flex flex-col sm:flex-row gap-4"
+          >
+            <a
+              href="/operations"
+              className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent text-primary font-semibold rounded-xl hover:bg-accent/90 transition-all duration-300 hover:shadow-lg hover:shadow-accent/20 hover:-translate-y-0.5"
+            >
+              Our Services
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </a>
+            <a
+              href="/about"
+              className="group inline-flex items-center justify-center px-8 py-4 bg-white/10 text-white font-medium rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20 backdrop-blur-sm hover:-translate-y-0.5"
+            >
+              Learn More
+            </a>
+          </motion.div>
         </div>
 
         {/* Stats with animated counter */}

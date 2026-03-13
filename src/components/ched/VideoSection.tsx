@@ -251,6 +251,11 @@ export default function VideoSection() {
     setTimeout(() => setSelectedVideo(null), 300);
   };
 
+  // Don't render anything if loading is complete and no videos
+  if (!loading && videos.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-20 lg:py-24 bg-gradient-to-b from-white to-muted/20 relative overflow-hidden">
       {/* Background decoration */}
@@ -310,7 +315,7 @@ export default function VideoSection() {
               </div>
             ))}
           </div>
-        ) : videos.length > 0 ? (
+        ) : (
           <motion.div
             variants={staggerContainer}
             initial="hidden"
@@ -322,39 +327,30 @@ export default function VideoSection() {
               <VideoCard key={video.id} video={video} index={index} onClick={() => openModal(video)} />
             ))}
           </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="text-center py-16 bg-white rounded-3xl border border-border shadow-sm"
-          >
-            <Youtube className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
-            <h3 className="font-semibold text-xl text-foreground mb-2">No Videos Available</h3>
-            <p className="text-muted-foreground">Check back soon for new video content.</p>
-          </motion.div>
         )}
 
         {/* Subscribe CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3, type: 'spring', stiffness: 80 }}
-          className="mt-12 text-center"
-        >
-          <motion.a
-            href={channelUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center gap-3 px-8 py-4 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20"
+        {!loading && videos.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, type: 'spring', stiffness: 80 }}
+            className="mt-12 text-center"
           >
-            <Youtube size={22} />
-            <span>Subscribe to Our Channel</span>
-          </motion.a>
-        </motion.div>
+            <motion.a
+              href={channelUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="inline-flex items-center gap-3 px-8 py-4 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20"
+            >
+              <Youtube size={22} />
+              <span>Subscribe to Our Channel</span>
+            </motion.a>
+          </motion.div>
+        )}
       </div>
 
       {/* Video Modal */}

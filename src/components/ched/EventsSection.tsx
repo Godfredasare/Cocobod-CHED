@@ -362,6 +362,11 @@ export default function EventsSection() {
     setTimeout(() => setSelectedEvent(null), 300);
   };
 
+  // Don't render anything if loading is complete and no upcoming events
+  if (!loading && upcomingEvents.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-20 lg:py-24 bg-gradient-to-b from-muted/50 to-muted/30 relative overflow-hidden">
       {/* Background decoration */}
@@ -421,7 +426,7 @@ export default function EventsSection() {
               </div>
             ))}
           </div>
-        ) : upcomingEvents.length > 0 ? (
+        ) : (
           <motion.div
             variants={staggerContainer}
             initial="hidden"
@@ -432,17 +437,6 @@ export default function EventsSection() {
             {upcomingEvents.map((event, index) => (
               <EventCard key={event.id} event={event} index={index} onClick={() => openModal(event)} />
             ))}
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="text-center py-16 bg-white rounded-3xl border border-border shadow-sm"
-          >
-            <Calendar className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
-            <h3 className="font-semibold text-xl text-foreground mb-2">No Upcoming Events</h3>
-            <p className="text-muted-foreground">Check back soon for new events and activities.</p>
           </motion.div>
         )}
       </div>

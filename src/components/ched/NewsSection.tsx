@@ -86,6 +86,11 @@ export default function NewsSection() {
     fetchNews();
   }, []);
 
+  // Don't render anything if loading is complete and no news
+  if (!loading && news.length === 0) {
+    return null;
+  }
+
   return (
     <section ref={sectionRef} id="news" className="py-20 lg:py-28 bg-white relative overflow-hidden">
       {/* Background decoration */}
@@ -141,7 +146,7 @@ export default function NewsSection() {
               </div>
             ))}
           </div>
-        ) : news.length > 0 ? (
+        ) : (
           <motion.div
             variants={staggerContainer}
             initial="hidden"
@@ -218,35 +223,26 @@ export default function NewsSection() {
               </motion.article>
             ))}
           </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="text-center py-16 bg-white rounded-3xl border border-border shadow-sm"
-          >
-            <Calendar className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
-            <h3 className="font-semibold text-xl text-foreground mb-2">No News Available</h3>
-            <p className="text-muted-foreground">Check back soon for the latest updates.</p>
-          </motion.div>
         )}
 
         {/* View All */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3, type: 'spring', stiffness: 80 }}
-          className="text-center mt-14"
-        >
-          <Link
-            href="/news"
-            className="group inline-flex items-center gap-2 px-8 py-4 border-2 border-primary text-primary font-semibold rounded-xl hover:bg-primary hover:text-white transition-all duration-300 hover:shadow-lg hover:shadow-primary/20"
+        {!loading && news.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, type: 'spring', stiffness: 80 }}
+            className="text-center mt-14"
           >
-            View All News
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </motion.div>
+            <Link
+              href="/news"
+              className="group inline-flex items-center gap-2 px-8 py-4 border-2 border-primary text-primary font-semibold rounded-xl hover:bg-primary hover:text-white transition-all duration-300 hover:shadow-lg hover:shadow-primary/20"
+            >
+              View All News
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </motion.div>
+        )}
       </div>
     </section>
   );
