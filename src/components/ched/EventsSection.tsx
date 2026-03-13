@@ -242,11 +242,11 @@ function EventCard({
       whileInView="visible"
       whileHover="hover"
       viewport={{ once: true, margin: "-30px" }}
-      className="group bg-white rounded-2xl border border-border overflow-hidden shadow-sm cursor-pointer"
+      className="group bg-white rounded-2xl border border-border overflow-hidden shadow-sm cursor-pointer flex flex-col h-full"
       onClick={onClick}
     >
       {/* Image */}
-      <div className="relative h-52 sm:h-56 bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden">
+      <div className="relative h-44 bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden flex-shrink-0">
         {hasImage ? (
           <Image
             src={event.image}
@@ -257,7 +257,7 @@ function EventCard({
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
-            <Calendar className="w-20 h-20 text-primary/20" />
+            <Calendar className="w-16 h-16 text-primary/20" />
           </div>
         )}
 
@@ -279,26 +279,26 @@ function EventCard({
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
             {new Date(event.date).toLocaleDateString('en-GB', { month: 'short' })}
           </p>
-          <p className="text-xl font-bold text-primary">
+          <p className="text-lg font-bold text-primary">
             {new Date(event.date).getDate()}
           </p>
         </motion.div>
       </div>
 
       {/* Content */}
-      <div className="p-5">
-        <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-2">
+      <div className="p-4 flex flex-col flex-grow">
+        <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2 min-h-[2.75rem]">
           {event.title}
         </h3>
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-3 min-h-[2.5rem] flex-grow">
           {event.description}
         </p>
 
         {/* Event Details */}
-        <div className="space-y-2 mb-4">
+        <div className="space-y-1.5 mb-3">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Calendar size={12} className={`${getCategoryTextColor(event.category)} flex-shrink-0`} />
-            <span>{formatDate(event.date).slice(0, -5)}</span>
+            <span className="line-clamp-1">{formatDate(event.date).slice(0, -5)}</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <MapPin size={12} className={`${getCategoryTextColor(event.category)} flex-shrink-0`} />
@@ -309,7 +309,7 @@ function EventCard({
         {/* CTA */}
         <motion.div
           whileHover={{ scale: 1.02 }}
-          className="flex items-center justify-center gap-2 text-sm font-semibold text-primary group-hover:text-white py-3 bg-primary/10 group-hover:bg-primary rounded-xl transition-colors"
+          className="flex items-center justify-center gap-2 text-sm font-semibold text-primary group-hover:text-white py-2.5 bg-primary/10 group-hover:bg-primary rounded-xl transition-colors"
         >
           <span>View Details</span>
           <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />

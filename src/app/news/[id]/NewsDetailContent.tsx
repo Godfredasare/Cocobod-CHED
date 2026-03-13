@@ -80,20 +80,6 @@ export default function NewsDetailContent({ slug }: Props) {
     );
   }
 
-  // Parse content - assuming content is stored as JSON string or array
-  let contentParagraphs: string[] = [];
-  try {
-    if (typeof article.content === 'string') {
-      contentParagraphs = JSON.parse(article.content);
-    } else if (Array.isArray(article.content)) {
-      contentParagraphs = article.content;
-    } else {
-      contentParagraphs = [article.content];
-    }
-  } catch {
-    contentParagraphs = [article.content];
-  }
-
   return (
     <main className="min-h-screen">
       <Header />
@@ -159,14 +145,9 @@ export default function NewsDetailContent({ slug }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
-            className="prose prose-lg max-w-none"
-          >
-            {contentParagraphs.map((paragraph, index) => (
-              <p key={index} className="text-foreground mb-4 leading-relaxed">
-                {paragraph}
-              </p>
-            ))}
-          </motion.div>
+            className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground prose-ul:text-muted-foreground prose-ol:text-muted-foreground"
+            dangerouslySetInnerHTML={{ __html: article.content }}
+          />
 
           {/* Tags */}
           <div className="mt-8 pt-8 border-t border-border">
@@ -202,10 +183,10 @@ export default function NewsDetailContent({ slug }: Props) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
-                  className="group bg-white rounded-xl overflow-hidden border border-border hover:shadow-lg transition-shadow"
+                  className="group bg-white rounded-xl overflow-hidden border border-border hover:shadow-lg transition-shadow flex flex-col h-full"
                 >
-                  <Link href={`/news/${news.slug}`}>
-                    <div className="relative h-40 overflow-hidden">
+                  <Link href={`/news/${news.slug}`} className="flex flex-col h-full">
+                    <div className="relative h-40 overflow-hidden flex-shrink-0">
                       <Image
                         src={news.image}
                         alt={news.title}
@@ -218,12 +199,12 @@ export default function NewsDetailContent({ slug }: Props) {
                         </span>
                       </div>
                     </div>
-                    <div className="p-4">
+                    <div className="p-4 flex flex-col flex-grow">
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                         <Calendar size={12} />
                         {new Date(news.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </div>
-                      <h3 className="font-medium text-foreground text-sm line-clamp-2 group-hover:text-primary transition-colors">
+                      <h3 className="font-medium text-foreground text-sm line-clamp-2 group-hover:text-primary transition-colors min-h-[2.5rem]">
                         {news.title}
                       </h3>
                     </div>

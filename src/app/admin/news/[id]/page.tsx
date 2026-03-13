@@ -7,6 +7,7 @@ import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import AdminShell from '@/components/admin/AdminShell';
 import ImageUpload from '@/components/admin/ImageUpload';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 import { supabase } from '@/lib/supabase';
 
 const categories = [
@@ -181,13 +182,11 @@ export default function NewsFormPage() {
               <label className="block text-sm font-medium text-foreground mb-2">
                 Content <span className="text-red-500">*</span>
               </label>
-              <textarea
+              <RichTextEditor
                 value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                required
-                rows={10}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
-                placeholder="Full news content"
+                onChange={(value) => setFormData({ ...formData, content: value })}
+                placeholder="Write your news content here..."
+                height="400px"
               />
             </div>
 

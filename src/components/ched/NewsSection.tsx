@@ -163,10 +163,10 @@ export default function NewsSection() {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-30px" }}
-                className="group bg-card rounded-2xl overflow-hidden border border-border shadow-sm hover:shadow-xl transition-shadow duration-300"
+                className="group bg-card rounded-2xl overflow-hidden border border-border shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col h-full"
               >
-                <Link href={`/news/${article.slug}`}>
-                  <div className="relative h-56 overflow-hidden">
+                <Link href={`/news/${article.slug}`} className="flex flex-col h-full">
+                  <div className="relative h-48 overflow-hidden flex-shrink-0">
                     <motion.div
                       variants={imageVariants}
                       initial="rest"
@@ -197,17 +197,17 @@ export default function NewsSection() {
                     </motion.div>
                   </div>
                   
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                  <div className="p-5 flex flex-col flex-grow">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                       <Calendar size={14} className="text-primary" />
                       <span>{new Date(article.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                     </div>
                     
-                    <h3 className="font-bold text-xl text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
+                    <h3 className="font-bold text-lg text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors leading-snug min-h-[3.5rem]">
                       {article.title}
                     </h3>
                     
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4 leading-relaxed">
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-4 leading-relaxed flex-grow min-h-[2.5rem]">
                       {article.excerpt}
                     </p>
                     

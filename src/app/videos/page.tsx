@@ -144,12 +144,12 @@ function VideoCard({
       whileInView="visible"
       whileHover="hover"
       viewport={{ once: true, margin: "-30px" }}
-      className="group cursor-pointer"
+      className="group cursor-pointer h-full"
       onClick={onClick}
     >
-      <div className="relative rounded-2xl overflow-hidden bg-muted shadow-sm hover:shadow-2xl transition-all duration-300">
+      <div className="relative rounded-2xl overflow-hidden bg-muted shadow-sm hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
         {/* Thumbnail */}
-        <div className="relative pt-[56.25%] bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden">
+        <div className="relative pt-[56.25%] bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden flex-shrink-0">
           <motion.div
             initial={{ scale: 1.1 }}
             whileHover={{ scale: 1.15 }}
@@ -189,11 +189,11 @@ function VideoCard({
         </div>
 
         {/* Content */}
-        <div className="p-5 bg-white">
-          <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-3">
+        <div className="p-4 bg-white flex flex-col flex-grow">
+          <h3 className="font-semibold text-base text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2 min-h-[2.75rem]">
             {video.title}
           </h3>
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{video.description}</p>
+          <p className="text-sm text-muted-foreground line-clamp-2 mb-3 flex-grow min-h-[2.5rem]">{video.description}</p>
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Clock size={12} className="text-primary" />
