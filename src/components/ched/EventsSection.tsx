@@ -55,6 +55,46 @@ function getCategoryTextColor(category: string): string {
   return colors[category] || 'text-primary';
 }
 
+// Animation variants
+const cardVariants = {
+  hidden: { 
+    opacity: 0, 
+    y: 50,
+    scale: 0.95
+  },
+  visible: (i: number) => ({ 
+    opacity: 1, 
+    y: 0,
+    scale: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 80,
+      damping: 12,
+      delay: i * 0.1
+    }
+  }),
+  hover: {
+    y: -8,
+    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
+    transition: {
+      type: 'spring',
+      stiffness: 400,
+      damping: 20
+    }
+  }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1
+    }
+  }
+};
+
 // Event Modal Component
 function EventModal({
   event,
@@ -78,19 +118,24 @@ function EventModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
           onClick={onClose}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.9, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.3 }}
-            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+            exit={{ opacity: 0, scale: 0.9, y: 30 }}
+            transition={{ 
+              type: 'spring',
+              stiffness: 300,
+              damping: 25
+            }}
+            className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header Image */}
-            <div className="relative h-56 sm:h-64 bg-gradient-to-br from-primary/30 to-primary/10">
+            <div className="relative h-56 sm:h-72 bg-gradient-to-br from-primary/30 to-primary/10 overflow-hidden">
               {hasImage ? (
                 <Image
                   src={event.image}
@@ -101,68 +146,83 @@ function EventModal({
                 />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Calendar className="w-20 h-20 text-primary/30" />
+                  <Calendar className="w-24 h-24 text-primary/20" />
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
               {/* Close Button */}
-              <button
+              <motion.button
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={onClose}
-                className="absolute top-4 right-4 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center text-foreground hover:bg-white transition-colors shadow-md"
+                className="absolute top-4 right-4 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center text-foreground hover:bg-white transition-colors shadow-lg"
               >
                 <X size={20} />
-              </button>
+              </motion.button>
 
               {/* Category Badge */}
-              <div className="absolute bottom-4 left-4">
-                <span className={`${getCategoryColor(event.category)} text-white text-sm font-semibold px-4 py-1.5 rounded-full`}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="absolute bottom-4 left-4"
+              >
+                <span className={`${getCategoryColor(event.category)} text-white text-sm font-semibold px-5 py-2 rounded-full shadow-lg`}>
                   {event.category}
                 </span>
-              </div>
+              </motion.div>
             </div>
 
             {/* Content */}
             <div className="p-6 sm:p-8 overflow-y-auto max-h-[50vh]">
-              <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
+              <motion.h2
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="text-2xl sm:text-3xl font-bold text-foreground mb-4"
+              >
                 {event.title}
-              </h2>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="text-muted-foreground mb-6 leading-relaxed text-lg"
+              >
                 {event.description}
-              </p>
+              </motion.p>
 
               {/* Event Details */}
-              <div className="space-y-4 bg-muted/30 rounded-xl p-5">
-                <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-lg ${getCategoryColor(event.category)}/10 flex items-center justify-center`}>
-                    <Calendar className={`w-5 h-5 ${getCategoryTextColor(event.category)}`} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Date</p>
-                    <p className="font-semibold text-foreground">{formatDate(event.date)}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-lg ${getCategoryColor(event.category)}/10 flex items-center justify-center`}>
-                    <Clock className={`w-5 h-5 ${getCategoryTextColor(event.category)}`} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Time</p>
-                    <p className="font-semibold text-foreground">{event.time}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-lg ${getCategoryColor(event.category)}/10 flex items-center justify-center`}>
-                    <MapPin className={`w-5 h-5 ${getCategoryTextColor(event.category)}`} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Venue</p>
-                    <p className="font-semibold text-foreground">{event.venue}</p>
-                  </div>
-                </div>
-              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="space-y-4 bg-muted/30 rounded-2xl p-5"
+              >
+                {[
+                  { icon: Calendar, label: 'Date', value: formatDate(event.date) },
+                  { icon: Clock, label: 'Time', value: event.time },
+                  { icon: MapPin, label: 'Venue', value: event.venue }
+                ].map((item, i) => (
+                  <motion.div
+                    key={item.label}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.25 + i * 0.05 }}
+                    className="flex items-center gap-4"
+                  >
+                    <div className={`w-12 h-12 rounded-xl ${getCategoryColor(event.category)}/10 flex items-center justify-center`}>
+                      <item.icon className={`w-5 h-5 ${getCategoryTextColor(event.category)}`} />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">{item.label}</p>
+                      <p className="font-semibold text-foreground">{item.value}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
             </div>
           </motion.div>
         </motion.div>
@@ -186,58 +246,66 @@ function EventCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group bg-white rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
+      custom={index}
+      variants={cardVariants}
+      initial="hidden"
+      whileInView="visible"
+      whileHover="hover"
+      viewport={{ once: true, margin: "-30px" }}
+      className="group bg-white rounded-2xl border border-border overflow-hidden shadow-sm cursor-pointer"
       onClick={onClick}
     >
       {/* Image */}
-      <div className="relative h-48 sm:h-52 bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden">
+      <div className="relative h-52 sm:h-56 bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden">
         {hasImage ? (
           <Image
             src={event.image}
             alt={event.title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className="object-cover group-hover:scale-110 transition-transform duration-700"
             onError={() => setImgError(true)}
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
-            <Calendar className="w-16 h-16 text-primary/30" />
+            <Calendar className="w-20 h-20 text-primary/20" />
           </div>
         )}
 
+        {/* Overlay on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
         {/* Category Badge */}
         <div className="absolute top-3 left-3">
-          <span className={`${getCategoryColor(event.category)} text-white text-xs font-semibold px-3 py-1 rounded-full`}>
+          <span className={`${getCategoryColor(event.category)} text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-md`}>
             {event.category}
           </span>
         </div>
 
         {/* Date Badge */}
-        <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-lg px-2.5 py-1.5 text-center shadow-sm">
-          <p className="text-[10px] text-muted-foreground">
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 text-center shadow-md"
+        >
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
             {new Date(event.date).toLocaleDateString('en-GB', { month: 'short' })}
           </p>
-          <p className="text-lg font-bold text-primary">
+          <p className="text-xl font-bold text-primary">
             {new Date(event.date).getDate()}
           </p>
-        </div>
+        </motion.div>
       </div>
 
       {/* Content */}
-      <div className="p-4">
-        <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors line-clamp-1">
+      <div className="p-5">
+        <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-2">
           {event.title}
         </h3>
-        <p className="text-sm text-muted-foreground mt-1.5 line-clamp-2">
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
           {event.description}
         </p>
 
         {/* Event Details */}
-        <div className="mt-3 space-y-1.5">
+        <div className="space-y-2 mb-4">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Calendar size={12} className={`${getCategoryTextColor(event.category)} flex-shrink-0`} />
             <span>{formatDate(event.date).slice(0, -5)}</span>
@@ -249,12 +317,13 @@ function EventCard({
         </div>
 
         {/* CTA */}
-        <div className="mt-4 pt-3 border-t border-border">
-          <div className="flex items-center justify-center gap-2 text-sm font-medium text-primary group-hover:text-white py-2 bg-primary/10 group-hover:bg-primary rounded-lg transition-colors">
-            <span>View Details</span>
-            <ArrowRight size={14} />
-          </div>
-        </div>
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          className="flex items-center justify-center gap-2 text-sm font-semibold text-primary group-hover:text-white py-3 bg-primary/10 group-hover:bg-primary rounded-xl transition-colors"
+        >
+          <span>View Details</span>
+          <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+        </motion.div>
       </div>
     </motion.div>
   );
@@ -288,22 +357,27 @@ export default function EventsSection() {
   };
 
   return (
-    <section className="py-16 lg:py-20 bg-muted/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 lg:py-24 bg-gradient-to-b from-muted/50 to-muted/30 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ type: 'spring', stiffness: 80 }}
           >
-            <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-3">
+            <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-3">
               What&apos;s Happening
             </span>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground">
               Upcoming Events
             </h2>
-            <p className="text-muted-foreground mt-2 max-w-xl">
+            <p className="text-muted-foreground text-lg mt-3 max-w-xl">
               Stay connected with CHED&apos;s upcoming events, workshops, and celebrations.
             </p>
           </motion.div>
@@ -312,33 +386,40 @@ export default function EventsSection() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
           >
             <Link
               href="/events"
-              className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all"
+              className="group inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
             >
               <span>View All Events</span>
-              <ArrowRight size={18} />
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>
         </div>
 
         {/* Events Grid */}
         {upcomingEvents.length > 0 ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
             {upcomingEvents.map((event, index) => (
               <EventCard key={event.title} event={event} index={index} onClick={() => openModal(event)} />
             ))}
-          </div>
+          </motion.div>
         ) : (
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="text-center py-12 bg-white rounded-2xl border border-border"
+            className="text-center py-16 bg-white rounded-3xl border border-border shadow-sm"
           >
-            <Calendar className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
-            <h3 className="font-semibold text-foreground mb-2">No Upcoming Events</h3>
+            <Calendar className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
+            <h3 className="font-semibold text-xl text-foreground mb-2">No Upcoming Events</h3>
             <p className="text-muted-foreground">Check back soon for new events and activities.</p>
           </motion.div>
         )}

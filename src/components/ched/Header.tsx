@@ -92,23 +92,29 @@ export default function Header() {
                 <AnimatePresence>
                   {hoveredMenu === 'about' && (
                     <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-border py-2 z-50"
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                      className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-border py-2 z-50 overflow-hidden"
                     >
-                      {aboutDropdown.map((item) => (
-                        <Link
+                      {aboutDropdown.map((item, i) => (
+                        <motion.div
                           key={item.name}
-                          href={item.href}
-                          className={`flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:text-primary hover:bg-muted transition-colors ${
-                            item.name === 'Overview' ? 'font-semibold border-b border-border mb-1' : ''
-                          }`}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.03 }}
                         >
-                          <item.icon size={14} className="flex-shrink-0" />
-                          <span>{item.name}</span>
-                        </Link>
+                          <Link
+                            href={item.href}
+                            className={`flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:text-primary hover:bg-muted/50 transition-colors ${
+                              item.name === 'Overview' ? 'font-semibold border-b border-border mb-1' : ''
+                            }`}
+                          >
+                            <item.icon size={14} className="flex-shrink-0" />
+                            <span>{item.name}</span>
+                          </Link>
+                        </motion.div>
                       ))}
                     </motion.div>
                   )}
@@ -160,21 +166,27 @@ export default function Header() {
                 <AnimatePresence>
                   {hoveredMenu === 'media' && (
                     <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute top-full left-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-border py-2 z-50"
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                      className="absolute top-full left-0 mt-1 w-40 bg-white rounded-xl shadow-xl border border-border py-2 z-50 overflow-hidden"
                     >
-                      {mediaDropdown.map((item) => (
-                        <Link
+                      {mediaDropdown.map((item, i) => (
+                        <motion.div
                           key={item.name}
-                          href={item.href}
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:text-primary hover:bg-muted transition-colors"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.03 }}
                         >
-                          <item.icon size={14} className="flex-shrink-0" />
-                          <span>{item.name}</span>
-                        </Link>
+                          <Link
+                            href={item.href}
+                            className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:text-primary hover:bg-muted/50 transition-colors"
+                          >
+                            <item.icon size={14} className="flex-shrink-0" />
+                            <span>{item.name}</span>
+                          </Link>
+                        </motion.div>
                       ))}
                     </motion.div>
                   )}
@@ -221,8 +233,8 @@ export default function Header() {
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'tween', duration: 0.25 }}
-              className="absolute right-0 top-0 bottom-0 w-72 bg-white shadow-xl overflow-y-auto"
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="absolute right-0 top-0 bottom-0 w-72 bg-white shadow-2xl overflow-y-auto"
             >
               <div className="p-6 pt-20 space-y-1">
                 {/* Logo in Mobile Menu */}

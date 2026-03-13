@@ -1,44 +1,102 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Calendar } from 'lucide-react';
 import newsData from '@/data/news.json';
+import { useRef } from 'react';
+
+// Animation variants
+const cardVariants = {
+  hidden: { 
+    opacity: 0, 
+    y: 60,
+    scale: 0.95
+  },
+  visible: (i: number) => ({ 
+    opacity: 1, 
+    y: 0,
+    scale: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 70,
+      damping: 12,
+      delay: i * 0.12
+    }
+  }),
+  hover: {
+    y: -10,
+    transition: {
+      type: 'spring',
+      stiffness: 400,
+      damping: 20
+    }
+  }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1
+    }
+  }
+};
+
+const imageVariants = {
+  rest: { scale: 1 },
+  hover: { 
+    scale: 1.1,
+    transition: {
+      type: 'spring',
+      stiffness: 300,
+      damping: 20
+    }
+  }
+};
 
 export default function NewsSection() {
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+  
   // Get only the first 3 news articles for the homepage
   const featuredNews = newsData.slice(0, 3);
 
   return (
-    <section id="news" className="py-16 lg:py-24 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section ref={sectionRef} id="news" className="py-20 lg:py-28 bg-white relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-1/2 left-0 w-72 h-72 bg-primary/5 rounded-full blur-3xl -translate-y-1/2" />
+      <div className="absolute top-1/3 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-14">
           <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3 }}
-            className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+            transition={{ type: 'spring', stiffness: 200 }}
+            className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4"
           >
             Latest News
           </motion.span>
+          
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3, delay: 0.1 }}
-            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4"
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ type: 'spring', stiffness: 80, delay: 0.1 }}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-5"
           >
             News & Updates
           </motion.h2>
+          
           <motion.p
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3, delay: 0.15 }}
-            className="text-muted-foreground max-w-2xl mx-auto"
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ delay: 0.2 }}
+            className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed"
           >
             Stay informed about our latest programs, training sessions, 
             and community engagement activities.
@@ -46,65 +104,97 @@ export default function NewsSection() {
         </div>
 
         {/* News Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 lg:gap-8"
+        >
           {featuredNews.map((article, index) => (
             <motion.article
               key={article.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="group bg-card rounded-xl overflow-hidden border border-border hover:shadow-lg transition-shadow"
+              custom={index}
+              variants={cardVariants}
+              whileHover="hover"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-30px" }}
+              className="group bg-card rounded-2xl overflow-hidden border border-border shadow-sm hover:shadow-xl transition-shadow duration-300"
             >
               <Link href={`/news/${article.slug}`}>
-                <div className="relative h-48 overflow-hidden">
-                  <Image
-                    src={article.image}
-                    alt={article.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-3 left-3">
-                    <span className="px-2 py-1 bg-card/90 text-primary text-xs font-medium rounded">
+                <div className="relative h-56 overflow-hidden">
+                  <motion.div
+                    variants={imageVariants}
+                    initial="rest"
+                    whileHover="hover"
+                    className="w-full h-full"
+                  >
+                    <Image
+                      src={article.image}
+                      alt={article.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </motion.div>
+                  
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  
+                  {/* Category Badge */}
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="absolute top-4 left-4"
+                  >
+                    <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-primary text-xs font-semibold rounded-full shadow-md">
                       {article.category}
                     </span>
-                  </div>
+                  </motion.div>
                 </div>
-                <div className="p-5">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                    <Calendar size={14} />
-                    {article.date}
+                
+                <div className="p-6">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                    <Calendar size={14} className="text-primary" />
+                    <span>{article.date}</span>
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                  
+                  <h3 className="font-bold text-xl text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors leading-snug">
                     {article.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                  
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4 leading-relaxed">
                     {article.excerpt}
                   </p>
-                  <span className="inline-flex items-center gap-1 text-sm font-medium text-primary group-hover:gap-2 transition-all">
+                  
+                  <motion.div
+                    whileHover={{ x: 5 }}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-primary"
+                  >
                     Read more
-                    <ArrowRight size={14} />
-                  </span>
+                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </motion.div>
                 </div>
               </Link>
             </motion.article>
           ))}
-        </div>
+        </motion.div>
 
         {/* View All */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.3, delay: 0.3 }}
-          className="text-center mt-10"
+          transition={{ delay: 0.3, type: 'spring', stiffness: 80 }}
+          className="text-center mt-14"
         >
           <Link
             href="/news"
-            className="inline-flex items-center gap-2 px-6 py-3 border border-primary text-primary font-medium rounded-lg hover:bg-primary hover:text-white transition-colors"
+            className="group inline-flex items-center gap-2 px-8 py-4 border-2 border-primary text-primary font-semibold rounded-xl hover:bg-primary hover:text-white transition-all duration-300 hover:shadow-lg hover:shadow-primary/20"
           >
             View All News
-            <ArrowRight size={18} />
+            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
       </div>

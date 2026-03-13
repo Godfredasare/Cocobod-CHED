@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, TrendingDown, ExternalLink, Package, Calendar } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 
@@ -190,22 +190,28 @@ export default function CocoaPriceChart() {
   };
 
   return (
-    <section className="py-16 lg:py-20 bg-white relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 lg:py-24 bg-gradient-to-b from-white to-muted/20 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-10">
           <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
+            transition={{ type: 'spring', stiffness: 200 }}
             className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4"
           >
             Market Insights
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ type: 'spring', stiffness: 80, delay: 0.1 }}
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4"
           >
             Cocoa Price per Bag
@@ -214,6 +220,7 @@ export default function CocoaPriceChart() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
             className="text-muted-foreground text-lg max-w-2xl mx-auto"
           >
             Live cocoa prices from ICE Futures US - displayed per 64kg bag
@@ -222,18 +229,23 @@ export default function CocoaPriceChart() {
 
         {/* Main Chart Card */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden"
+          transition={{ type: 'spring', stiffness: 60, damping: 15 }}
+          className="bg-white rounded-3xl border border-gray-200 shadow-xl overflow-hidden"
         >
           {/* Chart Header */}
-          <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+          <div className="p-6 lg:p-8 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-                  <Package className="w-6 h-6 text-white" />
-                </div>
+                <motion.div
+                  whileHover={{ rotate: [0, -10, 10, 0] }}
+                  transition={{ duration: 0.5 }}
+                  className="w-14 h-14 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20"
+                >
+                  <Package className="w-7 h-7 text-white" />
+                </motion.div>
                 <div>
                   <h3 className="text-xl font-bold text-foreground">Cocoa Futures</h3>
                   <p className="text-sm text-muted-foreground">ICE US - USD per 64kg Bag</p>
@@ -241,57 +253,79 @@ export default function CocoaPriceChart() {
               </div>
 
               {/* Time Range Selector */}
-              <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+              <div className="flex items-center gap-1 bg-gray-100 rounded-xl p-1.5">
                 {(['1W', '1M', '3M', '1Y'] as const).map((range) => (
-                  <button
+                  <motion.button
                     key={range}
                     onClick={() => setTimeRange(range)}
-                    className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`px-5 py-2.5 text-sm font-medium rounded-lg transition-all ${
                       timeRange === range
                         ? 'bg-white text-primary shadow-sm'
                         : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     {range}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </div>
 
             {/* Price Display */}
             <div className="mt-6 flex flex-wrap items-end gap-6">
-              <div>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+              >
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl lg:text-5xl font-bold text-foreground">
                     ${formatNumber(priceData?.currentPrice || 0)}
                   </span>
-                  <span className="text-muted-foreground text-lg">/ Bag (64kg)</span>
+                  <span className="text-muted-foreground text-lg font-medium">/ Bag (64kg)</span>
                 </div>
-                <p className="text-base text-primary font-medium mt-1">
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-lg text-primary font-semibold mt-1"
+                >
                   {formatCurrency(pricePerBag.ghs, 'GHS')} per bag
-                </p>
-              </div>
+                </motion.p>
+              </motion.div>
 
-              <div className={`flex items-center gap-2 px-4 py-2.5 rounded-xl ${
-                isPositive 
-                  ? 'bg-green-50 text-green-600 border border-green-200' 
-                  : 'bg-red-50 text-red-600 border border-red-200'
-              }`}>
-                {isPositive ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
+                whileHover={{ scale: 1.02 }}
+                className={`flex items-center gap-3 px-5 py-3 rounded-xl ${
+                  isPositive 
+                    ? 'bg-green-50 text-green-600 border border-green-200' 
+                    : 'bg-red-50 text-red-600 border border-red-200'
+                }`}
+              >
+                <motion.div
+                  animate={{ y: [0, -3, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  {isPositive ? <TrendingUp size={22} /> : <TrendingDown size={22} />}
+                </motion.div>
                 <div>
                   <span className="font-bold text-lg">
                     {isPositive ? '+' : ''}{formatCurrency(Math.abs(priceData?.change || 0), 'USD')}
                   </span>
-                  <span className="text-sm ml-1">
+                  <span className="text-sm ml-1 opacity-80">
                     ({isPositive ? '+' : ''}{priceData?.changePercent.toFixed(2)}%)
                   </span>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
 
           {/* Chart */}
-          <div className="p-6 bg-white">
+          <div className="p-6 lg:p-8 bg-white">
             {isLoading ? (
               <div className="animate-pulse bg-gray-100 rounded-xl h-[320px]"></div>
             ) : (
@@ -303,7 +337,7 @@ export default function CocoaPriceChart() {
                 >
                   <defs>
                     <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#166534" stopOpacity="0.25" />
+                      <stop offset="0%" stopColor="#166534" stopOpacity="0.3" />
                       <stop offset="100%" stopColor="#166534" stopOpacity="0" />
                     </linearGradient>
                     <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -311,12 +345,22 @@ export default function CocoaPriceChart() {
                       <stop offset="50%" stopColor="#166534" />
                       <stop offset="100%" stopColor="#14532d" />
                     </linearGradient>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                      <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
                   </defs>
 
                   {/* Grid Lines */}
                   {[0, 1, 2, 3, 4].map((i) => (
-                    <line
+                    <motion.line
                       key={i}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.1 * i }}
                       x1={padding.left}
                       y1={padding.top + (graphHeight / 4) * i}
                       x2={padding.left + graphWidth}
@@ -328,8 +372,11 @@ export default function CocoaPriceChart() {
 
                   {/* Y-axis labels */}
                   {getYAxisLabels().map((label, i) => (
-                    <text
+                    <motion.text
                       key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 * i }}
                       x={padding.left - 15}
                       y={padding.top + (graphHeight / 4) * i + 4}
                       fill="#6b7280"
@@ -338,15 +385,18 @@ export default function CocoaPriceChart() {
                       fontFamily="system-ui, sans-serif"
                     >
                       ${label}
-                    </text>
+                    </motion.text>
                   ))}
 
                   {/* X-axis labels */}
                   {getXAxisLabels().map((item, i) => {
                     const x = padding.left + (item.index / (priceData!.history.length - 1)) * graphWidth;
                     return (
-                      <text
+                      <motion.text
                         key={i}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.05 * i }}
                         x={x}
                         y={chartHeight - 15}
                         fill="#6b7280"
@@ -355,49 +405,64 @@ export default function CocoaPriceChart() {
                         fontFamily="system-ui, sans-serif"
                       >
                         {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                      </text>
+                      </motion.text>
                     );
                   })}
 
                   {/* Area Fill */}
-                  <path
+                  <motion.path
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1, delay: 0.3 }}
                     d={getAreaPath()}
                     fill="url(#chartGradient)"
                   />
 
                   {/* Line */}
-                  <path
+                  <motion.path
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 1.5, ease: 'easeOut', delay: 0.2 }}
                     d={getChartPath()}
                     fill="none"
                     stroke="url(#lineGradient)"
-                    strokeWidth="2.5"
+                    strokeWidth="3"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    filter="url(#glow)"
                   />
 
                   {/* Hover Line */}
-                  {hoveredIndex !== null && priceData && (
-                    <>
-                      <line
-                        x1={getPointPosition(hoveredIndex).x}
-                        y1={padding.top}
-                        x2={getPointPosition(hoveredIndex).x}
-                        y2={padding.top + graphHeight}
-                        stroke="#166534"
-                        strokeWidth="1"
-                        strokeDasharray="4,4"
-                        opacity="0.6"
-                      />
-                      <circle
-                        cx={getPointPosition(hoveredIndex).x}
-                        cy={getPointPosition(hoveredIndex).y}
-                        r="6"
-                        fill="#166534"
-                        stroke="white"
-                        strokeWidth="3"
-                      />
-                    </>
-                  )}
+                  <AnimatePresence>
+                    {hoveredIndex !== null && priceData && (
+                      <>
+                        <motion.line
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          x1={getPointPosition(hoveredIndex).x}
+                          y1={padding.top}
+                          x2={getPointPosition(hoveredIndex).x}
+                          y2={padding.top + graphHeight}
+                          stroke="#166534"
+                          strokeWidth="1"
+                          strokeDasharray="4,4"
+                          opacity="0.6"
+                        />
+                        <motion.circle
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          exit={{ scale: 0 }}
+                          cx={getPointPosition(hoveredIndex).x}
+                          cy={getPointPosition(hoveredIndex).y}
+                          r="8"
+                          fill="#166534"
+                          stroke="white"
+                          strokeWidth="4"
+                        />
+                      </>
+                    )}
+                  </AnimatePresence>
 
                   {/* Invisible hover areas */}
                   {priceData?.history.map((_, index) => (
@@ -415,94 +480,90 @@ export default function CocoaPriceChart() {
                 </svg>
 
                 {/* Tooltip */}
-                {hoveredIndex !== null && priceData && (
-                  <div 
-                    className="absolute bg-white px-4 py-3 rounded-lg shadow-xl border border-gray-200 text-sm pointer-events-none z-10"
-                    style={{
-                      left: `${((getPointPosition(hoveredIndex).x - padding.left) / graphWidth) * 100}%`,
-                      top: '30px',
-                      transform: 'translateX(-50%)'
-                    }}
-                  >
-                    <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                      <Calendar size={12} />
-                      <span className="text-xs">
-                        {new Date(priceData.history[hoveredIndex].date).toLocaleDateString('en-US', { 
-                          weekday: 'short', 
-                          month: 'short', 
-                          day: 'numeric',
-                          year: 'numeric'
-                        })}
-                      </span>
-                    </div>
-                    <p className="font-bold text-foreground text-lg">
-                      ${formatNumber(priceData.history[hoveredIndex].price)}/bag
-                    </p>
-                    <p className="text-primary text-sm font-medium">
-                      {formatCurrency(priceData.history[hoveredIndex].price * exchangeRate, 'GHS')}/bag
-                    </p>
-                  </div>
-                )}
+                <AnimatePresence>
+                  {hoveredIndex !== null && priceData && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute bg-white px-5 py-4 rounded-xl shadow-2xl border border-gray-200 text-sm pointer-events-none z-10"
+                      style={{
+                        left: `${((getPointPosition(hoveredIndex).x - padding.left) / graphWidth) * 100}%`,
+                        top: '30px',
+                        transform: 'translateX(-50%)'
+                      }}
+                    >
+                      <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                        <Calendar size={12} />
+                        <span className="text-xs">
+                          {new Date(priceData.history[hoveredIndex].date).toLocaleDateString('en-US', { 
+                            weekday: 'short', 
+                            month: 'short', 
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </span>
+                      </div>
+                      <p className="font-bold text-foreground text-xl">
+                        ${formatNumber(priceData.history[hoveredIndex].price)}/bag
+                      </p>
+                      <p className="text-primary text-sm font-semibold">
+                        {formatCurrency(priceData.history[hoveredIndex].price * exchangeRate, 'GHS')}/bag
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
           </div>
 
           {/* Stats Footer */}
-          <div className="p-6 border-t border-gray-100 bg-gray-50">
+          <div className="p-6 lg:p-8 border-t border-gray-100 bg-gray-50">
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              <div className="text-center p-4 bg-white rounded-xl border border-gray-100">
-                <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Open</p>
-                <p className="font-bold text-lg text-foreground">
-                  ${formatNumber(priceData?.open || 0)}
-                </p>
-              </div>
-              <div className="text-center p-4 bg-white rounded-xl border border-gray-100">
-                <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">High</p>
-                <p className="font-bold text-lg text-green-600">
-                  ${formatNumber(priceData?.high || 0)}
-                </p>
-              </div>
-              <div className="text-center p-4 bg-white rounded-xl border border-gray-100">
-                <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Low</p>
-                <p className="font-bold text-lg text-red-600">
-                  ${formatNumber(priceData?.low || 0)}
-                </p>
-              </div>
-              <div className="text-center p-4 bg-white rounded-xl border border-gray-100">
-                <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Change</p>
-                <p className={`font-bold text-lg ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                  {isPositive ? '+' : ''}{formatCurrency(priceData?.change || 0, 'USD')}
-                </p>
-              </div>
-              <div className="text-center p-4 bg-white rounded-xl border border-gray-100">
-                <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Exchange</p>
-                <p className="font-bold text-lg text-foreground">
-                  ₵{exchangeRate.toFixed(2)}
-                </p>
-              </div>
+              {[
+                { label: 'Open', value: `$${formatNumber(priceData?.open || 0)}`, color: 'text-foreground' },
+                { label: 'High', value: `$${formatNumber(priceData?.high || 0)}`, color: 'text-green-600' },
+                { label: 'Low', value: `$${formatNumber(priceData?.low || 0)}`, color: 'text-red-600' },
+                { label: 'Change', value: `${isPositive ? '+' : ''}${formatCurrency(priceData?.change || 0, 'USD')}`, color: isPositive ? 'text-green-600' : 'text-red-600' },
+                { label: 'Exchange', value: `₵${exchangeRate.toFixed(2)}`, color: 'text-foreground' }
+              ].map((stat, index) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ y: -3 }}
+                  className="text-center p-4 bg-white rounded-xl border border-gray-100 shadow-sm"
+                >
+                  <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1">{stat.label}</p>
+                  <p className={`font-bold text-lg ${stat.color}`}>{stat.value}</p>
+                </motion.div>
+              ))}
             </div>
 
             {/* Price info */}
-            <div className="mt-4 pt-4 border-t border-gray-200 flex flex-wrap items-center justify-between gap-4 text-sm">
+            <div className="mt-5 pt-5 border-t border-gray-200 flex flex-wrap items-center justify-between gap-4 text-sm">
               <div className="flex items-center gap-4 text-muted-foreground">
                 <span>1 Bag = 64 kg</span>
                 <span>•</span>
                 <span>1 Tonne = 15.625 Bags</span>
                 <span>•</span>
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1.5">
                   <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                   Live
                 </span>
               </div>
-              <a
+              <motion.a
                 href="https://tradingeconomics.com/commodity/cocoa"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-primary hover:text-primary/80 font-medium"
+                whileHover={{ x: 5 }}
+                className="flex items-center gap-2 text-primary hover:text-primary/80 font-semibold"
               >
                 View on TradingEconomics
                 <ExternalLink size={14} />
-              </a>
+              </motion.a>
             </div>
           </div>
         </motion.div>

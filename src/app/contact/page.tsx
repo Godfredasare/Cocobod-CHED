@@ -1,11 +1,66 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { MapPin, Phone, Mail, Clock, Send, Facebook, Twitter, Linkedin, Navigation } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin, Phone, Mail, Clock, Send, Facebook, Twitter, Linkedin, Navigation, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 import Header from '@/components/ched/Header';
 import Footer from '@/components/ched/Footer';
 import contactData from '@/data/contact.json';
+
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 80,
+      damping: 15
+    }
+  }
+};
+
+const slideInLeft = {
+  hidden: { opacity: 0, x: -40 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 60,
+      damping: 15
+    }
+  }
+};
+
+const slideInRight = {
+  hidden: { opacity: 0, x: 40 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 60,
+      damping: 15,
+      delay: 0.2
+    }
+  }
+};
+
+const contactItemVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: (i: number) => ({ 
+    opacity: 1, 
+    x: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 100,
+      damping: 12,
+      delay: i * 0.1
+    }
+  })
+};
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -42,149 +97,186 @@ export default function ContactPage() {
 
   const { headquarters, socialMedia } = contactData;
 
+  const contactItems = [
+    { icon: MapPin, title: 'Address', lines: [headquarters.address, `Digital Address: ${headquarters.digitalAddress}`, headquarters.city] },
+    { icon: Phone, title: 'Phone', lines: headquarters.phone },
+    { icon: Mail, title: 'Email', lines: [headquarters.email], isLink: true },
+    { icon: Clock, title: 'Working Hours', lines: [headquarters.hours] },
+  ];
+
   return (
     <main className="min-h-screen">
       <Header />
       
       {/* Hero Banner */}
-      <section className="pt-24 pb-12 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative pt-28 pb-16 bg-gradient-to-br from-primary via-primary to-primary/95 overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            className="absolute -top-20 -right-20 w-80 h-80 bg-accent/10 rounded-full blur-3xl"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <motion.div
+            className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/5 rounded-full blur-3xl"
+            animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
+            transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+          />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="text-center"
+            transition={{ type: 'spring', stiffness: 80, damping: 15 }}
+            className="text-center max-w-3xl mx-auto"
           >
-            <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4">
+            <motion.span
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1 }}
+              className="inline-block px-5 py-2 bg-accent/20 text-accent text-sm font-semibold rounded-full mb-6 backdrop-blur-sm border border-accent/10"
+            >
               Get In Touch
-            </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+            </motion.span>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6"
+            >
               Contact Us
-            </h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-xl text-white/90 leading-relaxed"
+            >
               Have questions or need assistance? We are here to help. Reach out to us through 
               any of the channels below or fill out the contact form.
-            </p>
+            </motion.p>
           </motion.div>
         </div>
       </section>
 
       {/* Contact Content */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12">
+      <section className="py-20 bg-white relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute top-1/2 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl translate-x-1/2" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
             {/* Contact Information */}
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3 }}
+              variants={slideInLeft}
+              initial="hidden"
+              animate="visible"
             >
-              <h2 className="text-2xl font-bold text-foreground mb-6">
+              <h2 className="text-3xl font-bold text-foreground mb-8">
                 Our Office
               </h2>
               
               <div className="space-y-6">
-                {/* Address */}
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-1">Address</h3>
-                    <p className="text-muted-foreground">{headquarters.address}</p>
-                    <p className="text-muted-foreground">Digital Address: {headquarters.digitalAddress}</p>
-                    <p className="text-muted-foreground">{headquarters.city}</p>
-                  </div>
-                </div>
-
-                {/* Phone */}
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-1">Phone</h3>
-                    {headquarters.phone.map((tel, i) => (
-                      <p key={i} className="text-muted-foreground">
-                        <a href={`tel:${tel}`} className="hover:text-primary transition-colors">
-                          {tel}
-                        </a>
-                      </p>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Email */}
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-1">Email</h3>
-                    <a href={`mailto:${headquarters.email}`} className="text-primary hover:underline">
-                      {headquarters.email}
-                    </a>
-                  </div>
-                </div>
-
-                {/* Working Hours */}
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-1">Working Hours</h3>
-                    <p className="text-muted-foreground">{headquarters.hours}</p>
-                  </div>
-                </div>
+                {contactItems.map((item, index) => (
+                  <motion.div
+                    key={item.title}
+                    custom={index}
+                    variants={contactItemVariants}
+                    initial="hidden"
+                    animate="visible"
+                    whileHover={{ x: 5 }}
+                    className="flex items-start gap-4 group"
+                  >
+                    <motion.div
+                      whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+                      transition={{ duration: 0.5 }}
+                      className="w-14 h-14 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl flex items-center justify-center flex-shrink-0"
+                    >
+                      <item.icon className="w-6 h-6 text-primary" />
+                    </motion.div>
+                    <div>
+                      <h3 className="font-semibold text-foreground mb-1">{item.title}</h3>
+                      {item.lines.map((line, i) => (
+                        <p key={i} className="text-muted-foreground">
+                          {item.isLink ? (
+                            <a href={`mailto:${line}`} className="text-primary hover:underline">
+                              {line}
+                            </a>
+                          ) : (
+                            line
+                          )}
+                        </p>
+                      ))}
+                    </div>
+                  </motion.div>
+                ))}
               </div>
 
               {/* Social Media */}
-              <div className="mt-8 pt-8 border-t border-border">
-                <h3 className="font-semibold text-foreground mb-4">Follow Us</h3>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="mt-10 pt-8 border-t border-border"
+              >
+                <h3 className="font-semibold text-foreground mb-5">Follow Us</h3>
                 <div className="flex gap-3">
-                  {socialMedia.map((social) => (
-                    <a
+                  {socialMedia.map((social, i) => (
+                    <motion.a
                       key={social.platform}
                       href={social.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-colors"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.6 + i * 0.1 }}
+                      whileHover={{ y: -3, scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-12 h-12 bg-gradient-to-br from-muted to-muted/50 rounded-xl flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-colors shadow-sm"
                       title={social.platform}
                     >
-                      {social.icon === 'Facebook' && <Facebook size={18} />}
-                      {social.icon === 'Twitter' && <Twitter size={18} />}
-                      {social.icon === 'Linkedin' && <Linkedin size={18} />}
-                    </a>
+                      {social.icon === 'Facebook' && <Facebook size={20} />}
+                      {social.icon === 'Twitter' && <Twitter size={20} />}
+                      {social.icon === 'Linkedin' && <Linkedin size={20} />}
+                    </motion.a>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
 
             {/* Contact Form */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
+              variants={slideInRight}
+              initial="hidden"
+              animate="visible"
             >
-              <div className="bg-muted/30 rounded-xl p-6 lg:p-8 border border-border">
-                <h2 className="text-2xl font-bold text-foreground mb-6">
+              <div className="bg-gradient-to-br from-muted/50 to-muted/30 rounded-3xl p-8 lg:p-10 border border-border shadow-sm">
+                <h2 className="text-3xl font-bold text-foreground mb-8">
                   Send Us a Message
                 </h2>
 
-                {isSubmitted && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700"
-                  >
-                    Thank you for your message! We will get back to you soon.
-                  </motion.div>
-                )}
+                <AnimatePresence mode="wait">
+                  {isSubmitted && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 flex items-center gap-3"
+                    >
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      Thank you for your message! We will get back to you soon.
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid sm:grid-cols-2 gap-5">
-                    <div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                    >
                       <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
                         Full Name *
                       </label>
@@ -195,11 +287,15 @@ export default function ContactPage() {
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 rounded-lg border border-border bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                         placeholder="Your name"
                       />
-                    </div>
-                    <div>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.15 }}
+                    >
                       <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
                         Email Address *
                       </label>
@@ -210,14 +306,18 @@ export default function ContactPage() {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 rounded-lg border border-border bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                         placeholder="your@email.com"
                       />
-                    </div>
+                    </motion.div>
                   </div>
 
                   <div className="grid sm:grid-cols-2 gap-5">
-                    <div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                    >
                       <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
                         Phone Number
                       </label>
@@ -227,11 +327,15 @@ export default function ContactPage() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-border bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                         placeholder="+233 XX XXX XXXX"
                       />
-                    </div>
-                    <div>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.25 }}
+                    >
                       <label htmlFor="subject" className="block text-sm font-medium text-foreground mb-2">
                         Subject *
                       </label>
@@ -241,7 +345,7 @@ export default function ContactPage() {
                         value={formData.subject}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 rounded-lg border border-border bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                       >
                         <option value="">Select a subject</option>
                         <option value="general">General Inquiry</option>
@@ -251,10 +355,14 @@ export default function ContactPage() {
                         <option value="partnership">Partnership Inquiry</option>
                         <option value="other">Other</option>
                       </select>
-                    </div>
+                    </motion.div>
                   </div>
 
-                  <div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
                     <label htmlFor="message" className="block text-sm font-medium text-foreground mb-2">
                       Message *
                     </label>
@@ -265,15 +373,20 @@ export default function ContactPage() {
                       onChange={handleChange}
                       required
                       rows={5}
-                      className="w-full px-4 py-3 rounded-lg border border-border bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors resize-none"
+                      className="w-full px-4 py-3 rounded-xl border border-border bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none"
                       placeholder="How can we help you?"
                     />
-                  </div>
+                  </motion.div>
 
-                  <button
+                  <motion.button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.35 }}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-primary/20"
                   >
                     {isSubmitting ? (
                       <>
@@ -286,7 +399,7 @@ export default function ContactPage() {
                         Send Message
                       </>
                     )}
-                  </button>
+                  </motion.button>
                 </form>
               </div>
             </motion.div>
@@ -295,25 +408,28 @@ export default function ContactPage() {
       </section>
 
       {/* Map Section */}
-      <section className="py-16 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 bg-gradient-to-b from-muted/30 to-muted/50 relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-8"
+            variants={fadeInUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            className="text-center mb-10"
           >
-            <h2 className="text-2xl font-bold text-foreground mb-2">Find Us</h2>
-            <p className="text-muted-foreground">Visit our office at Swanzy Arcade, Kwame Nkrumah Avenue, Accra</p>
+            <h2 className="text-3xl font-bold text-foreground mb-3">Find Us</h2>
+            <p className="text-muted-foreground text-lg">Visit our office at Swanzy Arcade, Kwame Nkrumah Avenue, Accra</p>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="rounded-2xl overflow-hidden shadow-lg border border-border"
+            transition={{ type: 'spring', stiffness: 60, damping: 15 }}
+            className="rounded-3xl overflow-hidden shadow-2xl border border-border"
           >
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3970.7647959794516!2d-0.20638972474964744!3d5.550018894429894!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf9a36a2f9c2d1%3A0x9f7b4e7c3b1d4c5a!2sSwanzy%20Arcade%2C%20Kwame%20Nkrumah%20Ave%2C%20Accra!5e0!3m2!1sen!2sgh!4v1700000000000!5m2!1sen!2sgh"
@@ -330,21 +446,23 @@ export default function ContactPage() {
 
           {/* Directions Button */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-6 text-center"
+            transition={{ delay: 0.2 }}
+            className="mt-8 text-center"
           >
-            <a
+            <motion.a
               href="https://www.google.com/maps/dir/?api=1&destination=Swanzy+Arcade+Kwame+Nkrumah+Avenue+Accra+Ghana"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
             >
               <Navigation size={18} />
               Get Directions
-            </a>
+            </motion.a>
           </motion.div>
         </div>
       </section>
