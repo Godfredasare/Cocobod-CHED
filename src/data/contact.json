@@ -1,0 +1,17 @@
+{
+  "headquarters": {
+    "name": "CHED Headquarters",
+    "address": "Swanzy Arcade, Kwame Nkrumah Avenue",
+    "digitalAddress": "GA-105-9815",
+    "city": "Accra, Ghana",
+    "phone": ["+233 302 666 946", "+233 302 666 947"],
+    "fax": ["+233 302 666 948", "+233 302 666 949"],
+    "email": "info@ched.com.gh",
+    "hours": "Monday - Friday: 8:00 AM - 5:00 PM"
+  },
+  "socialMedia": [
+    { "platform": "Facebook", "url": "https://facebook.com/chedghana", "icon": "Facebook" },
+    { "platform": "Twitter", "url": "https://twitter.com/chedghana", "icon": "Twitter" },
+    { "platform": "LinkedIn", "url": "https://linkedin.com/company/chedghana", "icon": "Linkedin" }
+  ]
+}

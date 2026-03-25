@@ -1,0 +1,66 @@
+{
+  "partners": [
+    {
+      "name": "Ghana Cocoa Board",
+      "type": "Parent Organization",
+      "description": "CHED operates as a specialized division under Ghana Cocoa Board, implementing policies and programs for cocoa industry development."
+    },
+    {
+      "name": "Ministry of Food and Agriculture",
+      "type": "Government Partner",
+      "description": "Collaboration on agricultural policy development, farmer support initiatives, and national food security programs."
+    },
+    {
+      "name": "World Cocoa Foundation",
+      "type": "International Partner",
+      "description": "Partnership for sustainable cocoa production, farmer livelihoods improvement, and industry best practices."
+    },
+    {
+      "name": "Cocoa Research Institute of Ghana",
+      "type": "Research Partner",
+      "description": "Joint research on disease control, improved cocoa varieties, and sustainable farming methods."
+    },
+    {
+      "name": "International Cocoa Organization",
+      "type": "International Body",
+      "description": "Global cooperation on cocoa industry standards, market analysis, and production practices."
+    },
+    {
+      "name": "Kwame Nkrumah University of Science & Technology",
+      "type": "Academic Partner",
+      "description": "Training programs, agricultural research collaboration, and student internship opportunities."
+    },
+    {
+      "name": "GIZ Ghana",
+      "type": "Development Partner",
+      "description": "Technical cooperation for sustainable agricultural development and capacity building."
+    },
+    {
+      "name": "Fairtrade Ghana",
+      "type": "Certification Partner",
+      "description": "Support for fair trade certification and premium cocoa production standards."
+    }
+  ],
+  "benefits": [
+    {
+      "icon": "Handshake",
+      "title": "Technical Assistance",
+      "description": "Access to expertise and resources for program implementation."
+    },
+    {
+      "icon": "Building2",
+      "title": "Infrastructure Development",
+      "description": "Joint investment in facilities and operational capacity."
+    },
+    {
+      "icon": "Globe",
+      "title": "International Standards",
+      "description": "Alignment with global best practices in cocoa production."
+    },
+    {
+      "icon": "Users",
+      "title": "Community Impact",
+      "description": "Expanded reach and effectiveness of farmer support programs."
+    }
+  ]
+}

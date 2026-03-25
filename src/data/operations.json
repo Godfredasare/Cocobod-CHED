@@ -1,0 +1,53 @@
+{
+  "keyStats": [
+    { "label": "Annual Farm Visits", "value": "50,000+" },
+    { "label": "Training Programs", "value": "2,500+" },
+    { "label": "Extension Officers", "value": "800+" },
+    { "label": "Farmer Groups", "value": "3,500+" }
+  ],
+  "programs": [
+    {
+      "id": "cocoa-rehabilitation",
+      "icon": "Leaf",
+      "title": "Cocoa Rehabilitation Programme",
+      "description": "Nationwide initiative to rehabilitate diseased and aged cocoa farms, distributing hybrid seedlings and providing technical support to restore productivity.",
+      "stats": [
+        { "label": "Hectares Rehabilitated", "value": "45,000+" },
+        { "label": "Seedlings Distributed", "value": "2M+" },
+        { "label": "Farms Benefited", "value": "25,000+" }
+      ]
+    },
+    {
+      "id": "extension-services",
+      "icon": "Users",
+      "title": "Extension Services Programme",
+      "description": "Regular farm visits, training sessions, and community workshops to educate farmers on best practices for sustainable cocoa production.",
+      "stats": [
+        { "label": "Annual Farm Visits", "value": "50,000+" },
+        { "label": "Training Sessions", "value": "2,500+" },
+        { "label": "Farmers Trained", "value": "150,000+" }
+      ]
+    },
+    {
+      "id": "disease-control",
+      "icon": "Building",
+      "title": "Disease Control Programme",
+      "description": "Systematic control and eradication of cocoa diseases including CSSVD, black pod, and mirids through detection, treatment, and prevention.",
+      "stats": [
+        { "label": "Farms Treated", "value": "30,000+" },
+        { "label": "Outbreaks Contained", "value": "500+" },
+        { "label": "Success Rate", "value": "95%" }
+      ]
+    }
+  ],
+  "regions": [
+    { "name": "Ashanti Region", "farmers": "120,000+", "offices": 12, "districts": 33 },
+    { "name": "Eastern Region", "farmers": "95,000+", "offices": 10, "districts": 26 },
+    { "name": "Western Region", "farmers": "110,000+", "offices": 11, "districts": 29 },
+    { "name": "Central Region", "farmers": "75,000+", "offices": 8, "districts": 22 },
+    { "name": "Brong Ahafo Region", "farmers": "85,000+", "offices": 9, "districts": 24 },
+    { "name": "Volta Region", "farmers": "45,000+", "offices": 5, "districts": 14 },
+    { "name": "Western North", "farmers": "65,000+", "offices": 7, "districts": 18 },
+    { "name": "Ahafo Region", "farmers": "35,000+", "offices": 4, "districts": 11 }
+  ]
+}

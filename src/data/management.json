@@ -1,0 +1,77 @@
+{
+  "team": [
+    {
+      "name": "Dr. Richard Adu-Acheampong",
+      "title": "Ag. Executive Director",
+      "description": "Leads the strategic direction and overall management of CHED operations across Ghana. Former Senior Researcher at Cocoa Research Institute of Ghana.",
+      "image": "/images/team/richard-adu-acheampong.jpg",
+      "linkedin": "https://gh.linkedin.com/in/richard-adu-acheampong-a1b9b49a",
+      "researchgate": "https://www.researchgate.net/profile/Richard-Adu-Acheampong",
+      "isExecutive": true
+    },
+    {
+      "name": "Mr. Abdul-Majid Mumuni",
+      "title": "Ag. Deputy Executive Director (Operations)",
+      "description": "Oversees field operations and coordinates extension services across all regions. Responsible for operational efficiency and program implementation.",
+      "image": "/images/team/abdul-majid-mumuni.jpg",
+      "facebook": "https://www.facebook.com/ched.cocobod",
+      "isExecutive": true
+    },
+    {
+      "name": "Mrs. Margaret Frimpong Ayerakwa",
+      "title": "Ag. Deputy Executive Director (Extension)",
+      "description": "Leads farmer education programs and extension services. Specialist in agricultural extension and gender dynamics in cocoa farming.",
+      "image": "/images/team/margaret-frimpong-ayerakwa.jpg",
+      "linkedin": "https://gh.linkedin.com/in/magaret-frimpong-ayerakwa-986b73a7",
+      "isExecutive": true
+    },
+    {
+      "name": "Mrs. Dorine Fanny Amartey",
+      "title": "Deputy Director, Human Resource",
+      "description": "Manages human resources operations and talent development. Extensive experience in HR management at Ghana Cocoa Board.",
+      "image": "/images/team/dorine-fanny-amartey.jpg",
+      "linkedin": "https://gh.linkedin.com/in/dorine-fanny-amartey-353b901b"
+    },
+    {
+      "name": "Mr. Abukari Abdullai",
+      "title": "Cartography Manager",
+      "description": "Oversees mapping and geographical information systems for cocoa farm monitoring and rehabilitation programs.",
+      "image": "/images/team/abukari-abdullai.jpg",
+      "linkedin": "https://gh.linkedin.com/in/abukari-abdulai-abdulai-8155a0119"
+    },
+    {
+      "name": "Mrs. Yvonne",
+      "title": "Deputy Director Finance",
+      "description": "Manages financial operations and budgetary controls for the division.",
+      "image": "/images/team/yvonne.jpg"
+    },
+    {
+      "name": "Mr. Ephraim Ahorlu",
+      "title": "Deputy Audit Manager",
+      "description": "Responsible for internal audit processes and compliance monitoring across all regional offices.",
+      "image": "/images/team/ephraim-ahorlu.jpg"
+    },
+    {
+      "name": "Mr. Ernest Ayivor",
+      "title": "Information Systems Manager",
+      "description": "Leads IT infrastructure and digital transformation initiatives. Former Faculty Lecturer at Bunso Cocoa College.",
+      "image": "/images/team/ernest-ayivor.jpg",
+      "linkedin": "https://gh.linkedin.com/in/ernestayivor",
+      "email": "eayivor@ched.com.gh"
+    },
+    {
+      "name": "Mr. Franklin Mensah",
+      "title": "Deputy Estates Manager",
+      "description": "Manages estates and facilities operations for the division.",
+      "image": "/images/team/franklin-mensah.jpg"
+    }
+  ],
+  "departments": [
+    { "title": "Executive Directorate", "description": "Strategic leadership and policy direction", "head": "Dr. Richard Adu-Acheampong" },
+    { "title": "Operations", "description": "Field operations and program implementation", "head": "Mr. Abdul-Majid Mumuni" },
+    { "title": "Extension Services", "description": "Farmer education and field support", "head": "Mrs. Margaret Frimpong Ayerakwa" },
+    { "title": "Human Resources", "description": "Talent management and administration", "head": "Mrs. Dorine Fanny Amartey" },
+    { "title": "Finance", "description": "Financial management and budgeting", "head": "Mrs. Yvonne" },
+    { "title": "Information Systems", "description": "IT infrastructure and digital services", "head": "Mr. Ernest Ayivor" }
+  ]
+}
