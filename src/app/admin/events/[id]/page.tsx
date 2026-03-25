@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import AdminShell from '@/components/admin/AdminShell';
@@ -202,11 +201,9 @@ export default function EventFormPage() {
             >
               Cancel
             </Link>
-            <motion.button
+            <button
               type="submit"
               disabled={saving}
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
               className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-70"
             >
               {saving ? (
@@ -220,7 +217,7 @@ export default function EventFormPage() {
                   Save Event
                 </>
               )}
-            </motion.button>
+            </button>
           </div>
         </form>
       </div>

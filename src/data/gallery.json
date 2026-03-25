@@ -1,0 +1,14 @@
+[
+  { "src": "/images/gallery-1.png", "alt": "Cocoa farmers at work in the field", "category": "Field Work" },
+  { "src": "/images/gallery-2.png", "alt": "Farmer training session outdoors", "category": "Training" },
+  { "src": "/images/gallery-3.png", "alt": "Cocoa processing facility", "category": "Facilities" },
+  { "src": "/images/gallery-4.png", "alt": "Community meeting with farmers", "category": "Community" },
+  { "src": "/images/news-1.png", "alt": "Indoor training workshop", "category": "Training" },
+  { "src": "/images/news-2.png", "alt": "Fire safety demonstration", "category": "Events" },
+  { "src": "/images/news-3.png", "alt": "Community engagement program", "category": "Community" },
+  { "src": "/images/hero-bg.png", "alt": "Premium cocoa beans", "category": "Products" },
+  { "src": "/images/hero-2.png", "alt": "Cocoa plantation aerial view", "category": "Field Work" },
+  { "src": "/images/hero-3.png", "alt": "Extension officer demonstration", "category": "Training" },
+  { "src": "/images/hero-4.png", "alt": "Cocoa seedlings nursery", "category": "Facilities" },
+  { "src": "/images/about-profile.png", "alt": "CHED headquarters building", "category": "Facilities" }
+]

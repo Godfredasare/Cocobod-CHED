@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import { Newspaper, Calendar, Youtube, Image, TrendingUp, Eye, Plus, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import AdminShell from '@/components/admin/AdminShell';
@@ -68,13 +67,9 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <motion.h1
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-3xl font-bold text-foreground"
-          >
+          <h1 className="text-3xl font-bold text-foreground">
             Dashboard
-          </motion.h1>
+          </h1>
           <p className="text-muted-foreground mt-1">
             Welcome back! Here&apos;s an overview of your content.
           </p>
@@ -82,39 +77,28 @@ export default function AdminDashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {statCards.map((stat, index) => (
-            <motion.div
+          {statCards.map((stat) => (
+            <Link
               key={stat.name}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              href={stat.href}
+              className="block bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg hover:border-gray-300 transition-all group"
             >
-              <Link
-                href={stat.href}
-                className="block bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-lg hover:border-gray-300 transition-all group"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`w-12 h-12 ${stat.bg} rounded-xl flex items-center justify-center`}>
-                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="flex items-center justify-between mb-4">
+                <div className={`w-12 h-12 ${stat.bg} rounded-xl flex items-center justify-center`}>
+                  <stat.icon className={`w-6 h-6 ${stat.color}`} />
                 </div>
-                <p className="text-sm text-muted-foreground">{stat.name}</p>
-                <p className="text-3xl font-bold text-foreground mt-1">
-                  {loading ? '...' : stat.count}
-                </p>
-              </Link>
-            </motion.div>
+                <ArrowRight className="w-5 h-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+              <p className="text-sm text-muted-foreground">{stat.name}</p>
+              <p className="text-3xl font-bold text-foreground mt-1">
+                {loading ? '...' : stat.count}
+              </p>
+            </Link>
           ))}
         </div>
 
         {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white rounded-2xl p-6 border border-gray-200 mb-8"
-        >
+        <div className="bg-white rounded-2xl p-6 border border-gray-200 mb-8">
           <h2 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {quickActions.map((action) => (
@@ -132,15 +116,10 @@ export default function AdminDashboard() {
               </Link>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Getting Started Guide */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="bg-gradient-to-br from-primary to-primary/90 rounded-2xl p-8 text-white"
-        >
+        <div className="bg-gradient-to-br from-primary to-primary/90 rounded-2xl p-8 text-white">
           <h2 className="text-xl font-bold mb-2">Getting Started</h2>
           <p className="text-white/80 mb-6">
             This admin dashboard allows you to manage all content on your CHED website. 
@@ -160,7 +139,7 @@ export default function AdminDashboard() {
               <span className="text-sm">Track engagement</span>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </AdminShell>
   );
