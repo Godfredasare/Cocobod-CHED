@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Upload, X, Loader2 } from 'lucide-react';
 
 interface ImageUploadProps {
   value: string;
@@ -109,7 +108,7 @@ export default function ImageUpload({
       </label>
 
       <div
-        className={`relative border-2 border-dashed rounded-xl transition-all ${
+        className={`relative border-2 border-dashed rounded-xl transition-colors ${
           dragActive
             ? 'border-primary bg-primary/5'
             : value
@@ -139,15 +138,13 @@ export default function ImageUpload({
                       (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
                     }}
                   />
-                  <motion.button
+                  <button
                     type="button"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileHover={{ scale: 1.1 }}
                     onClick={handleRemove}
-                    className="absolute -top-2 -right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute -top-2 -right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                   >
                     <X className="w-4 h-4" />
-                  </motion.button>
+                  </button>
                 </div>
               </div>
             )}
@@ -181,18 +178,9 @@ export default function ImageUpload({
         />
       </div>
 
-      <AnimatePresence>
-        {error && (
-          <motion.p
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
-            className="text-sm text-red-500"
-          >
-            {error}
-          </motion.p>
-        )}
-      </AnimatePresence>
+      {error && (
+        <p className="text-sm text-red-500">{error}</p>
+      )}
     </div>
   );
 }
