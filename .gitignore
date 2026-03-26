@@ -47,9 +47,28 @@ test
 prompt
 
 server.log
+
 # Skills directory
 /skills/
 
 # Upload directory - store uploaded images but don't track in git
 /public/uploads/
 !public/uploads/**/
+
+# Unwanted files and folders
+.accesslog
+.config
+.stats
+.zscripts/
+ADMIN_README.md
+Caddyfile
+bun.lock
+company_profile.json
+departments.json
+regions.json
+db/
+download/
+examples/
+mini-services/
+upload/
+worklog.md
