@@ -47,7 +47,7 @@
    COLOR PALETTE 1: Forest Green & Gold (DEFAULT)
    Professional, natural, trustworthy
    ======================================== */
-:root {
+/* root-1 {
   --radius: 0.5rem;
   --background: #FFFFFF;
   --foreground: #1C1917;
@@ -67,33 +67,32 @@
   --border: #E7E5E4;
   --input: #E7E5E4;
   --ring: #D4A017;
-}
+} */
 
 /* ========================================
    COLOR PALETTE 2: Cocoa Brown & Cream
    Warm, earthy, traditional cocoa colors
    ======================================== */
-.palette-cocoa {
+:root {
   --background: #FFFFFF;
-  --foreground: #3D2314;
-  --card: #FFFEF7;
-  --card-foreground: #3D2314;
+  --foreground: #2D1B0E;
+  --card: #FFFFFF;
+  --card-foreground: #2D1B0E;
   --popover: #FFFFFF;
-  --popover-foreground: #3D2314;
-  --primary: #8B4513;
+  --popover-foreground: #2D1B0E;
+  --primary: #654321;
   --primary-foreground: #FFFFFF;
-  --secondary: #FFF8DC;
-  --secondary-foreground: #8B4513;
-  --muted: #F5F0E6;
-  --muted-foreground: #7C6B5A;
-  --accent: #D2691E;
+  --secondary: #F5EDE4;
+  --secondary-foreground: #654321;
+  --muted: #F8F4F0;
+  --muted-foreground: #8B7355;
+  --accent: #C17B4B;
   --accent-foreground: #FFFFFF;
   --destructive: #DC2626;
-  --border: #E8DCC8;
-  --input: #E8DCC8;
-  --ring: #D2691E;
+  --border: #E6DDD3;
+  --input: #E6DDD3;
+  --ring: #C17B4B;
 }
-
 /* ========================================
    COLOR PALETTE 3: Ghana Flag Colors
    Green, Gold, Red - National pride

@@ -51,8 +51,8 @@ export default function ServicesSection() {
         {/* Section Header */}
         <div className="text-center mb-12 lg:mb-16">
           <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.3 }}
             className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4"
@@ -60,10 +60,10 @@ export default function ServicesSection() {
             Our Services
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.3, delay: 0.1 }}
+            transition={{ duration: 0.3 }}
             className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4"
           >
             What We Offer

@@ -5,63 +5,16 @@ import { Play, Youtube, Clock, Calendar, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
 import type { Video } from '@/types/database';
 
-// Animation variants
 const cardVariants = {
-  hidden: { 
-    opacity: 0, 
-    y: 50,
-    scale: 0.95
-  },
-  visible: (i: number) => ({ 
-    opacity: 1, 
-    y: 0,
-    scale: 1,
-    transition: {
-      type: 'spring',
-      stiffness: 70,
-      damping: 12,
-      delay: i * 0.12
-    }
-  }),
-  hover: {
-    y: -8,
-    transition: {
-      type: 'spring',
-      stiffness: 400,
-      damping: 20
-    }
-  }
-};
-
-const playButtonVariants = {
-  rest: { 
-    scale: 1,
-    boxShadow: "0 0 0 0 rgba(22, 101, 52, 0.4)"
-  },
-  hover: { 
-    scale: 1.1,
-    boxShadow: "0 0 0 20px rgba(22, 101, 52, 0)",
-    transition: {
-      type: 'spring',
-      stiffness: 400,
-      damping: 15
-    }
-  },
-  tap: { scale: 0.95 }
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.3 } }
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1
-    }
-  }
+  visible: { opacity: 1, transition: { duration: 0.3 } }
 };
 
 // Video Modal Component
@@ -83,23 +36,14 @@ function VideoModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80"
           onClick={onClose}
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 30 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 30 }}
-            transition={{ 
-              type: 'spring',
-              stiffness: 300,
-              damping: 25
-            }}
-            className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full overflow-hidden"
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-4xl w-full overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Video Player */}
             <div className="relative pt-[56.25%] bg-black">
               <iframe
                 src={`https://www.youtube.com/embed/${video.youtube_id}?autoplay=1&rel=0`}
@@ -109,13 +53,11 @@ function VideoModal({
                 className="absolute inset-0 w-full h-full"
               />
             </div>
-
-            {/* Video Info */}
             <div className="p-6">
               <h3 className="text-xl font-bold text-foreground mb-2">{video.title}</h3>
               <p className="text-muted-foreground leading-relaxed">{video.description}</p>
             </div>
-          </motion.div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
@@ -134,24 +76,17 @@ function VideoCard({
 }) {
   return (
     <motion.div
-      custom={index}
       variants={cardVariants}
       initial="hidden"
       whileInView="visible"
-      whileHover="hover"
-      viewport={{ once: true, margin: "-30px" }}
+      viewport={{ once: true }}
       className="group cursor-pointer h-full"
       onClick={onClick}
     >
       <div className="relative rounded-2xl overflow-hidden bg-muted shadow-sm hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
         {/* Thumbnail */}
         <div className="relative pt-[56.25%] bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden flex-shrink-0">
-          <motion.div
-            initial={{ scale: 1.1 }}
-            whileHover={{ scale: 1.15 }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="absolute inset-0"
-          >
+          <div className="absolute inset-0 hover:scale-[1.02] transition-transform duration-300">
             <Image
               src={`https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg`}
               alt={video.title}
@@ -162,29 +97,24 @@ function VideoCard({
                 target.src = `https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`;
               }}
             />
-          </motion.div>
+          </div>
 
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
           {/* Play Button Overlay */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <motion.div
-              variants={playButtonVariants}
-              initial="rest"
-              whileHover="hover"
-              whileTap="tap"
-              className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-xl"
-            >
+            <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
               <Play className="w-7 h-7 text-white fill-white ml-1" />
-            </motion.div>
+            </div>
           </div>
 
           {/* Duration Badge */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.3 }}
             className="absolute bottom-4 right-4 bg-black/80 text-white text-xs font-medium px-3 py-1.5 rounded-lg backdrop-blur-sm"
           >
             {video.duration}
@@ -224,14 +154,12 @@ export default function VideoSection() {
   useEffect(() => {
     async function fetchVideos() {
       try {
-        const { data, error } = await supabase
-          .from('videos')
-          .select('*')
-          .order('published_at', { ascending: false })
-          .limit(3);
-
-        if (error) throw error;
-        setVideos(data || []);
+        const res = await fetch('/api/videos');
+        if (res.ok) {
+          const { data } = await res.json();
+          // Client-side limit to 3 for homepage
+          setVideos((data || []).slice(0, 3));
+        }
       } catch (error) {
         console.error('Error fetching videos:', error);
       } finally {
@@ -270,7 +198,7 @@ export default function VideoSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ type: 'spring', stiffness: 80 }}
+            transition={{ duration: 0.3 }}
           >
             <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-500/10 text-red-500 text-sm font-semibold rounded-full mb-3">
               <Youtube size={16} className="flex-shrink-0" />
@@ -336,20 +264,18 @@ export default function VideoSection() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.3, type: 'spring', stiffness: 80 }}
+            transition={{ delay: 0.3, duration: 0.3 }}
             className="mt-12 text-center"
           >
-            <motion.a
+            <a
               href={channelUrl}
               target="_blank"
               rel="noopener noreferrer"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-3 px-8 py-4 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20"
+              className="inline-flex items-center gap-3 px-8 py-4 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 hover:scale-[1.02] active:scale-[1.00] transition-all duration-300 shadow-lg shadow-red-500/20"
             >
               <Youtube size={22} />
               <span>Subscribe to Our Channel</span>
-            </motion.a>
+            </a>
           </motion.div>
         )}
       </div>

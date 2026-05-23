@@ -5,51 +5,10 @@ import { Calendar, Clock, MapPin, ArrowRight, Filter, ChevronDown, X } from 'luc
 import Image from 'next/image';
 import Header from '@/components/ched/Header';
 import Footer from '@/components/ched/Footer';
-import { supabase } from '@/lib/supabase';
 import type { Event } from '@/types/database';
 import { useState, useEffect } from 'react';
 
-// Animation variants
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: {
-      type: 'spring',
-      stiffness: 80,
-      damping: 15
-    }
-  }
-};
-
-const cardVariants = {
-  hidden: { 
-    opacity: 0, 
-    y: 50,
-    scale: 0.95
-  },
-  visible: (i: number) => ({ 
-    opacity: 1, 
-    y: 0,
-    scale: 1,
-    transition: {
-      type: 'spring',
-      stiffness: 70,
-      damping: 12,
-      delay: i * 0.06
-    }
-  }),
-  hover: {
-    y: -8,
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
-    transition: {
-      type: 'spring',
-      stiffness: 400,
-      damping: 20
-    }
-  }
-};
+// Simplified animation variants
 
 // Format date to readable string
 function formatDate(dateString: string): string {
@@ -121,15 +80,15 @@ function EventModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
           onClick={onClose}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 30 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 30 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
             className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
@@ -151,52 +110,38 @@ function EventModal({
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
               {/* Close Button */}
-              <motion.button
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.95 }}
+              <button
                 onClick={onClose}
-                className="absolute top-4 right-4 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center text-foreground hover:bg-white transition-colors shadow-lg"
+                className="absolute top-4 right-4 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center text-foreground hover:bg-white transition-colors shadow-lg hover:scale-110 active:scale-95"
               >
                 <X size={20} />
-              </motion.button>
+              </button>
 
               {/* Category Badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
+              <div
                 className="absolute bottom-4 left-4"
               >
                 <span className={`${getCategoryColor(event.category)} text-white text-sm font-semibold px-5 py-2 rounded-full shadow-lg`}>
                   {event.category}
                 </span>
-              </motion.div>
+              </div>
             </div>
 
             {/* Content */}
             <div className="p-6 sm:p-8 overflow-y-auto max-h-[50vh]">
-              <motion.h2
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
+              <h2
                 className="text-2xl sm:text-3xl font-bold text-foreground mb-4"
               >
                 {event.title}
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 }}
+              </h2>
+              <p
                 className="text-muted-foreground text-lg mb-6 leading-relaxed"
               >
                 {event.description}
-              </motion.p>
+              </p>
 
               {/* Event Details */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
+              <div
                 className="space-y-4 bg-muted/30 rounded-2xl p-5"
               >
                 {[
@@ -204,11 +149,8 @@ function EventModal({
                   { icon: Clock, label: 'Time', value: event.time },
                   { icon: MapPin, label: 'Venue', value: event.venue }
                 ].map((item, i) => (
-                  <motion.div
+                  <div
                     key={item.label}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.25 + i * 0.05 }}
                     className="flex items-center gap-4"
                   >
                     <div className={`w-12 h-12 rounded-xl ${getCategoryColor(event.category)}/10 flex items-center justify-center`}>
@@ -218,9 +160,9 @@ function EventModal({
                       <p className="text-sm text-muted-foreground">{item.label}</p>
                       <p className="font-semibold text-foreground">{item.value}</p>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         </motion.div>
@@ -245,32 +187,22 @@ function EventCard({
   const hasImage = event.image && event.image.trim() !== '' && !imgError;
 
   return (
-    <motion.div
-      custom={index}
-      variants={cardVariants}
-      initial="hidden"
-      whileInView="visible"
-      whileHover="hover"
-      viewport={{ once: true, margin: "-20px" }}
-      className={`group bg-white rounded-2xl border border-border overflow-hidden shadow-sm cursor-pointer ${isPast ? 'opacity-75' : ''}`}
+    <div
+      className={`group bg-white rounded-2xl border border-border overflow-hidden shadow-sm cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all ${isPast ? 'opacity-75' : ''}`}
       onClick={onClick}
     >
       {/* Image */}
       <div className="relative h-52 sm:h-56 bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden">
         {hasImage ? (
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.6 }}
-            className="w-full h-full"
-          >
+          <div className="w-full h-full overflow-hidden">
             <Image
               src={event.image}
               alt={event.title}
               fill
-              className={`object-cover ${isPast ? 'grayscale' : ''}`}
+              className={`object-cover group-hover:scale-105 transition-transform duration-300 ${isPast ? 'grayscale' : ''}`}
               onError={() => setImgError(true)}
             />
-          </motion.div>
+          </div>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <Calendar className="w-20 h-20 text-primary/20" />
@@ -285,8 +217,7 @@ function EventCard({
         </div>
 
         {/* Date Badge */}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
+        <div
           className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 text-center shadow-md"
         >
           <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
@@ -295,7 +226,7 @@ function EventCard({
           <p className="text-xl font-bold text-primary">
             {new Date(event.date).getDate()}
           </p>
-        </motion.div>
+        </div>
 
         {/* Past Event Overlay */}
         {isPast && (
@@ -468,13 +399,11 @@ export default function EventsPageContent() {
   useEffect(() => {
     async function fetchEvents() {
       try {
-        const { data, error } = await supabase
-          .from('events')
-          .select('*')
-          .order('date', { ascending: true });
-
-        if (error) throw error;
-        setEvents(data || []);
+        const res = await fetch('/api/events');
+        if (res.ok) {
+          const { data } = await res.json();
+          setEvents(data || []);
+        }
       } catch (error) {
         console.error('Error fetching events:', error);
       } finally {

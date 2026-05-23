@@ -103,17 +103,17 @@ export default function ImageUpload({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-foreground">
+      <label className="block text-sm font-medium text-gray-700">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
 
       <div
-        className={`relative border-2 border-dashed rounded-xl transition-colors ${
+        className={`relative border-2 border-dashed rounded-md transition-colors ${
           dragActive
-            ? 'border-primary bg-primary/5'
+            ? 'border-gray-900 bg-gray-50'
             : value
-            ? 'border-border'
-            : 'border-gray-200 hover:border-primary/50'
+            ? 'border-gray-200'
+            : 'border-gray-200 hover:border-gray-400'
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -122,8 +122,8 @@ export default function ImageUpload({
       >
         {uploading ? (
           <div className="flex flex-col items-center justify-center py-8">
-            <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
-            <p className="text-sm text-muted-foreground">Uploading...</p>
+            <Loader2 className="w-8 h-8 text-gray-400 animate-spin mb-2" />
+            <p className="text-sm text-gray-500">Uploading...</p>
           </div>
         ) : value ? (
           <div className="relative group">
@@ -149,7 +149,7 @@ export default function ImageUpload({
               </div>
             )}
             <div className="px-4 pb-4">
-              <p className="text-xs text-muted-foreground truncate max-w-md">{value}</p>
+              <p className="text-xs text-gray-400 truncate max-w-md">{value}</p>
             </div>
           </div>
         ) : (
@@ -157,13 +157,13 @@ export default function ImageUpload({
             onClick={() => inputRef.current?.click()}
             className="flex flex-col items-center justify-center py-8 cursor-pointer"
           >
-            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-3">
-              <Upload className="w-6 h-6 text-primary" />
+            <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center mb-3">
+              <Upload className="w-6 h-6 text-gray-500" />
             </div>
-            <p className="text-sm font-medium text-foreground mb-1">
+            <p className="text-sm font-medium text-gray-700 mb-1">
               Drag and drop or click to upload
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-gray-400">
               JPEG, PNG, GIF or WebP (max 5MB)
             </p>
           </div>

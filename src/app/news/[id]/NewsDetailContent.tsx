@@ -6,9 +6,9 @@ import Image from 'next/image';
 import { Calendar, User, ArrowLeft, Tag } from 'lucide-react';
 import Header from '@/components/ched/Header';
 import Footer from '@/components/ched/Footer';
-import { supabase } from '@/lib/supabase';
 import type { News } from '@/types/database';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import DOMPurify from 'dompurify';
 
 interface Props {
   slug: string;
@@ -23,25 +23,18 @@ export default function NewsDetailContent({ slug }: Props) {
     async function fetchNews() {
       try {
         // Fetch the main article
-        const { data: articleData, error: articleError } = await supabase
-          .from('news')
-          .select('*')
-          .eq('slug', slug)
-          .single();
-
-        if (articleError) throw articleError;
-        setArticle(articleData);
+        const res = await fetch(`/api/news/${slug}`);
+        if (res.ok) {
+          const { data } = await res.json();
+          setArticle(data);
+        }
 
         // Fetch other news
-        const { data: otherData, error: otherError } = await supabase
-          .from('news')
-          .select('*')
-          .neq('slug', slug)
-          .order('date', { ascending: false })
-          .limit(3);
-
-        if (otherError) throw otherError;
-        setOtherNews(otherData || []);
+        const otherRes = await fetch('/api/news?limit=4');
+        if (otherRes.ok) {
+          const { data: otherData } = await otherRes.json();
+          setOtherNews((otherData || []).filter((n: News) => n.slug !== slug).slice(0, 3));
+        }
       } catch (error) {
         console.error('Error fetching news:', error);
       } finally {
@@ -51,6 +44,11 @@ export default function NewsDetailContent({ slug }: Props) {
 
     fetchNews();
   }, [slug]);
+
+  const sanitizedContent = useMemo(() => {
+    if (!article?.content) return '';
+    return DOMPurify.sanitize(article.content);
+  }, [article?.content]);
 
   if (loading) {
     return (
@@ -83,7 +81,7 @@ export default function NewsDetailContent({ slug }: Props) {
   return (
     <main className="min-h-screen">
       <Header />
-      
+
       {/* Article Header */}
       <section className="pt-24 pb-8 bg-muted/30">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -96,15 +94,15 @@ export default function NewsDetailContent({ slug }: Props) {
               <ArrowLeft size={16} />
               Back to News
             </Link>
-            
+
             <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4">
               {article.category}
             </span>
-            
+
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4">
               {article.title}
             </h1>
-            
+
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Calendar size={16} />
@@ -129,7 +127,7 @@ export default function NewsDetailContent({ slug }: Props) {
             className="relative h-64 sm:h-80 lg:h-96 rounded-xl overflow-hidden"
           >
             <Image
-              src={article.image}
+              src={article.image || '/images/placeholder.jpg'}
               alt={article.title}
               fill
               className="object-cover"
@@ -146,7 +144,7 @@ export default function NewsDetailContent({ slug }: Props) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
             className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground prose-ul:text-muted-foreground prose-ol:text-muted-foreground"
-            dangerouslySetInnerHTML={{ __html: article.content }}
+            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
           />
 
           {/* Tags */}
@@ -174,7 +172,7 @@ export default function NewsDetailContent({ slug }: Props) {
                 View All
               </Link>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {otherNews.map((news, index) => (
                 <motion.article
@@ -188,7 +186,7 @@ export default function NewsDetailContent({ slug }: Props) {
                   <Link href={`/news/${news.slug}`} className="flex flex-col h-full">
                     <div className="relative h-40 overflow-hidden flex-shrink-0">
                       <Image
-                        src={news.image}
+                        src={news.image || '/images/placeholder.jpg'}
                         alt={news.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"

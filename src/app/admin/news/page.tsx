@@ -1,241 +1,125 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, Search, Edit2, Trash2, Eye, Calendar, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import AdminShell from '@/components/admin/AdminShell';
-import { supabase } from '@/lib/supabase';
 import { News } from '@/types/database';
-import Image from 'next/image';
-import { Newspaper } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, Eye } from 'lucide-react';
 
 export default function NewsAdminPage() {
   const [news, setNews] = useState<News[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [deleteId, setDeleteId] = useState<number | null>(null);
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    fetchNews();
+    fetch('/api/admin/news')
+      .then(r => r.json())
+      .then(d => setNews(d.data || []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
-
-  const fetchNews = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('news')
-        .select('*')
-        .order('date', { ascending: false });
-
-      if (error) throw error;
-      setNews(data || []);
-    } catch (error) {
-      console.error('Error fetching news:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDelete = async () => {
     if (!deleteId) return;
-    
     setDeleting(true);
-    try {
-      const { error } = await supabase.from('news').delete().eq('id', deleteId);
-      if (error) throw error;
-      setNews(news.filter((item) => item.id !== deleteId));
-      setDeleteId(null);
-    } catch (error) {
-      console.error('Error deleting news:', error);
-    } finally {
-      setDeleting(false);
-    }
+    await fetch(`/api/admin/news/${deleteId}`, { method: 'DELETE' });
+    setNews(news.filter(n => n.id !== deleteId));
+    setDeleteId(null);
+    setDeleting(false);
   };
 
-  const filteredNews = news.filter(
-    (item) =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchQuery.toLowerCase())
+  const filtered = news.filter(n =>
+    n.title.toLowerCase().includes(search.toLowerCase()) ||
+    n.category.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <AdminShell>
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">News Management</h1>
-            <p className="text-muted-foreground mt-1">Manage news articles and updates</p>
-          </div>
-          <Link
-            href="/admin/news/new"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
-          >
-            <Plus className="w-5 h-5" />
-            Add News
-          </Link>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-lg font-semibold text-gray-900">News</h1>
+        <Link href="/admin/news/new" className="inline-flex items-center gap-1.5 px-3 py-2 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors">
+          <Plus size={14} />
+          Add News
+        </Link>
+      </div>
+
+      {/* Search */}
+      <div className="relative mb-4">
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search..."
+          className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+        />
+      </div>
+
+      {/* List */}
+      {loading ? (
+        <p className="text-sm text-gray-400 py-8 text-center">Loading...</p>
+      ) : filtered.length === 0 ? (
+        <div className="bg-white border border-gray-200 rounded-md p-12 text-center">
+          <p className="text-sm text-gray-400">{search ? 'No results' : 'No news articles yet'}</p>
         </div>
-
-        {/* Search */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-4 mb-6">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search news..."
-              className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-            />
-          </div>
-        </div>
-
-        {/* News List */}
-        {loading ? (
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-gray-200 p-6 animate-pulse">
-                <div className="flex gap-4">
-                  <div className="w-24 h-24 bg-gray-200 rounded-xl" />
-                  <div className="flex-1 space-y-3">
-                    <div className="h-4 bg-gray-200 rounded w-1/4" />
-                    <div className="h-6 bg-gray-200 rounded w-3/4" />
-                    <div className="h-4 bg-gray-200 rounded w-1/2" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : filteredNews.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
-            <Newspaper className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">No News Found</h3>
-            <p className="text-muted-foreground mb-6">
-              {searchQuery ? 'Try a different search term' : 'Get started by adding your first news article'}
-            </p>
-            {!searchQuery && (
-              <Link
-                href="/admin/news/new"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-xl"
-              >
-                <Plus className="w-5 h-5" />
-                Add News
-              </Link>
-            )}
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredNews.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
-              >
-                <div className="flex flex-col sm:flex-row">
-                  {/* Image */}
-                  <div className="relative w-full sm:w-48 h-48 sm:h-auto flex-shrink-0">
-                    <Image
-                      src={item.image || '/images/placeholder.jpg'}
-                      alt={item.title}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 p-6">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full mb-2">
-                          {item.category}
-                        </span>
-                        <h3 className="text-lg font-semibold text-foreground line-clamp-2">{item.title}</h3>
-                        <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            {new Date(item.date).toLocaleDateString('en-GB', {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric',
-                            })}
-                          </div>
-                        </div>
-                        <p className="text-muted-foreground text-sm mt-3 line-clamp-2">{item.excerpt}</p>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <Link
-                          href={`/news/${item.slug}`}
-                          target="_blank"
-                          className="p-2 text-muted-foreground hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
-                          title="View"
-                        >
-                          <Eye className="w-5 h-5" />
-                        </Link>
-                        <Link
-                          href={`/admin/news/${item.id}`}
-                          className="p-2 text-muted-foreground hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="Edit"
-                        >
-                          <Edit2 className="w-5 h-5" />
-                        </Link>
-                        <button
-                          onClick={() => setDeleteId(item.id)}
-                          className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                      </div>
+      ) : (
+        <div className="bg-white border border-gray-200 rounded-md overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-100">
+                <th className="text-left px-4 py-3 font-medium text-gray-500">Title</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500 hidden sm:table-cell">Category</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500 hidden md:table-cell">Date</th>
+                <th className="text-right px-4 py-3 font-medium text-gray-500">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(item => (
+                <tr key={item.id} className="border-b border-gray-50 hover:bg-gray-50">
+                  <td className="px-4 py-3">
+                    <span className="text-gray-900 line-clamp-1">{item.title}</span>
+                  </td>
+                  <td className="px-4 py-3 hidden sm:table-cell">
+                    <span className="text-gray-500 text-xs">{item.category}</span>
+                  </td>
+                  <td className="px-4 py-3 hidden md:table-cell">
+                    <span className="text-gray-500 text-xs">{new Date(item.date).toLocaleDateString('en-GB')}</span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center justify-end gap-1">
+                      <Link href={`/news/${item.slug}`} target="_blank" className="p-1.5 text-gray-400 hover:text-gray-600 rounded" title="View">
+                        <Eye size={14} />
+                      </Link>
+                      <Link href={`/admin/news/${item.id}`} className="p-1.5 text-gray-400 hover:text-blue-600 rounded" title="Edit">
+                        <Edit2 size={14} />
+                      </Link>
+                      <button onClick={() => setDeleteId(item.id)} className="p-1.5 text-gray-400 hover:text-red-600 rounded" title="Delete">
+                        <Trash2 size={14} />
+                      </button>
                     </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-        {/* Delete Confirmation Modal */}
-        {deleteId && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-            onClick={() => setDeleteId(null)}
-          >
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl"
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-                  <AlertCircle className="w-6 h-6 text-red-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">Delete News</h3>
-                  <p className="text-sm text-muted-foreground">This action cannot be undone</p>
-                </div>
-              </div>
-              <p className="text-muted-foreground mb-6">
-                Are you sure you want to delete this news article? All associated data will be permanently removed.
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setDeleteId(null)}
-                  className="flex-1 px-4 py-3 bg-gray-100 text-foreground font-medium rounded-xl hover:bg-gray-200 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={deleting}
-                  className="flex-1 px-4 py-3 bg-red-600 text-white font-medium rounded-xl hover:bg-red-700 transition-colors disabled:opacity-70"
-                >
-                  {deleting ? 'Deleting...' : 'Delete'}
-                </button>
-              </div>
+      {/* Delete modal */}
+      {deleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setDeleteId(null)}>
+          <div onClick={e => e.stopPropagation()} className="bg-white rounded-md border border-gray-200 p-6 max-w-sm w-full">
+            <h3 className="font-medium text-gray-900 mb-2">Delete article?</h3>
+            <p className="text-sm text-gray-500 mb-4">This action cannot be undone.</p>
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setDeleteId(null)} className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200">Cancel</button>
+              <button onClick={handleDelete} disabled={deleting} className="px-4 py-2 text-sm text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50">{deleting ? 'Deleting...' : 'Delete'}</button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </AdminShell>
   );
 }

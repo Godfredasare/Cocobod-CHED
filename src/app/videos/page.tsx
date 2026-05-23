@@ -6,47 +6,9 @@ import { Play, Youtube, Clock, Calendar, X, Search } from 'lucide-react';
 import Image from 'next/image';
 import Header from '@/components/ched/Header';
 import Footer from '@/components/ched/Footer';
-import { supabase } from '@/lib/supabase';
 import type { Video } from '@/types/database';
 
-// Animation variants
-const cardVariants = {
-  hidden: { 
-    opacity: 0, 
-    y: 50,
-    scale: 0.95
-  },
-  visible: (i: number) => ({ 
-    opacity: 1, 
-    y: 0,
-    scale: 1,
-    transition: {
-      type: 'spring',
-      stiffness: 70,
-      damping: 12,
-      delay: i * 0.08
-    }
-  }),
-  hover: {
-    y: -8,
-    transition: {
-      type: 'spring',
-      stiffness: 400,
-      damping: 20
-    }
-  }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1
-    }
-  }
-};
+// Simplified animation variants
 
 // Video Modal Component
 function VideoModal({
@@ -67,31 +29,25 @@ function VideoModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80"
           onClick={onClose}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 30 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 30 }}
-            transition={{ 
-              type: 'spring',
-              stiffness: 300,
-              damping: 25
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
             className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
-            <motion.button
-              whileHover={{ scale: 1.1, rotate: 90 }}
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={onClose}
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center text-foreground hover:bg-white transition-colors shadow-lg"
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center text-foreground hover:bg-white transition-colors shadow-lg hover:scale-110 active:scale-95"
             >
               <X size={20} />
-            </motion.button>
+            </button>
 
             {/* Video Player */}
             <div className="relative pt-[56.25%] bg-black">
@@ -129,33 +85,20 @@ function VideoModal({
 // Video Card Component
 function VideoCard({
   video,
-  index,
   onClick
 }: {
   video: Video;
-  index: number;
   onClick: () => void;
 }) {
   return (
-    <motion.div
-      custom={index}
-      variants={cardVariants}
-      initial="hidden"
-      whileInView="visible"
-      whileHover="hover"
-      viewport={{ once: true, margin: "-30px" }}
-      className="group cursor-pointer h-full"
+    <div
+      className="group cursor-pointer h-full transition-all duration-300 hover:-translate-y-1"
       onClick={onClick}
     >
       <div className="relative rounded-2xl overflow-hidden bg-muted shadow-sm hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
         {/* Thumbnail */}
         <div className="relative pt-[56.25%] bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden flex-shrink-0">
-          <motion.div
-            initial={{ scale: 1.1 }}
-            whileHover={{ scale: 1.15 }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="absolute inset-0"
-          >
+          <div className="absolute inset-0 group-hover:scale-105 transition-transform duration-300">
             <Image
               src={`https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg`}
               alt={video.title}
@@ -166,20 +109,16 @@ function VideoCard({
                 target.src = `https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`;
               }}
             />
-          </motion.div>
+          </div>
 
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
           {/* Play Button Overlay */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-xl"
-            >
+            <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-xl group-hover:scale-110 active:scale-95 transition-transform">
               <Play className="w-7 h-7 text-white fill-white ml-1" />
-            </motion.div>
+            </div>
           </div>
 
           {/* Duration Badge */}
@@ -206,7 +145,7 @@ function VideoCard({
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -222,13 +161,11 @@ export default function VideosPage() {
   useEffect(() => {
     async function fetchVideos() {
       try {
-        const { data, error } = await supabase
-          .from('videos')
-          .select('*')
-          .order('published_at', { ascending: false });
-
-        if (error) throw error;
-        setVideos(data || []);
+        const res = await fetch('/api/videos');
+        if (res.ok) {
+          const { data } = await res.json();
+          setVideos(data || []);
+        }
       } catch (error) {
         console.error('Error fetching videos:', error);
       } finally {
@@ -262,41 +199,39 @@ export default function VideosPage() {
       <section className="pt-28 pb-12 bg-gradient-to-br from-red-50 via-white to-primary/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 80 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
             className="text-center"
           >
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
+            <div
               className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-500/10 mb-6"
             >
               <Youtube className="w-10 h-10 text-red-500" />
-            </motion.div>
-            
+            </div>
+
             <motion.span
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
               className="inline-block px-4 py-1.5 bg-red-500/10 text-red-500 text-sm font-semibold rounded-full mb-4"
             >
               Media Library
             </motion.span>
-            
+
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
               className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-5"
             >
               Video Gallery
             </motion.h1>
-            
+
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
               className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed"
             >
               Explore our collection of educational videos, farmer success stories, and informative content about cocoa farming best practices.
@@ -305,9 +240,9 @@ export default function VideosPage() {
 
           {/* Search and Stats */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.3 }}
             className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4"
           >
             {/* Search */}
@@ -328,17 +263,15 @@ export default function VideosPage() {
                 <span className="font-bold text-2xl text-primary">{videos.length}</span>
                 <span className="text-muted-foreground">Videos</span>
               </div>
-              <motion.a
+              <a
                 href={channelUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Youtube size={18} />
                 <span>Subscribe</span>
-              </motion.a>
+              </a>
             </div>
           </motion.div>
         </div>
@@ -363,20 +296,13 @@ export default function VideosPage() {
               ))}
             </div>
           ) : filteredVideos.length > 0 ? (
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              animate="visible"
-              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              {filteredVideos.map((video, index) => (
-                <VideoCard key={video.id} video={video} index={index} onClick={() => openModal(video)} />
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredVideos.map((video) => (
+                <VideoCard key={video.id} video={video} onClick={() => openModal(video)} />
               ))}
-            </motion.div>
+            </div>
           ) : (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
+            <div
               className="text-center py-20"
             >
               <Youtube className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
@@ -386,7 +312,7 @@ export default function VideosPage() {
               <p className="text-muted-foreground">
                 {searchQuery ? 'Try a different search term.' : 'Check back soon for new video content.'}
               </p>
-            </motion.div>
+            </div>
           )}
         </div>
       </section>
@@ -395,9 +321,10 @@ export default function VideosPage() {
       <section className="py-16 bg-gradient-to-r from-red-500 to-red-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.3 }}
           >
             <Youtube className="w-16 h-16 text-white/80 mx-auto mb-6" />
             <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
@@ -406,17 +333,15 @@ export default function VideosPage() {
             <p className="text-white/80 text-lg max-w-2xl mx-auto mb-8">
               Subscribe to our YouTube channel for the latest farmer training videos, success stories, and cocoa farming tips.
             </p>
-            <motion.a
+            <a
               href={channelUrl}
               target="_blank"
               rel="noopener noreferrer"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-3 px-8 py-4 bg-white text-red-500 font-semibold rounded-xl hover:bg-white/90 transition-colors shadow-lg"
+              className="inline-flex items-center gap-3 px-8 py-4 bg-white text-red-500 font-semibold rounded-xl hover:bg-white/90 transition-all shadow-lg hover:scale-[1.02] active:scale-[0.98]"
             >
               <Youtube size={22} />
               <span>Subscribe to Our Channel</span>
-            </motion.a>
+            </a>
           </motion.div>
         </div>
       </section>

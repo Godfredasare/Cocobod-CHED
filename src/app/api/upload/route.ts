@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir, access } from 'fs/promises';
 import path from 'path';
+import { requireAuth } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
+    // Require authentication
+    try {
+      await requireAuth();
+    } catch {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const formData = await request.formData();
     const file = formData.get('file') as File;
     const folder = (formData.get('folder') as string) || 'images';

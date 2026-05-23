@@ -2,21 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import AdminShell from '@/components/admin/AdminShell';
 import ImageUpload from '@/components/admin/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
-import { supabase } from '@/lib/supabase';
+import { ArrowLeft } from 'lucide-react';
 
-const categories = [
-  'Extension Services',
-  'Disease Control',
-  'Training',
-  'Partnership',
-  'Achievement',
-  'Announcement',
-];
+const categories = ['Extension Services', 'Disease Control', 'Training', 'Partnership', 'Achievement', 'Announcement'];
 
 export default function NewsFormPage() {
   const router = useRouter();
@@ -26,234 +18,116 @@ export default function NewsFormPage() {
 
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
-  const [formData, setFormData] = useState({
-    title: '',
-    slug: '',
-    excerpt: '',
-    content: '',
-    image: '',
-    category: categories[0],
-    date: new Date().toISOString().split('T')[0],
+  const [form, setForm] = useState({
+    title: '', slug: '', excerpt: '', content: '', image: '',
+    category: categories[0], date: new Date().toISOString().split('T')[0],
   });
 
   useEffect(() => {
     if (isEdit && newsId) {
-      fetchNews();
+      fetch(`/api/admin/news/${newsId}`)
+        .then(r => r.json())
+        .then(d => {
+          if (d.data) setForm({ ...d.data, image: d.data.image || '', date: d.data.date.split('T')[0] });
+        })
+        .catch(() => router.push('/admin/news'))
+        .finally(() => setLoading(false));
     }
   }, [newsId]);
 
-  const fetchNews = async () => {
-    try {
-      const { data, error } = await supabase.from('news').select('*').eq('id', newsId).single();
-
-      if (error) throw error;
-
-      if (data) {
-        setFormData({
-          title: data.title,
-          slug: data.slug,
-          excerpt: data.excerpt,
-          content: data.content,
-          image: data.image || '',
-          category: data.category,
-          date: data.date,
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching news:', error);
-      router.push('/admin/news');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
-  };
-
-  const handleTitleChange = (title: string) => {
-    setFormData({
-      ...formData,
-      title,
-      slug: generateSlug(title),
-    });
-  };
+  const generateSlug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-
-    try {
-      if (isEdit) {
-        const { error } = await supabase
-          .from('news')
-          .update({ ...formData, updated_at: new Date().toISOString() })
-          .eq('id', newsId);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from('news').insert([formData]);
-        if (error) throw error;
-      }
-      router.push('/admin/news');
-    } catch (error) {
-      console.error('Error saving news:', error);
-    } finally {
-      setSaving(false);
-    }
+    const url = isEdit ? `/api/admin/news/${newsId}` : '/api/admin/news';
+    await fetch(url, {
+      method: isEdit ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    });
+    router.push('/admin/news');
   };
 
   if (loading) {
-    return (
-      <AdminShell>
-        <div className="flex items-center justify-center h-96">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </div>
-      </AdminShell>
-    );
+    return <AdminShell><div className="flex justify-center py-20"><div className="w-6 h-6 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" /></div></AdminShell>;
   }
 
   return (
     <AdminShell>
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center gap-4 mb-8">
-          <Link href="/admin/news" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
-              {isEdit ? 'Edit News' : 'Add News'}
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              {isEdit ? 'Update news article details' : 'Create a new news article'}
-            </p>
-          </div>
+      <div className="max-w-2xl">
+        <div className="flex items-center gap-3 mb-6">
+          <Link href="/admin/news" className="p-1 text-gray-400 hover:text-gray-600"><ArrowLeft size={18} /></Link>
+          <h1 className="text-lg font-semibold text-gray-900">{isEdit ? 'Edit News' : 'Add News'}</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="bg-white border border-gray-200 rounded-md p-6 space-y-5">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Title <span className="text-red-500">*</span>
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
               <input
-                type="text"
-                value={formData.title}
-                onChange={(e) => handleTitleChange(e.target.value)}
+                type="text" value={form.title}
+                onChange={e => { const t = e.target.value; setForm({ ...form, title: t, slug: generateSlug(t) }); }}
                 required
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                placeholder="Enter news title"
+                className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                placeholder="News title"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Slug <span className="text-red-500">*</span>
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Slug *</label>
               <input
-                type="text"
-                value={formData.slug}
-                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                type="text" value={form.slug}
+                onChange={e => setForm({ ...form, slug: e.target.value })}
                 required
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                placeholder="news-article-slug"
+                className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
               />
-              <p className="text-xs text-muted-foreground mt-1">URL: /news/{formData.slug}</p>
+              <p className="text-xs text-gray-400 mt-1">/news/{form.slug}</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Excerpt <span className="text-red-500">*</span>
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Excerpt *</label>
               <textarea
-                value={formData.excerpt}
-                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                required
-                rows={3}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
-                placeholder="Brief summary of the news"
+                value={form.excerpt} onChange={e => setForm({ ...form, excerpt: e.target.value })}
+                required rows={2}
+                className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Content <span className="text-red-500">*</span>
-              </label>
-              <RichTextEditor
-                value={formData.content}
-                onChange={(value) => setFormData({ ...formData, content: value })}
-                placeholder="Write your news content here..."
-                height="400px"
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Content *</label>
+              <RichTextEditor value={form.content} onChange={v => setForm({ ...form, content: v })} placeholder="Write content..." height="300px" />
             </div>
 
-            <ImageUpload
-              value={formData.image}
-              onChange={(url) => setFormData({ ...formData, image: url })}
-              folder="news"
-              label="Featured Image"
-              preview={true}
-            />
+            <ImageUpload value={form.image} onChange={url => setForm({ ...form, image: url })} folder="news" label="Featured Image" />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Category <span className="text-red-500">*</span>
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
                 <select
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 >
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
+                  {categories.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Date <span className="text-red-500">*</span>
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Date *</label>
                 <input
-                  type="date"
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  type="date" value={form.date}
+                  onChange={e => setForm({ ...form, date: e.target.value })}
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-4">
-            <Link
-              href="/admin/news"
-              className="px-6 py-3 bg-gray-100 text-foreground font-medium rounded-xl hover:bg-gray-200 transition-colors"
-            >
-              Cancel
-            </Link>
-            <button
-              type="submit"
-              disabled={saving}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-70"
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="w-5 h-5" />
-                  Save News
-                </>
-              )}
+          <div className="flex justify-end gap-3">
+            <Link href="/admin/news" className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200">Cancel</Link>
+            <button type="submit" disabled={saving} className="px-4 py-2 text-sm text-white bg-gray-900 rounded-md hover:bg-gray-800 disabled:opacity-50">
+              {saving ? 'Saving...' : 'Save'}
             </button>
           </div>
         </form>

@@ -66,8 +66,8 @@ export default function PartnershipSection() {
         {/* Section Header */}
         <div className="text-center mb-12 lg:mb-16">
           <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.3 }}
             className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4"
@@ -75,19 +75,19 @@ export default function PartnershipSection() {
             Collaboration
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.3, delay: 0.1 }}
+            transition={{ duration: 0.3 }}
             className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4"
           >
             Partnerships
           </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.3, delay: 0.15 }}
+            transition={{ duration: 0.3 }}
             className="text-muted-foreground max-w-2xl mx-auto"
           >
             We collaborate with local and international organizations to strengthen 
@@ -100,10 +100,10 @@ export default function PartnershipSection() {
           {partnershipBenefits.map((benefit, index) => (
             <motion.div
               key={benefit.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
+              transition={{ duration: 0.3 }}
               className="text-center p-6 bg-muted/30 rounded-xl"
             >
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -117,10 +117,10 @@ export default function PartnershipSection() {
 
         {/* Partners List */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.3, delay: 0.2 }}
+          transition={{ duration: 0.3 }}
           className="bg-muted/30 rounded-xl border border-border overflow-hidden"
         >
           <div className="p-6 border-b border-border">
@@ -134,10 +134,10 @@ export default function PartnershipSection() {
             {partners.map((partner, index) => (
               <motion.div
                 key={partner.name}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
+                transition={{ duration: 0.3 }}
                 className="p-5 hover:bg-white transition-colors"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -156,10 +156,10 @@ export default function PartnershipSection() {
 
         {/* Become a Partner */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.3, delay: 0.3 }}
+          transition={{ duration: 0.3 }}
           className="mt-12 bg-primary rounded-xl p-8 text-center text-white"
         >
           <h3 className="text-xl font-semibold mb-2">Become a Partner</h3>

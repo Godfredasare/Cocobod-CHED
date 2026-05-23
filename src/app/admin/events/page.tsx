@@ -1,205 +1,112 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, Search, Edit2, Trash2, Calendar, MapPin, Clock, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import AdminShell from '@/components/admin/AdminShell';
-import { supabase } from '@/lib/supabase';
 import { Event } from '@/types/database';
-
-const categoryColors: Record<string, string> = {
-  Festival: 'bg-purple-100 text-purple-700',
-  Workshop: 'bg-blue-100 text-blue-700',
-  Meeting: 'bg-green-100 text-green-700',
-  Celebration: 'bg-amber-100 text-amber-700',
-  Conference: 'bg-rose-100 text-rose-700',
-  Training: 'bg-teal-100 text-teal-700',
-};
+import { Search, Plus, Edit2, Trash2 } from 'lucide-react';
 
 export default function EventsAdminPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [deleteId, setDeleteId] = useState<number | null>(null);
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    fetchEvents();
+    fetch('/api/admin/events')
+      .then(r => r.json())
+      .then(d => setEvents(d.data || []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
-
-  const fetchEvents = async () => {
-    try {
-      const { data, error } = await supabase.from('events').select('*').order('date', { ascending: true });
-      if (error) throw error;
-      setEvents(data || []);
-    } catch (error) {
-      console.error('Error fetching events:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDelete = async () => {
     if (!deleteId) return;
     setDeleting(true);
-    try {
-      const { error } = await supabase.from('events').delete().eq('id', deleteId);
-      if (error) throw error;
-      setEvents(events.filter((item) => item.id !== deleteId));
-      setDeleteId(null);
-    } catch (error) {
-      console.error('Error deleting event:', error);
-    } finally {
-      setDeleting(false);
-    }
+    await fetch(`/api/admin/events/${deleteId}`, { method: 'DELETE' });
+    setEvents(events.filter(e => e.id !== deleteId));
+    setDeleteId(null);
+    setDeleting(false);
   };
 
-  const filteredEvents = events.filter(
-    (item) =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchQuery.toLowerCase())
+  const filtered = events.filter(e =>
+    e.title.toLowerCase().includes(search.toLowerCase()) ||
+    e.category.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <AdminShell>
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Events Management</h1>
-            <p className="text-muted-foreground mt-1">Manage upcoming and past events</p>
-          </div>
-          <Link
-            href="/admin/events/new"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            Add Event
-          </Link>
-        </div>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-lg font-semibold text-gray-900">Events</h1>
+        <Link href="/admin/events/new" className="inline-flex items-center gap-1.5 px-3 py-2 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-gray-800">
+          <Plus size={14} /> Add Event
+        </Link>
+      </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 p-4 mb-6">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search events..."
-              className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-            />
-          </div>
-        </div>
+      <div className="relative mb-4">
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
+      </div>
 
-        {loading ? (
-          <div className="text-center py-12">Loading...</div>
-        ) : filteredEvents.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
-            <Calendar className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">No Events Found</h3>
-            <p className="text-muted-foreground mb-6">Get started by adding your first event</p>
-            <Link
-              href="/admin/events/new"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-xl"
-            >
-              <Plus className="w-5 h-5" />
-              Add Event
-            </Link>
-          </div>
-        ) : (
-          <div className="grid gap-4">
-            {filteredEvents.map((event) => (
-              <div
-                key={event.id}
-                className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-shadow"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <span
-                      className={`inline-block px-3 py-1 text-xs font-semibold rounded-full mb-2 ${
-                        categoryColors[event.category] || 'bg-gray-100 text-gray-700'
-                      }`}
-                    >
-                      {event.category}
-                    </span>
-                    <h3 className="text-lg font-semibold text-foreground">{event.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{event.description}</p>
-                    <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {new Date(event.date).toLocaleDateString('en-GB', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
-                        })}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {event.time}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
-                        {event.venue}
-                      </div>
+      {loading ? (
+        <p className="text-sm text-gray-400 py-8 text-center">Loading...</p>
+      ) : filtered.length === 0 ? (
+        <div className="bg-white border border-gray-200 rounded-md p-12 text-center">
+          <p className="text-sm text-gray-400">{search ? 'No results' : 'No events yet'}</p>
+        </div>
+      ) : (
+        <div className="bg-white border border-gray-200 rounded-md overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-100">
+                <th className="text-left px-4 py-3 font-medium text-gray-500">Title</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500 hidden sm:table-cell">Category</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500 hidden md:table-cell">Date</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-500 hidden md:table-cell">Venue</th>
+                <th className="text-right px-4 py-3 font-medium text-gray-500">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(event => (
+                <tr key={event.id} className="border-b border-gray-50 hover:bg-gray-50">
+                  <td className="px-4 py-3">
+                    <span className="text-gray-900 line-clamp-1">{event.title}</span>
+                  </td>
+                  <td className="px-4 py-3 hidden sm:table-cell">
+                    <span className="text-gray-500 text-xs">{event.category}</span>
+                  </td>
+                  <td className="px-4 py-3 hidden md:table-cell">
+                    <span className="text-gray-500 text-xs">{new Date(event.date).toLocaleDateString('en-GB')}</span>
+                  </td>
+                  <td className="px-4 py-3 hidden md:table-cell">
+                    <span className="text-gray-500 text-xs">{event.venue}</span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center justify-end gap-1">
+                      <Link href={`/admin/events/${event.id}`} className="p-1.5 text-gray-400 hover:text-blue-600 rounded"><Edit2 size={14} /></Link>
+                      <button onClick={() => setDeleteId(event.id)} className="p-1.5 text-gray-400 hover:text-red-600 rounded"><Trash2 size={14} /></button>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href={`/admin/events/${event.id}`}
-                      className="p-2 text-muted-foreground hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                    >
-                      <Edit2 className="w-5 h-5" />
-                    </Link>
-                    <button
-                      onClick={() => setDeleteId(event.id)}
-                      className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-        {/* Delete Confirmation Modal */}
-        {deleteId && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-            onClick={() => setDeleteId(null)}
-          >
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl"
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-                  <AlertCircle className="w-6 h-6 text-red-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">Delete Event</h3>
-                  <p className="text-sm text-muted-foreground">This action cannot be undone</p>
-                </div>
-              </div>
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={() => setDeleteId(null)}
-                  className="flex-1 px-4 py-3 bg-gray-100 text-foreground font-medium rounded-xl hover:bg-gray-200 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={deleting}
-                  className="flex-1 px-4 py-3 bg-red-600 text-white font-medium rounded-xl hover:bg-red-700 transition-colors disabled:opacity-70"
-                >
-                  {deleting ? 'Deleting...' : 'Delete'}
-                </button>
-              </div>
+      {deleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setDeleteId(null)}>
+          <div onClick={e => e.stopPropagation()} className="bg-white rounded-md border border-gray-200 p-6 max-w-sm w-full">
+            <h3 className="font-medium text-gray-900 mb-2">Delete event?</h3>
+            <p className="text-sm text-gray-500 mb-4">This cannot be undone.</p>
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setDeleteId(null)} className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200">Cancel</button>
+              <button onClick={handleDelete} disabled={deleting} className="px-4 py-2 text-sm text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50">{deleting ? 'Deleting...' : 'Delete'}</button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </AdminShell>
   );
 }

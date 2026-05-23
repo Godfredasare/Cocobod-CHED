@@ -42,7 +42,7 @@ const galleryImages = [
     category: 'Community',
   },
   {
-    src: '/images/hero-bg.png',
+    src: '/images/hero-bg.jpg',
     alt: 'Premium cocoa beans',
     category: 'Products',
   },
@@ -87,8 +87,8 @@ export default function GallerySection() {
         {/* Section Header */}
         <div className="text-center mb-12">
           <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.3 }}
             className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4"
@@ -96,19 +96,19 @@ export default function GallerySection() {
             Media
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.3, delay: 0.1 }}
+            transition={{ duration: 0.3 }}
             className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4"
           >
             Photo Gallery
           </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.3, delay: 0.15 }}
+            transition={{ duration: 0.3 }}
             className="text-muted-foreground max-w-2xl mx-auto"
           >
             Highlights from our training sessions, field operations, and community programs across Ghana.
@@ -117,10 +117,10 @@ export default function GallerySection() {
 
         {/* Category Filter */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.3, delay: 0.2 }}
+          transition={{ duration: 0.3 }}
           className="flex flex-wrap justify-center gap-2 mb-8"
         >
           {categories.map((category) => (
@@ -139,17 +139,14 @@ export default function GallerySection() {
         </motion.div>
 
         {/* Gallery Grid */}
-        <motion.div
-          layout
+        <div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6"
         >
           {filteredImages.map((image, index) => (
             <motion.div
               key={`${image.src}-${index}`}
-              layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
               onClick={() => openLightbox(index)}
               className="group relative aspect-video rounded-xl overflow-hidden cursor-pointer bg-muted"
@@ -168,7 +165,7 @@ export default function GallerySection() {
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
       {/* Lightbox */}

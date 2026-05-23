@@ -7,27 +7,27 @@ import Header from '@/components/ched/Header';
 import Footer from '@/components/ched/Footer';
 
 const stats = [
-  { 
-    icon: Users, 
-    value: '800,000+', 
+  {
+    icon: Users,
+    value: '800,000+',
     label: 'Farmers Supported',
     description: 'Direct support to cocoa farming communities'
   },
-  { 
-    icon: MapPin, 
-    value: '14', 
+  {
+    icon: MapPin,
+    value: '14',
     label: 'Regions Covered',
     description: 'Nationwide presence across Ghana'
   },
-  { 
-    icon: Award, 
-    value: '50+', 
+  {
+    icon: Award,
+    value: '50+',
     label: 'Years of Excellence',
     description: 'Decades of dedicated service'
   },
-  { 
-    icon: Target, 
-    value: '95%', 
+  {
+    icon: Target,
+    value: '95%',
     label: 'Success Rate',
     description: 'In disease control programs'
   },
@@ -46,16 +46,11 @@ export default function AboutPageContent() {
   return (
     <main className="min-h-screen">
       <Header />
-      
+
       {/* Hero Banner */}
       <section className="pt-24 pb-12 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="text-center"
-          >
+          <div className="text-center">
             <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4">
               About Us
             </span>
@@ -65,7 +60,7 @@ export default function AboutPageContent() {
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Learn about our mission, history, and commitment to Ghana&apos;s cocoa industry.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -73,13 +68,13 @@ export default function AboutPageContent() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
+            {stats.map((stat) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
+                transition={{ duration: 0.3 }}
                 className="bg-muted/30 p-6 rounded-xl border border-border"
               >
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
@@ -99,30 +94,30 @@ export default function AboutPageContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.3 }}
               className="bg-white p-8 rounded-xl border border-border"
             >
               <h2 className="text-xl font-bold text-foreground mb-4">Our Mission</h2>
               <p className="text-muted-foreground">
-                To provide efficient and effective extension services that empower 
-                cocoa farmers with knowledge and skills for sustainable production, 
+                To provide efficient and effective extension services that empower
+                cocoa farmers with knowledge and skills for sustainable production,
                 while controlling diseases and pests that threaten cocoa farms.
               </p>
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.3 }}
               className="bg-white p-8 rounded-xl border border-border"
             >
               <h2 className="text-xl font-bold text-foreground mb-4">Our Vision</h2>
               <p className="text-muted-foreground">
-                A thriving Ghanaian cocoa industry where farmers are empowered with 
-                knowledge, technology, and resources to produce premium quality cocoa 
+                A thriving Ghanaian cocoa industry where farmers are empowered with
+                knowledge, technology, and resources to produce premium quality cocoa
                 beans sustainably and profitably.
               </p>
             </motion.div>
@@ -144,13 +139,13 @@ export default function AboutPageContent() {
               'Improve cocoa yield and quality',
               'Ensure sustainable cocoa production',
               'Support farmer livelihoods'
-            ].map((item, index) => (
+            ].map((item) => (
               <motion.div
                 key={item}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
+                transition={{ duration: 0.3 }}
                 className="flex items-start gap-3 p-4 bg-muted/30 rounded-lg"
               >
                 <span className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
@@ -169,13 +164,13 @@ export default function AboutPageContent() {
             <p className="text-muted-foreground">Key milestones in CHED&apos;s history</p>
           </div>
           <div className="space-y-6">
-            {timeline.map((item, index) => (
+            {timeline.map((item) => (
               <motion.div
                 key={item.year}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
+                transition={{ duration: 0.3 }}
                 className="flex gap-4 p-6 bg-white rounded-xl border border-border"
               >
                 <div className="w-20 flex-shrink-0 text-primary font-bold">{item.year}</div>

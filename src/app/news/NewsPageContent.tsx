@@ -7,49 +7,25 @@ import { Calendar, ArrowRight } from 'lucide-react';
 import Header from '@/components/ched/Header';
 import Footer from '@/components/ched/Footer';
 import VideoSection from '@/components/ched/VideoSection';
-import { supabase } from '@/lib/supabase';
 import type { News } from '@/types/database';
 import { useState, useEffect } from 'react';
 
-// Animation variants
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
-    transition: {
-      type: 'spring',
-      stiffness: 80,
-      damping: 15
-    }
+    transition: { type: 'spring', stiffness: 80, damping: 15 }
   }
 };
 
 const cardVariants = {
-  hidden: { 
-    opacity: 0, 
-    y: 50,
-    scale: 0.95
-  },
-  visible: (i: number) => ({ 
-    opacity: 1, 
-    y: 0,
-    scale: 1,
-    transition: {
-      type: 'spring',
-      stiffness: 70,
-      damping: 12,
-      delay: i * 0.08
-    }
+  hidden: { opacity: 0, y: 50, scale: 0.95 },
+  visible: (i: number) => ({
+    opacity: 1, y: 0, scale: 1,
+    transition: { type: 'spring', stiffness: 70, damping: 12, delay: i * 0.08 }
   }),
-  hover: {
-    y: -8,
-    transition: {
-      type: 'spring',
-      stiffness: 400,
-      damping: 20
-    }
-  }
+  hover: { y: -8, transition: { type: 'spring', stiffness: 400, damping: 20 } }
 };
 
 export default function NewsPageContent() {
@@ -59,13 +35,11 @@ export default function NewsPageContent() {
   useEffect(() => {
     async function fetchNews() {
       try {
-        const { data, error } = await supabase
-          .from('news')
-          .select('*')
-          .order('date', { ascending: false });
-
-        if (error) throw error;
-        setNews(data || []);
+        const res = await fetch('/api/news');
+        if (res.ok) {
+          const { data } = await res.json();
+          setNews(data || []);
+        }
       } catch (error) {
         console.error('Error fetching news:', error);
       } finally {
@@ -79,10 +53,9 @@ export default function NewsPageContent() {
   return (
     <main className="min-h-screen">
       <Header />
-      
+
       {/* Hero Banner */}
       <section className="relative pt-28 pb-16 bg-gradient-to-br from-primary via-primary to-primary/95 overflow-hidden">
-        {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             className="absolute -top-20 -right-20 w-80 h-80 bg-accent/10 rounded-full blur-3xl"
@@ -133,7 +106,6 @@ export default function NewsPageContent() {
 
       {/* News Grid */}
       <section className="py-20 bg-white relative overflow-hidden">
-        {/* Background decoration */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
 
@@ -178,13 +150,12 @@ export default function NewsPageContent() {
                         className="w-full h-full"
                       >
                         <Image
-                          src={article.image}
+                          src={article.image || '/images/placeholder.jpg'}
                           alt={article.title}
                           fill
                           className="object-cover"
                         />
                       </motion.div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       <div className="absolute top-4 left-4">
                         <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-primary text-xs font-semibold rounded-full shadow-md">
                           {article.category}
@@ -228,9 +199,7 @@ export default function NewsPageContent() {
         </div>
       </section>
 
-      {/* Video Section */}
       <VideoSection />
-
       <Footer />
     </main>
   );

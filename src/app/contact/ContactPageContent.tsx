@@ -68,16 +68,11 @@ export default function ContactPageContent() {
   return (
     <main className="min-h-screen">
       <Header />
-      
+
       {/* Hero Banner */}
       <section className="pt-24 pb-12 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="text-center"
-          >
+          <div className="text-center">
             <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4">
               Get in Touch
             </span>
@@ -87,7 +82,7 @@ export default function ContactPageContent() {
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Have questions or need assistance? We&apos;re here to help.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -97,13 +92,13 @@ export default function ContactPageContent() {
           <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
             {/* Contact Info */}
             <div className="lg:col-span-1 space-y-4">
-              {contactCards.map((item, index) => (
+              {contactCards.map((item) => (
                 <motion.div
                   key={item.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  transition={{ duration: 0.3 }}
                   className="flex gap-4 p-4 bg-muted/30 rounded-xl border border-border"
                 >
                   <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -125,19 +120,20 @@ export default function ContactPageContent() {
 
             {/* Contact Form */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.3, delay: 0.2 }}
               className="lg:col-span-2"
             >
               <div className="bg-muted/30 rounded-xl border border-border p-6 lg:p-8">
                 <h3 className="text-lg font-semibold text-foreground mb-6">Send us a Message</h3>
-                
+
                 {isSubmitted ? (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
                     className="flex flex-col items-center justify-center py-12 text-center"
                   >
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
@@ -265,15 +261,15 @@ export default function ContactPageContent() {
             <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">Regional Offices</h2>
             <p className="text-muted-foreground">Contact our regional offices across Ghana</p>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {regionalOffices.map((office, index) => (
+            {regionalOffices.map((office) => (
               <motion.div
                 key={office.region}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
+                transition={{ duration: 0.3 }}
                 className="p-5 bg-white rounded-xl border border-border"
               >
                 <h4 className="font-medium text-foreground">{office.region}</h4>

@@ -31,9 +31,10 @@ interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  height?: string;
 }
 
-export default function RichTextEditor({ value, onChange, placeholder = 'Write your content here...' }: RichTextEditorProps) {
+export default function RichTextEditor({ value, onChange, placeholder = 'Write your content here...', height }: RichTextEditorProps) {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -58,8 +59,8 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Write y
     content: value,
     editorProps: {
       attributes: {
-        class: 'prose prose-sm max-w-none focus:outline-none min-h-[250px] p-4',
-        placeholder: placeholder,
+        class: 'prose prose-sm max-w-none focus:outline-none p-4',
+        'data-placeholder': placeholder,
       },
     },
     onUpdate: ({ editor }) => {
@@ -279,7 +280,7 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Write y
       <style jsx global>{`
         .rich-text-editor .ProseMirror {
           outline: none;
-          min-height: 250px;
+          min-height: ${height || '250px'};
         }
         .rich-text-editor .ProseMirror p.is-editor-empty:first-child::before {
           color: #9ca3af;

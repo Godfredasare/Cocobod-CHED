@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import AdminShell from '@/components/admin/AdminShell';
-import { supabase } from '@/lib/supabase';
+import { ArrowLeft } from 'lucide-react';
 
 export default function VideoFormPage() {
   const router = useRouter();
@@ -15,196 +14,93 @@ export default function VideoFormPage() {
 
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    youtube_id: '',
-    thumbnail: '',
-    duration: '',
-    published_at: new Date().toISOString().split('T')[0],
+  const [form, setForm] = useState({
+    title: '', description: '', youtube_id: '', thumbnail: '',
+    duration: '', published_at: new Date().toISOString().split('T')[0],
   });
 
   useEffect(() => {
-    if (isEdit && videoId) fetchVideo();
-  }, [videoId]);
-
-  const fetchVideo = async () => {
-    try {
-      const { data, error } = await supabase.from('videos').select('*').eq('id', videoId).single();
-      if (error) throw error;
-      if (data) setFormData(data);
-    } catch (error) {
-      console.error('Error fetching video:', error);
-      router.push('/admin/videos');
-    } finally {
-      setLoading(false);
+    if (isEdit && videoId) {
+      fetch(`/api/admin/videos/${videoId}`)
+        .then(r => r.json())
+        .then(d => {
+          if (d.data) setForm({
+            title: d.data.title, description: d.data.description || '',
+            youtube_id: d.data.youtube_id, thumbnail: d.data.thumbnail || '',
+            duration: d.data.duration || '', published_at: d.data.published_at ? d.data.published_at.split('T')[0] : '',
+          });
+        })
+        .catch(() => router.push('/admin/videos'))
+        .finally(() => setLoading(false));
     }
-  };
+  }, [videoId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    try {
-      if (isEdit) {
-        const { error } = await supabase
-          .from('videos')
-          .update({ ...formData, updated_at: new Date().toISOString() })
-          .eq('id', videoId);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from('videos').insert([formData]);
-        if (error) throw error;
-      }
-      router.push('/admin/videos');
-    } catch (error) {
-      console.error('Error saving video:', error);
-    } finally {
-      setSaving(false);
-    }
+    await fetch(isEdit ? `/api/admin/videos/${videoId}` : '/api/admin/videos', {
+      method: isEdit ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form),
+    });
+    router.push('/admin/videos');
   };
 
   if (loading) {
-    return (
-      <AdminShell>
-        <div className="flex items-center justify-center h-96">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </div>
-      </AdminShell>
-    );
+    return <AdminShell><div className="flex justify-center py-20"><div className="w-6 h-6 border-2 border-gray-300 border-t-gray-900 rounded-full animate-spin" /></div></AdminShell>;
   }
 
   return (
     <AdminShell>
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center gap-4 mb-8">
-          <Link href="/admin/videos" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
-              {isEdit ? 'Edit Video' : 'Add Video'}
-            </h1>
-            <p className="text-muted-foreground mt-1">Add a YouTube video</p>
-          </div>
+      <div className="max-w-2xl">
+        <div className="flex items-center gap-3 mb-6">
+          <Link href="/admin/videos" className="p-1 text-gray-400 hover:text-gray-600"><ArrowLeft size={18} /></Link>
+          <h1 className="text-lg font-semibold text-gray-900">{isEdit ? 'Edit Video' : 'Add Video'}</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="bg-white border border-gray-200 rounded-md p-6 space-y-5">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Video Title <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                required
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                placeholder="Enter video title"
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
+              <input type="text" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Description</label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                rows={3}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
-                placeholder="Video description"
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none" />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                YouTube Video ID <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={formData.youtube_id}
-                onChange={(e) => setFormData({ ...formData, youtube_id: e.target.value })}
-                required
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                placeholder="e.g., dQw4w9WgXcQ"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                The ID from youtube.com/watch?v=<span className="font-medium">VIDEO_ID</span>
-              </p>
+              <label className="block text-sm font-medium text-gray-700 mb-1">YouTube Video ID *</label>
+              <input type="text" value={form.youtube_id} onChange={e => setForm({ ...form, youtube_id: e.target.value })} required className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" placeholder="dQw4w9WgXcQ" />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Duration</label>
-                <input
-                  type="text"
-                  value={formData.duration}
-                  onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                  placeholder="10:30"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+                <input type="text" value={form.duration} onChange={e => setForm({ ...form, duration: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" placeholder="10:30" />
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Published Date</label>
-                <input
-                  type="date"
-                  value={formData.published_at}
-                  onChange={(e) => setFormData({ ...formData, published_at: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Published</label>
+                <input type="date" value={form.published_at} onChange={e => setForm({ ...form, published_at: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
               </div>
-
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">Custom Thumbnail</label>
-                <input
-                  type="url"
-                  value={formData.thumbnail}
-                  onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                  placeholder="Optional"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Thumbnail URL</label>
+                <input type="url" value={form.thumbnail} onChange={e => setForm({ ...form, thumbnail: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent" />
               </div>
             </div>
 
-            {formData.youtube_id && (
-              <div className="p-4 bg-gray-50 rounded-xl">
-                <p className="text-sm font-medium text-foreground mb-2">Preview:</p>
-                <img
-                  src={`https://img.youtube.com/vi/${formData.youtube_id}/maxresdefault.jpg`}
-                  alt="Video thumbnail preview"
-                  className="w-full max-w-md rounded-lg"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                  }}
-                />
+            {form.youtube_id && (
+              <div className="bg-gray-50 rounded-md p-3">
+                <p className="text-xs text-gray-500 mb-2">Preview:</p>
+                <img src={`https://img.youtube.com/vi/${form.youtube_id}/maxresdefault.jpg`} alt="" className="w-full max-w-sm rounded" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
               </div>
             )}
           </div>
 
-          <div className="flex items-center justify-end gap-4">
-            <Link
-              href="/admin/videos"
-              className="px-6 py-3 bg-gray-100 text-foreground font-medium rounded-xl hover:bg-gray-200 transition-colors"
-            >
-              Cancel
-            </Link>
-            <button
-              type="submit"
-              disabled={saving}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-70"
-            >
-              {saving ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="w-5 h-5" />
-                  Save Video
-                </>
-              )}
-            </button>
+          <div className="flex justify-end gap-3">
+            <Link href="/admin/videos" className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200">Cancel</Link>
+            <button type="submit" disabled={saving} className="px-4 py-2 text-sm text-white bg-gray-900 rounded-md hover:bg-gray-800 disabled:opacity-50">{saving ? 'Saving...' : 'Save'}</button>
           </div>
         </form>
       </div>
