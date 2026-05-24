@@ -40,7 +40,7 @@ export async function PUT(
     const values: any[] = [];
 
     if (body.src !== undefined) { fields.push('src = ?'); values.push(body.src); }
-    if (body.alt !== undefined) { fields.push('alt = ?'); values.push(body.alt); }
+    if (body.alt !== undefined) { fields.push('alt = ?'); values.push(body.alt.substring(0, 255)); }
     if (body.category !== undefined) { fields.push('category = ?'); values.push(body.category); }
 
     if (fields.length === 0) {

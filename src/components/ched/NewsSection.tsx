@@ -80,7 +80,7 @@ export default function NewsSection() {
             transition={{ delay: 0.2 }}
             className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed"
           >
-            Stay informed about our latest programs, training sessions, 
+            Stay informed about our latest programs, training sessions, celebrations,
             and community engagement activities.
           </motion.p>
         </div>

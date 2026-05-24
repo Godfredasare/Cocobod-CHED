@@ -98,7 +98,7 @@ export default function NewsPageContent() {
               transition={{ delay: 0.3 }}
               className="text-xl text-white/90 leading-relaxed"
             >
-              Stay informed about our latest programs, training sessions, and community engagement activities.
+              Stay informed about our latest programs, training sessions, celebrations, and community engagement activities.
             </motion.p>
           </motion.div>
         </div>

@@ -8,7 +8,7 @@ import ImageUpload from '@/components/admin/ImageUpload';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import { ArrowLeft } from 'lucide-react';
 
-const categories = ['Extension Services', 'Disease Control', 'Training', 'Partnership', 'Achievement', 'Announcement'];
+const categories = ['Extension Services', 'Disease Control', 'Training', 'Partnership', 'Achievement', 'Announcement', 'Celebration'];
 
 export default function NewsFormPage() {
   const router = useRouter();

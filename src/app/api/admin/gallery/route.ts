@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 
     const [result] = await pool.query(
       'INSERT INTO gallery (src, alt, category) VALUES (?, ?, ?)',
-      [src, alt, category]
+      [src, alt.substring(0, 255), category]
     );
 
     const insertResult = result as any;
