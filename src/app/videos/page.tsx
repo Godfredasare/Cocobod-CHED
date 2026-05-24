@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Youtube, Facebook, Music2, Clock, Calendar, X, Search } from 'lucide-react';
+import { Play, Youtube, Facebook, Music2, Clock, Calendar, X } from 'lucide-react';
 import Header from '@/components/ched/Header';
 import Footer from '@/components/ched/Footer';
 import type { Video, VideoPlatform } from '@/types/database';
@@ -208,7 +208,6 @@ function VideoCard({
 export default function VideosPage() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -229,11 +228,6 @@ export default function VideosPage() {
 
     fetchVideos();
   }, []);
-
-  const filteredVideos = videos.filter(video =>
-    video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (video.description || '').toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   const openModal = (video: Video) => {
     setSelectedVideo(video);
@@ -258,21 +252,6 @@ export default function VideosPage() {
             transition={{ duration: 0.3 }}
             className="text-center"
           >
-            <div
-              className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-6"
-            >
-              <Play className="w-10 h-10 text-primary" />
-            </div>
-
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-              className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4"
-            >
-              Media Library
-            </motion.span>
-
             <motion.h1
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -292,24 +271,6 @@ export default function VideosPage() {
             </motion.p>
           </motion.div>
 
-          {/* Search and Stats */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.3 }}
-            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <div className="relative w-full sm:w-96">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search videos..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-              />
-            </div>
-          </motion.div>
         </div>
       </section>
 
@@ -317,7 +278,7 @@ export default function VideosPage() {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <div key={i} className="animate-pulse">
                   <div className="rounded-2xl overflow-hidden bg-muted">
@@ -331,9 +292,9 @@ export default function VideosPage() {
                 </div>
               ))}
             </div>
-          ) : filteredVideos.length > 0 ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredVideos.map((video) => (
+          ) : videos.length > 0 ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {videos.map((video) => (
                 <VideoCard key={video.id} video={video} onClick={() => openModal(video)} />
               ))}
             </div>
@@ -342,12 +303,8 @@ export default function VideosPage() {
               className="text-center py-20"
             >
               <Play className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
-              <h3 className="font-semibold text-xl text-foreground mb-2">
-                {searchQuery ? 'No Videos Found' : 'No Videos Available'}
-              </h3>
-              <p className="text-muted-foreground">
-                {searchQuery ? 'Try a different search term.' : 'Check back soon for new video content.'}
-              </p>
+              <h3 className="font-semibold text-xl text-foreground mb-2">No Videos Available</h3>
+              <p className="text-muted-foreground">Check back soon for new video content.</p>
             </div>
           )}
         </div>

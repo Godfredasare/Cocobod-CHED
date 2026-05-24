@@ -202,7 +202,7 @@ export default function CocoaPriceChart() {
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ type: 'spring', stiffness: 200 }}
+            transition={{ type: 'spring', stiffness: 300 }}
             className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4"
           >
             Market Insights
@@ -211,7 +211,7 @@ export default function CocoaPriceChart() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ type: 'spring', stiffness: 80, delay: 0.1 }}
+            transition={{ type: 'spring', stiffness: 150, delay: 0.05 }}
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4"
           >
             Cocoa Price per Bag
@@ -220,7 +220,7 @@ export default function CocoaPriceChart() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.1 }}
             className="text-muted-foreground text-lg max-w-2xl mx-auto"
           >
             Live cocoa prices from ICE Futures US - displayed per 64kg bag
@@ -232,7 +232,7 @@ export default function CocoaPriceChart() {
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ type: 'spring', stiffness: 60, damping: 15 }}
+          transition={{ type: 'spring', stiffness: 120, damping: 12 }}
           className="bg-white rounded-3xl border border-gray-200 shadow-xl overflow-hidden"
         >
           {/* Chart Header */}
@@ -241,7 +241,7 @@ export default function CocoaPriceChart() {
               <div className="flex items-center gap-4">
                 <motion.div
                   whileHover={{ rotate: [0, -10, 10, 0] }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.3 }}
                   className="w-14 h-14 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20"
                 >
                   <Package className="w-7 h-7 text-white" />
@@ -277,7 +277,7 @@ export default function CocoaPriceChart() {
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.15 }}
               >
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl lg:text-5xl font-bold text-foreground">
@@ -288,7 +288,7 @@ export default function CocoaPriceChart() {
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 }}
+                  transition={{ delay: 0.2 }}
                   className="text-lg text-primary font-semibold mt-1"
                 >
                   {formatCurrency(pricePerBag.ghs, 'GHS')} per bag
@@ -298,7 +298,7 @@ export default function CocoaPriceChart() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
+                transition={{ delay: 0.25, type: 'spring', stiffness: 300 }}
                 whileHover={{ scale: 1.02 }}
                 className={`flex items-center gap-3 px-5 py-3 rounded-xl ${
                   isPositive 
@@ -308,7 +308,7 @@ export default function CocoaPriceChart() {
               >
                 <motion.div
                   animate={{ y: [0, -3, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                  transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut' }}
                 >
                   {isPositive ? <TrendingUp size={22} /> : <TrendingDown size={22} />}
                 </motion.div>
@@ -360,7 +360,7 @@ export default function CocoaPriceChart() {
                       key={i}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      transition={{ delay: 0.1 * i }}
+                      transition={{ delay: 0.05 * i }}
                       x1={padding.left}
                       y1={padding.top + (graphHeight / 4) * i}
                       x2={padding.left + graphWidth}
@@ -376,7 +376,7 @@ export default function CocoaPriceChart() {
                       key={i}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 * i }}
+                      transition={{ delay: 0.05 * i }}
                       x={padding.left - 15}
                       y={padding.top + (graphHeight / 4) * i + 4}
                       fill="#6b7280"
@@ -413,7 +413,7 @@ export default function CocoaPriceChart() {
                   <motion.path
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ duration: 1, delay: 0.3 }}
+                    transition={{ duration: 0.5, delay: 0.15 }}
                     d={getAreaPath()}
                     fill="url(#chartGradient)"
                   />
@@ -422,7 +422,7 @@ export default function CocoaPriceChart() {
                   <motion.path
                     initial={{ pathLength: 0 }}
                     animate={{ pathLength: 1 }}
-                    transition={{ duration: 1.5, ease: 'easeOut', delay: 0.2 }}
+                    transition={{ duration: 0.8, ease: 'easeOut', delay: 0.1 }}
                     d={getChartPath()}
                     fill="none"
                     stroke="url(#lineGradient)"

@@ -46,12 +46,12 @@ function getCategoryTextColor(category: string): string {
 
 const cardVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.3 } }
+  visible: { opacity: 1, transition: { duration: 0.2 } }
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.3 } }
+  visible: { opacity: 1, transition: { duration: 0.2 } }
 };
 
 // Event Modal Component
@@ -298,7 +298,7 @@ export default function EventsSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }}
           >
             <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-3">
               What&apos;s Happening
@@ -315,7 +315,7 @@ export default function EventsSection() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.1 }}
           >
             <Link
               href="/events"
@@ -349,7 +349,7 @@ export default function EventsSection() {
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: true, margin: "-20px" }}
             className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             {upcomingEvents.map((event, index) => (

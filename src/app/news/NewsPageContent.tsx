@@ -15,7 +15,7 @@ const fadeInUp = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: 'spring', stiffness: 80, damping: 15 }
+    transition: { type: 'spring' as const, stiffness: 80, damping: 15 }
   }
 };
 
@@ -23,9 +23,9 @@ const cardVariants = {
   hidden: { opacity: 0, y: 50, scale: 0.95 },
   visible: (i: number) => ({
     opacity: 1, y: 0, scale: 1,
-    transition: { type: 'spring', stiffness: 70, damping: 12, delay: i * 0.08 }
+    transition: { type: 'spring' as const, stiffness: 70, damping: 12, delay: i * 0.08 }
   }),
-  hover: { y: -8, transition: { type: 'spring', stiffness: 400, damping: 20 } }
+  hover: { y: -8, transition: { type: 'spring' as const, stiffness: 400, damping: 20 } }
 };
 
 export default function NewsPageContent() {

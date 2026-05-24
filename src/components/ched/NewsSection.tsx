@@ -9,12 +9,12 @@ import { useRef, useState, useEffect } from 'react';
 
 const cardVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.3 } }
+  visible: { opacity: 1, transition: { duration: 0.2 } }
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.3 } }
+  visible: { opacity: 1, transition: { duration: 0.2 } }
 };
 
 export default function NewsSection() {
@@ -59,7 +59,7 @@ export default function NewsSection() {
           <motion.span
             initial={{ opacity: 0, scale: 0.9 }}
             animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }}
             className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4"
           >
             Latest News
@@ -68,7 +68,7 @@ export default function NewsSection() {
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
+            transition={{ duration: 0.2, delay: 0.05 }}
             className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-5"
           >
             News & Updates
@@ -77,7 +77,7 @@ export default function NewsSection() {
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.1 }}
             className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed"
           >
             Stay informed about our latest programs, training sessions, celebrations,
@@ -107,7 +107,7 @@ export default function NewsSection() {
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: true, margin: "-20px" }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 lg:gap-8"
           >
             {news.map((article, index) => (

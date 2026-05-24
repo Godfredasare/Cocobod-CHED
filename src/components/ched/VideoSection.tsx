@@ -8,12 +8,12 @@ import type { Video, VideoPlatform } from '@/types/database';
 
 const cardVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.3 } }
+  visible: { opacity: 1, transition: { duration: 0.2 } }
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.3 } }
+  visible: { opacity: 1, transition: { duration: 0.2 } }
 };
 
 function getEmbedUrl(video: Video): string {
@@ -191,7 +191,7 @@ function VideoCard({
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.2 }}
               className="absolute bottom-4 right-4 bg-black/80 text-white text-xs font-medium px-3 py-1.5 rounded-lg backdrop-blur-sm"
             >
               {video.duration}
@@ -277,7 +277,7 @@ export default function VideoSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }}
           >
             <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-3">
               <Play size={16} className="flex-shrink-0" />
@@ -295,7 +295,7 @@ export default function VideoSection() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.1 }}
             className="flex items-center gap-4"
           >
             <Link
@@ -328,7 +328,7 @@ export default function VideoSection() {
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: true, margin: "-20px" }}
             className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             {videos.map((video, index) => (

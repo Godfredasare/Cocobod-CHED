@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, type Variants } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight, Target, Eye, Heart, Shield, Leaf, Users, Lightbulb, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
@@ -41,13 +41,13 @@ const services = [
 // Animation variants
 const slideIn = {
   hidden: { opacity: 0, x: -60 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     x: 0,
     transition: {
-      type: 'spring',
-      stiffness: 60,
-      damping: 15,
+      type: 'spring' as const,
+      stiffness: 120,
+      damping: 12,
       mass: 1
     }
   }
@@ -55,13 +55,13 @@ const slideIn = {
 
 const slideInRight = {
   hidden: { opacity: 0, x: 60 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     x: 0,
     transition: {
-      type: 'spring',
-      stiffness: 60,
-      damping: 15,
+      type: 'spring' as const,
+      stiffness: 120,
+      damping: 12,
       mass: 1
     }
   }
@@ -69,13 +69,13 @@ const slideInRight = {
 
 const scaleIn = {
   hidden: { opacity: 0, scale: 0.8, y: 20 },
-  visible: { 
-    opacity: 1, 
-    scale: 1, 
+  visible: {
+    opacity: 1,
+    scale: 1,
     y: 0,
     transition: {
-      type: 'spring',
-      stiffness: 100,
+      type: 'spring' as const,
+      stiffness: 200,
       damping: 12
     }
   }
@@ -86,22 +86,22 @@ const staggerContainer = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.1
+      staggerChildren: 0.08,
+      delayChildren: 0.05
     }
   }
 };
 
 const cardHover = {
-  rest: { 
+  rest: {
     scale: 1,
     y: 0
   },
-  hover: { 
+  hover: {
     scale: 1.02,
     y: -5,
     transition: {
-      type: 'spring',
+      type: 'spring' as const,
       stiffness: 400,
       damping: 20
     }
@@ -127,10 +127,10 @@ export default function AboutSection() {
             <motion.div
               className="relative h-[350px] sm:h-[400px] lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl"
               whileHover={{ scale: 1.01 }}
-              transition={{ type: 'spring', stiffness: 300 }}
+              transition={{ type: 'spring', stiffness: 500 }}
             >
               <Image
-                src="/images/about-profile.png"
+                src="/images/about-profile.jpg"
                 alt="Cocoa farming in Ghana"
                 fill
                 className="object-cover"
@@ -141,12 +141,12 @@ export default function AboutSection() {
               <motion.div
                 className="absolute top-4 left-4 w-20 h-20 border-2 border-white/20 rounded-xl"
                 animate={{ rotate: [0, 5, 0, -5, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
               />
               <motion.div
                 className="absolute bottom-4 right-4 w-16 h-16 border-2 border-accent/30 rounded-full"
                 animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
               />
             </motion.div>
 
@@ -154,10 +154,10 @@ export default function AboutSection() {
             <motion.div
               initial={{ opacity: 0, y: 40, x: 20 }}
               animate={isInView ? { opacity: 1, y: 0, x: 0 } : { opacity: 0, y: 40, x: 20 }}
-              transition={{ 
-                delay: 0.4,
+              transition={{
+                delay: 0.2,
                 type: 'spring',
-                stiffness: 80,
+                stiffness: 150,
                 damping: 12
               }}
               className="absolute -bottom-6 -right-6 lg:right-6 bg-white rounded-2xl shadow-2xl p-6 border border-border"
@@ -179,7 +179,7 @@ export default function AboutSection() {
                     className="text-2xl sm:text-3xl font-bold text-primary"
                     initial={{ opacity: 0 }}
                     animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-                    transition={{ delay: 0.6 }}
+                    transition={{ delay: 0.3 }}
                   >
                     800K+
                   </motion.p>
@@ -206,7 +206,7 @@ export default function AboutSection() {
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ delay: 0.1 }}
+              transition={{ delay: 0.05 }}
               className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6 leading-tight"
             >
               Empowering Cocoa Farmers Since{' '}
@@ -216,7 +216,7 @@ export default function AboutSection() {
                   className="absolute -bottom-2 left-0 w-full h-1 bg-accent rounded-full"
                   initial={{ scaleX: 0 }}
                   animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
-                  transition={{ delay: 0.5, duration: 0.6 }}
+                  transition={{ delay: 0.25, duration: 0.3 }}
                 />
               </span>
             </motion.h2>
@@ -224,7 +224,7 @@ export default function AboutSection() {
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.1 }}
               className="text-muted-foreground text-lg mb-6 leading-relaxed"
             >
               The Cocoa Health and Extension Division (CHED) is a specialized division of Ghana Cocoa Board,
@@ -235,7 +235,7 @@ export default function AboutSection() {
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.15 }}
               className="text-muted-foreground mb-8 leading-relaxed"
             >
               Our team of dedicated extension officers provides hands-on support, training, and resources
@@ -247,7 +247,7 @@ export default function AboutSection() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.2 }}
               className="grid sm:grid-cols-2 gap-4 mb-8"
             >
               {[
@@ -258,7 +258,7 @@ export default function AboutSection() {
                   key={item.title}
                   initial={{ opacity: 0, x: index === 0 ? -20 : 20 }}
                   animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: index === 0 ? -20 : 20 }}
-                  transition={{ delay: 0.5 + index * 0.1 }}
+                  transition={{ delay: 0.25 + index * 0.05 }}
                   whileHover={{ y: -3, boxShadow: "0 10px 40px -10px rgba(0, 0, 0, 0.1)" }}
                   className="bg-gradient-to-br from-muted/50 to-muted/30 rounded-xl p-5 border border-border transition-all"
                 >
@@ -276,7 +276,7 @@ export default function AboutSection() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ delay: 0.6 }}
+              transition={{ delay: 0.3 }}
             >
               <Link
                 href="/about"
@@ -294,7 +294,7 @@ export default function AboutSection() {
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
+          viewport={{ once: true, margin: "-20px" }}
           className="mb-20"
         >
           <motion.div 
@@ -328,7 +328,7 @@ export default function AboutSection() {
                   <motion.div
                     className="w-14 h-14 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl flex items-center justify-center mb-5"
                     whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 0.3 }}
                   >
                     <value.icon className="w-7 h-7 text-primary" />
                   </motion.div>
@@ -344,8 +344,8 @@ export default function AboutSection() {
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ type: 'spring', stiffness: 60, damping: 15 }}
+          viewport={{ once: true, margin: "-20px" }}
+          transition={{ type: 'spring', stiffness: 120, damping: 12 }}
           className="bg-gradient-to-br from-primary via-primary to-primary/95 rounded-3xl overflow-hidden relative"
         >
           {/* Background decoration */}
@@ -353,12 +353,12 @@ export default function AboutSection() {
             <motion.div
               className="absolute -top-20 -right-20 w-64 h-64 bg-accent/10 rounded-full blur-3xl"
               animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-              transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
             />
             <motion.div
               className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/5 rounded-full blur-3xl"
               animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.4, 0.2] }}
-              transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
             />
           </div>
 
@@ -367,7 +367,7 @@ export default function AboutSection() {
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.1 }}
             >
               <span className="inline-block px-4 py-1.5 bg-white/10 text-white text-sm font-semibold rounded-full mb-6 backdrop-blur-sm">
                 What We Do
@@ -421,7 +421,7 @@ export default function AboutSection() {
                     initial={{ scale: 0 }}
                     whileInView={{ scale: 1 }}
                     viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 + 0.3, type: 'spring', stiffness: 400 }}
+                    transition={{ delay: index * 0.05 + 0.15, type: 'spring', stiffness: 400 }}
                   >
                     <CheckCircle className="w-5 h-5 text-accent flex-shrink-0" />
                   </motion.div>
