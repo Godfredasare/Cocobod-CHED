@@ -186,7 +186,7 @@ export default function GalleryPageContent() {
           )}
 
           {!loading && filteredImages.length > 0 && (
-            <p
+            <motion.p
               className="text-center text-sm text-muted-foreground mt-10"
             >
               Showing {filteredImages.length} photo{filteredImages.length !== 1 ? 's' : ''}

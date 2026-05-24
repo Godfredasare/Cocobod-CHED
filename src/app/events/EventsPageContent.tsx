@@ -276,7 +276,7 @@ function EventCard({
           <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
         </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -559,10 +559,10 @@ export default function EventsPageContent() {
           {/* Upcoming Events */}
           <section className="py-8 sm:py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
             <motion.div
-              variants={fadeInUp}
-              initial="hidden"
-              whileInView="visible"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.3 }}
               className="flex items-center justify-between mb-8"
             >
               <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Upcoming Events</h2>

@@ -30,21 +30,21 @@ export default function AdminShell({ children }: AdminShellProps) {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div onClick={() => setSidebarOpen(false)} className="fixed inset-0 bg-black/40 z-40 lg:hidden" />
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-200 transform transition-transform lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed top-0 left-0 z-50 h-full w-64 bg-card border-r border-border transform transition-transform lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="h-14 flex items-center justify-between px-4 border-b border-gray-100">
-            <Link href="/admin" className="font-semibold text-sm text-gray-900">
+          <div className="h-14 flex items-center justify-between px-4 border-b border-border">
+            <Link href="/admin" className="font-semibold text-sm text-foreground">
               CHED Admin
             </Link>
-            <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-1 text-gray-400 hover:text-gray-600">
+            <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-1 text-muted-foreground hover:text-foreground">
               <X size={18} />
             </button>
           </div>
@@ -59,8 +59,8 @@ export default function AdminShell({ children }: AdminShellProps) {
                   href={item.href}
                   className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors ${
                     isActive
-                      ? 'bg-gray-900 text-white'
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:bg-secondary'
                   }`}
                 >
                   <item.icon size={16} />
@@ -71,12 +71,12 @@ export default function AdminShell({ children }: AdminShellProps) {
           </nav>
 
           {/* Footer */}
-          <div className="border-t border-gray-100 px-3 py-3 space-y-1">
-            <Link href="/" target="_blank" className="flex items-center gap-2 px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 rounded-md transition-colors">
+          <div className="border-t border-border px-3 py-3 space-y-1">
+            <Link href="/" target="_blank" className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:bg-secondary rounded-md transition-colors">
               <ChevronLeft size={14} />
               View Website
             </Link>
-            <button onClick={signOut} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors">
+            <button onClick={signOut} className="w-full flex items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-destructive/10 rounded-md transition-colors">
               <LogOut size={14} />
               Sign Out
             </button>
@@ -87,11 +87,11 @@ export default function AdminShell({ children }: AdminShellProps) {
       {/* Main */}
       <div className="lg:ml-64">
         {/* Top bar */}
-        <header className="h-14 bg-white border-b border-gray-100 flex items-center px-4 sticky top-0 z-30">
-          <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-1 text-gray-500 hover:text-gray-700 mr-3">
+        <header className="h-14 bg-card border-b border-border flex items-center px-4 sticky top-0 z-30">
+          <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-1 text-muted-foreground hover:text-foreground mr-3">
             <Menu size={20} />
           </button>
-          <span className="text-xs text-gray-400 ml-auto">{user?.email}</span>
+          <span className="text-xs text-muted-foreground ml-auto">{user?.email}</span>
         </header>
 
         {/* Content */}

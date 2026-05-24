@@ -1,11 +1,10 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Youtube, Clock, Calendar, ExternalLink } from 'lucide-react';
+import { Play, Youtube, Facebook, Music2, Clock, Calendar, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import type { Video } from '@/types/database';
+import type { Video, VideoPlatform } from '@/types/database';
 
 const cardVariants = {
   hidden: { opacity: 0 },
@@ -16,6 +15,56 @@ const staggerContainer = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0.3 } }
 };
+
+function getEmbedUrl(video: Video): string {
+  const platform: VideoPlatform = video.platform || 'youtube';
+  switch (platform) {
+    case 'facebook':
+      const fbId = video.youtube_id.includes('facebook.com') ? video.youtube_id : `https://www.facebook.com/watch/?v=${video.youtube_id}`;
+      return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(fbId)}&show_text=false&width=734`;
+    case 'tiktok':
+      const tkId = video.youtube_id.replace('https://', '').replace('www.tiktok.com/', '').replace('tiktok.com/', '');
+      const cleanId = tkId.includes('/video/') ? tkId.split('/video/')[1].split('?')[0] : video.youtube_id;
+      return `https://www.tiktok.com/embed/v2/${cleanId}`;
+    case 'youtube':
+    default:
+      return `https://www.youtube.com/embed/${video.youtube_id}?autoplay=1&rel=0`;
+  }
+}
+
+function getThumbnailUrl(video: Video): string {
+  const platform: VideoPlatform = video.platform || 'youtube';
+  if (platform === 'youtube') {
+    return `https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg`;
+  }
+  return video.thumbnail || '';
+}
+
+function getThumbnailFallback(video: Video): string {
+  const platform: VideoPlatform = video.platform || 'youtube';
+  if (platform === 'youtube') {
+    return `https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`;
+  }
+  return '';
+}
+
+function getPlatformIcon(platform: VideoPlatform) {
+  switch (platform) {
+    case 'facebook': return <Facebook size={16} className="flex-shrink-0" />;
+    case 'tiktok': return <Music2 size={16} className="flex-shrink-0" />;
+    case 'youtube':
+    default: return <Youtube size={16} className="flex-shrink-0" />;
+  }
+}
+
+function getPlatformBadgeColor(platform: VideoPlatform): string {
+  switch (platform) {
+    case 'facebook': return 'bg-blue-500/10 text-blue-500';
+    case 'tiktok': return 'bg-gray-800/10 text-gray-700';
+    case 'youtube':
+    default: return 'bg-red-500/10 text-red-500';
+  }
+}
 
 // Video Modal Component
 function VideoModal({
@@ -28,6 +77,9 @@ function VideoModal({
   onClose: () => void;
 }) {
   if (!video) return null;
+
+  const platform: VideoPlatform = video.platform || 'youtube';
+  const embedUrl = getEmbedUrl(video);
 
   return (
     <AnimatePresence>
@@ -45,13 +97,23 @@ function VideoModal({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative pt-[56.25%] bg-black">
-              <iframe
-                src={`https://www.youtube.com/embed/${video.youtube_id}?autoplay=1&rel=0`}
-                title={video.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="absolute inset-0 w-full h-full"
-              />
+              {platform === 'youtube' || platform === 'tiktok' ? (
+                <iframe
+                  src={embedUrl}
+                  title={video.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute inset-0 w-full h-full"
+                />
+              ) : (
+                <iframe
+                  src={embedUrl}
+                  title={video.title}
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                  className="absolute inset-0 w-full h-full"
+                />
+              )}
             </div>
             <div className="p-6">
               <h3 className="text-xl font-bold text-foreground mb-2">{video.title}</h3>
@@ -74,6 +136,11 @@ function VideoCard({
   index: number;
   onClick: () => void;
 }) {
+  const platform: VideoPlatform = video.platform || 'youtube';
+  const thumbnailUrl = getThumbnailUrl(video);
+  const fallbackUrl = getThumbnailFallback(video);
+  const hasThumbnail = !!thumbnailUrl;
+
   return (
     <motion.div
       variants={cardVariants}
@@ -87,16 +154,25 @@ function VideoCard({
         {/* Thumbnail */}
         <div className="relative pt-[56.25%] bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden flex-shrink-0">
           <div className="absolute inset-0 hover:scale-[1.02] transition-transform duration-300">
-            <Image
-              src={`https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg`}
-              alt={video.title}
-              fill
-              className="object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = `https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`;
-              }}
-            />
+            {hasThumbnail ? (
+              <img
+                src={thumbnailUrl}
+                alt={video.title}
+                className="absolute inset-0 w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  if (fallbackUrl) {
+                    target.src = fallbackUrl;
+                  } else {
+                    target.style.display = 'none';
+                  }
+                }}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                {getPlatformIcon(platform)}
+              </div>
+            )}
           </div>
 
           {/* Gradient overlay */}
@@ -110,15 +186,22 @@ function VideoCard({
           </div>
 
           {/* Duration Badge */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3 }}
-            className="absolute bottom-4 right-4 bg-black/80 text-white text-xs font-medium px-3 py-1.5 rounded-lg backdrop-blur-sm"
-          >
-            {video.duration}
-          </motion.div>
+          {video.duration && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3 }}
+              className="absolute bottom-4 right-4 bg-black/80 text-white text-xs font-medium px-3 py-1.5 rounded-lg backdrop-blur-sm"
+            >
+              {video.duration}
+            </motion.div>
+          )}
+
+          {/* Platform Badge */}
+          <div className={`absolute top-4 left-4 px-2.5 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${getPlatformBadgeColor(platform)}`}>
+            {platform === 'youtube' ? 'YouTube' : platform === 'facebook' ? 'Facebook' : 'TikTok'}
+          </div>
         </div>
 
         {/* Content */}
@@ -130,11 +213,11 @@ function VideoCard({
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Clock size={12} className="text-primary" />
-              <span>{video.duration}</span>
+              <span>{video.duration || 'Video'}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Calendar size={12} className="text-primary" />
-              <span>{new Date(video.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+              <span>{video.published_at ? new Date(video.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}</span>
             </div>
           </div>
         </div>
@@ -149,16 +232,13 @@ export default function VideoSection() {
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const channelUrl = "https://www.youtube.com/@CHEDGhanaCocoaBoard";
-
   useEffect(() => {
     async function fetchVideos() {
       try {
         const res = await fetch('/api/videos');
         if (res.ok) {
           const { data } = await res.json();
-          // Client-side limit to 3 for homepage
-          setVideos((data || []).slice(0, 3));
+          setVideos((data || []).slice(0, 4));
         }
       } catch (error) {
         console.error('Error fetching videos:', error);
@@ -180,7 +260,6 @@ export default function VideoSection() {
     setTimeout(() => setSelectedVideo(null), 300);
   };
 
-  // Don't render anything if loading is complete and no videos
   if (!loading && videos.length === 0) {
     return null;
   }
@@ -200,12 +279,12 @@ export default function VideoSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.3 }}
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-500/10 text-red-500 text-sm font-semibold rounded-full mb-3">
-              <Youtube size={16} className="flex-shrink-0" />
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-3">
+              <Play size={16} className="flex-shrink-0" />
               <span>Watch & Learn</span>
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground">
-              Featured Videos
+              Latest Videos
             </h2>
             <p className="text-muted-foreground text-lg mt-3 max-w-xl leading-relaxed">
               Watch informative videos about our programs, farmer success stories, and cocoa farming best practices.
@@ -231,8 +310,8 @@ export default function VideoSection() {
 
         {/* Videos Grid */}
         {loading ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
               <div key={i} className="animate-pulse">
                 <div className="rounded-2xl overflow-hidden bg-muted">
                   <div className="pt-[56.25%] bg-muted" />
@@ -250,32 +329,11 @@ export default function VideoSection() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
-            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             {videos.map((video, index) => (
               <VideoCard key={video.id} video={video} index={index} onClick={() => openModal(video)} />
             ))}
-          </motion.div>
-        )}
-
-        {/* Subscribe CTA */}
-        {!loading && videos.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3, duration: 0.3 }}
-            className="mt-12 text-center"
-          >
-            <a
-              href={channelUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-8 py-4 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 hover:scale-[1.02] active:scale-[1.00] transition-all duration-300 shadow-lg shadow-red-500/20"
-            >
-              <Youtube size={22} />
-              <span>Subscribe to Our Channel</span>
-            </a>
           </motion.div>
         )}
       </div>

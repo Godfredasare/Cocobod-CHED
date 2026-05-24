@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function AdminLoginPage() {
@@ -23,21 +24,31 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-muted p-4">
       <div className="w-full max-w-sm">
-        <div className="bg-white border border-gray-200 rounded-lg p-8">
-          <h1 className="text-lg font-semibold text-gray-900 mb-1">Admin Login</h1>
-          <p className="text-sm text-gray-500 mb-6">Sign in to the CHED dashboard</p>
+        <div className="bg-card border border-border rounded-lg p-8">
+          <div className="flex justify-center mb-5">
+            <Image
+              src="/images/ched-logo.png"
+              alt="CHED Logo"
+              width={64}
+              height={64}
+              className="h-16 w-auto"
+              priority
+            />
+          </div>
+          <h1 className="text-lg font-semibold text-foreground mb-1 text-center">Admin Login</h1>
+          <p className="text-sm text-muted-foreground mb-6 text-center">Sign in to the CHED dashboard</p>
 
           {error && (
-            <div className="mb-5 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-600">
+            <div className="mb-5 p-3 bg-destructive/10 border border-destructive/20 rounded-md text-sm text-destructive">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1">Email</label>
               <input
                 id="email"
                 type="email"
@@ -45,12 +56,12 @@ export default function AdminLoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="admin@ched.gov.gh"
-                className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                className="w-full px-3 py-2 border border-input rounded-md text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label htmlFor="password" className="block text-sm font-medium text-foreground mb-1">Password</label>
               <input
                 id="password"
                 type="password"
@@ -58,14 +69,14 @@ export default function AdminLoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Enter password"
-                className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                className="w-full px-3 py-2 border border-input rounded-md text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-gray-800 disabled:opacity-50 transition-colors"
+              className="w-full py-2.5 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
@@ -73,7 +84,7 @@ export default function AdminLoginPage() {
         </div>
 
         <p className="text-center mt-4">
-          <Link href="/" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
+          <Link href="/" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
             Back to Website
           </Link>
         </p>

@@ -103,17 +103,17 @@ export default function ImageUpload({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">
-        {label} {required && <span className="text-red-500">*</span>}
+      <label className="block text-sm font-medium text-foreground">
+        {label} {required && <span className="text-destructive">*</span>}
       </label>
 
       <div
         className={`relative border-2 border-dashed rounded-md transition-colors ${
           dragActive
-            ? 'border-gray-900 bg-gray-50'
+            ? 'border-primary bg-muted'
             : value
-            ? 'border-gray-200'
-            : 'border-gray-200 hover:border-gray-400'
+            ? 'border-border'
+            : 'border-border hover:border-muted-foreground'
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -122,8 +122,8 @@ export default function ImageUpload({
       >
         {uploading ? (
           <div className="flex flex-col items-center justify-center py-8">
-            <Loader2 className="w-8 h-8 text-gray-400 animate-spin mb-2" />
-            <p className="text-sm text-gray-500">Uploading...</p>
+            <Loader2 className="w-8 h-8 text-muted-foreground animate-spin mb-2" />
+            <p className="text-sm text-muted-foreground">Uploading...</p>
           </div>
         ) : value ? (
           <div className="relative group">
@@ -141,7 +141,7 @@ export default function ImageUpload({
                   <button
                     type="button"
                     onClick={handleRemove}
-                    className="absolute -top-2 -right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                    className="absolute -top-2 -right-2 w-7 h-7 bg-destructive text-primary-foreground rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/90"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -149,7 +149,7 @@ export default function ImageUpload({
               </div>
             )}
             <div className="px-4 pb-4">
-              <p className="text-xs text-gray-400 truncate max-w-md">{value}</p>
+              <p className="text-xs text-muted-foreground truncate max-w-md">{value}</p>
             </div>
           </div>
         ) : (
@@ -157,13 +157,13 @@ export default function ImageUpload({
             onClick={() => inputRef.current?.click()}
             className="flex flex-col items-center justify-center py-8 cursor-pointer"
           >
-            <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center mb-3">
-              <Upload className="w-6 h-6 text-gray-500" />
+            <div className="w-12 h-12 bg-secondary rounded-md flex items-center justify-center mb-3">
+              <Upload className="w-6 h-6 text-muted-foreground" />
             </div>
-            <p className="text-sm font-medium text-gray-700 mb-1">
+            <p className="text-sm font-medium text-foreground mb-1">
               Drag and drop or click to upload
             </p>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-muted-foreground">
               JPEG, PNG, GIF or WebP (max 5MB)
             </p>
           </div>
@@ -179,7 +179,7 @@ export default function ImageUpload({
       </div>
 
       {error && (
-        <p className="text-sm text-red-500">{error}</p>
+        <p className="text-sm text-destructive">{error}</p>
       )}
     </div>
   );

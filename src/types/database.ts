@@ -47,11 +47,14 @@ export interface EventInput {
 }
 
 // Videos
+export type VideoPlatform = 'youtube' | 'facebook' | 'tiktok';
+
 export interface Video {
   id: number;
   title: string;
   description: string | null;
   youtube_id: string;
+  platform: VideoPlatform;
   thumbnail: string | null;
   duration: string | null;
   published_at: string | null;
@@ -63,6 +66,7 @@ export interface VideoInput {
   title: string;
   description?: string;
   youtube_id: string;
+  platform?: VideoPlatform;
   thumbnail?: string;
   duration?: string;
   published_at?: string;

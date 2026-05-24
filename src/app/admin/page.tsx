@@ -33,20 +33,20 @@ export default function AdminDashboard() {
 
   return (
     <AdminShell>
-      <h1 className="text-lg font-semibold text-gray-900 mb-6">Dashboard</h1>
+      <h1 className="text-lg font-semibold text-foreground mb-6">Dashboard</h1>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {links.map((item) => (
           <Link
             key={item.label}
             href={item.href}
-            className="bg-white border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors"
+            className="bg-card border border-border rounded-lg p-5 hover:border-primary/30 transition-colors"
           >
             <div className="flex items-center gap-3 mb-3">
-              <item.icon size={18} className="text-gray-500" />
-              <span className="text-sm text-gray-500">{item.label}</span>
+              <item.icon size={18} className="text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">{item.label}</span>
             </div>
-            <span className="text-2xl font-semibold text-gray-900">
+            <span className="text-2xl font-semibold text-foreground">
               {loading ? '-' : item.count(stats)}
             </span>
           </Link>

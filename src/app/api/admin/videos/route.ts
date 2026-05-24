@@ -21,15 +21,15 @@ export async function POST(request: NextRequest) {
   try {
     await requireAuth();
     const body: VideoInput = await request.json();
-    const { title, description, youtube_id, thumbnail, duration, published_at } = body;
+    const { title, description, youtube_id, platform, thumbnail, duration, published_at } = body;
 
     if (!title || !youtube_id) {
-      return NextResponse.json({ error: 'Title and YouTube ID are required' }, { status: 400 });
+      return NextResponse.json({ error: 'Title and Video ID are required' }, { status: 400 });
     }
 
     const [result] = await pool.query(
-      'INSERT INTO videos (title, description, youtube_id, thumbnail, duration, published_at) VALUES (?, ?, ?, ?, ?, ?)',
-      [title, description || null, youtube_id, thumbnail || null, duration || null, published_at || null]
+      'INSERT INTO videos (title, description, youtube_id, platform, thumbnail, duration, published_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [title, description || null, youtube_id, platform || 'youtube', thumbnail || null, duration || null, published_at || null]
     );
 
     const insertResult = result as any;

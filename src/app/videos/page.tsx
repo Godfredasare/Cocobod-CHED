@@ -2,13 +2,52 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Youtube, Clock, Calendar, X, Search } from 'lucide-react';
-import Image from 'next/image';
+import { Play, Youtube, Facebook, Music2, Clock, Calendar, X, Search } from 'lucide-react';
 import Header from '@/components/ched/Header';
 import Footer from '@/components/ched/Footer';
-import type { Video } from '@/types/database';
+import type { Video, VideoPlatform } from '@/types/database';
 
-// Simplified animation variants
+// Helpers
+function getEmbedUrl(video: Video): string {
+  const platform: VideoPlatform = video.platform || 'youtube';
+  switch (platform) {
+    case 'facebook':
+      const fbId = video.youtube_id.includes('facebook.com') ? video.youtube_id : `https://www.facebook.com/watch/?v=${video.youtube_id}`;
+      return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(fbId)}&show_text=false&width=734`;
+    case 'tiktok':
+      const tkId = video.youtube_id.replace('https://', '').replace('www.tiktok.com/', '').replace('tiktok.com/', '');
+      const cleanId = tkId.includes('/video/') ? tkId.split('/video/')[1].split('?')[0] : video.youtube_id;
+      return `https://www.tiktok.com/embed/v2/${cleanId}`;
+    case 'youtube':
+    default:
+      return `https://www.youtube.com/embed/${video.youtube_id}?autoplay=1&rel=0`;
+  }
+}
+
+function getThumbnailUrl(video: Video): string {
+  const platform: VideoPlatform = video.platform || 'youtube';
+  if (platform === 'youtube') {
+    return `https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg`;
+  }
+  return video.thumbnail || '';
+}
+
+function getThumbnailFallback(video: Video): string {
+  const platform: VideoPlatform = video.platform || 'youtube';
+  if (platform === 'youtube') {
+    return `https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`;
+  }
+  return '';
+}
+
+function getPlatformBadgeColor(platform: VideoPlatform): string {
+  switch (platform) {
+    case 'facebook': return 'bg-blue-500/10 text-blue-500';
+    case 'tiktok': return 'bg-gray-800/10 text-gray-700';
+    case 'youtube':
+    default: return 'bg-red-500/10 text-red-500';
+  }
+}
 
 // Video Modal Component
 function VideoModal({
@@ -21,6 +60,9 @@ function VideoModal({
   onClose: () => void;
 }) {
   if (!video) return null;
+
+  const platform: VideoPlatform = video.platform || 'youtube';
+  const embedUrl = getEmbedUrl(video);
 
   return (
     <AnimatePresence>
@@ -41,7 +83,6 @@ function VideoModal({
             className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
             <button
               onClick={onClose}
               className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center text-foreground hover:bg-white transition-colors shadow-lg hover:scale-110 active:scale-95"
@@ -49,10 +90,9 @@ function VideoModal({
               <X size={20} />
             </button>
 
-            {/* Video Player */}
             <div className="relative pt-[56.25%] bg-black">
               <iframe
-                src={`https://www.youtube.com/embed/${video.youtube_id}?autoplay=1&rel=0`}
+                src={embedUrl}
                 title={video.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -60,18 +100,17 @@ function VideoModal({
               />
             </div>
 
-            {/* Video Info */}
             <div className="p-6">
               <h3 className="text-xl font-bold text-foreground mb-2">{video.title}</h3>
               <p className="text-muted-foreground leading-relaxed">{video.description}</p>
               <div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1.5">
                   <Clock size={14} className="text-primary" />
-                  <span>{video.duration}</span>
+                  <span>{video.duration || 'Video'}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Calendar size={14} className="text-primary" />
-                  <span>{new Date(video.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                  <span>{video.published_at ? new Date(video.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}</span>
                 </div>
               </div>
             </div>
@@ -90,6 +129,11 @@ function VideoCard({
   video: Video;
   onClick: () => void;
 }) {
+  const platform: VideoPlatform = video.platform || 'youtube';
+  const thumbnailUrl = getThumbnailUrl(video);
+  const fallbackUrl = getThumbnailFallback(video);
+  const hasThumbnail = !!thumbnailUrl;
+
   return (
     <div
       className="group cursor-pointer h-full transition-all duration-300 hover:-translate-y-1"
@@ -99,31 +143,43 @@ function VideoCard({
         {/* Thumbnail */}
         <div className="relative pt-[56.25%] bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden flex-shrink-0">
           <div className="absolute inset-0 group-hover:scale-105 transition-transform duration-300">
-            <Image
-              src={`https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg`}
-              alt={video.title}
-              fill
-              className="object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = `https://img.youtube.com/vi/${video.youtube_id}/hqdefault.jpg`;
-              }}
-            />
+            {hasThumbnail ? (
+              <img
+                src={thumbnailUrl}
+                alt={video.title}
+                className="absolute inset-0 w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  if (fallbackUrl) {
+                    target.src = fallbackUrl;
+                  } else {
+                    target.style.display = 'none';
+                  }
+                }}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-muted">
+                <Play size={48} className="text-muted-foreground/30" />
+              </div>
+            )}
           </div>
 
-          {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
-          {/* Play Button Overlay */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-xl group-hover:scale-110 active:scale-95 transition-transform">
               <Play className="w-7 h-7 text-white fill-white ml-1" />
             </div>
           </div>
 
-          {/* Duration Badge */}
-          <div className="absolute bottom-4 right-4 bg-black/80 text-white text-xs font-medium px-3 py-1.5 rounded-lg backdrop-blur-sm">
-            {video.duration}
+          {video.duration && (
+            <div className="absolute bottom-4 right-4 bg-black/80 text-white text-xs font-medium px-3 py-1.5 rounded-lg backdrop-blur-sm">
+              {video.duration}
+            </div>
+          )}
+
+          <div className={`absolute top-4 left-4 px-2.5 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${getPlatformBadgeColor(platform)}`}>
+            {platform === 'youtube' ? 'YouTube' : platform === 'facebook' ? 'Facebook' : 'TikTok'}
           </div>
         </div>
 
@@ -136,11 +192,11 @@ function VideoCard({
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Clock size={12} className="text-primary" />
-              <span>{video.duration}</span>
+              <span>{video.duration || 'Video'}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Calendar size={12} className="text-primary" />
-              <span>{new Date(video.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+              <span>{video.published_at ? new Date(video.published_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}</span>
             </div>
           </div>
         </div>
@@ -155,8 +211,6 @@ export default function VideosPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const channelUrl = "https://www.youtube.com/@CHEDGhanaCocoaBoard";
 
   useEffect(() => {
     async function fetchVideos() {
@@ -178,7 +232,7 @@ export default function VideosPage() {
 
   const filteredVideos = videos.filter(video =>
     video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    video.description.toLowerCase().includes(searchQuery.toLowerCase())
+    (video.description || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const openModal = (video: Video) => {
@@ -194,9 +248,9 @@ export default function VideosPage() {
   return (
     <main className="min-h-screen bg-white">
       <Header />
-      
+
       {/* Hero Section */}
-      <section className="pt-28 pb-12 bg-gradient-to-br from-red-50 via-white to-primary/5">
+      <section className="pt-28 pb-12 bg-gradient-to-br from-primary/5 via-white to-muted/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0 }}
@@ -205,16 +259,16 @@ export default function VideosPage() {
             className="text-center"
           >
             <div
-              className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-500/10 mb-6"
+              className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-6"
             >
-              <Youtube className="w-10 h-10 text-red-500" />
+              <Play className="w-10 h-10 text-primary" />
             </div>
 
             <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
-              className="inline-block px-4 py-1.5 bg-red-500/10 text-red-500 text-sm font-semibold rounded-full mb-4"
+              className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4"
             >
               Media Library
             </motion.span>
@@ -243,10 +297,9 @@ export default function VideosPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3, delay: 0.3 }}
-            className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4"
+            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            {/* Search */}
-            <div className="relative w-full sm:w-80">
+            <div className="relative w-full sm:w-96">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <input
                 type="text"
@@ -255,23 +308,6 @@ export default function VideosPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 bg-white border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               />
-            </div>
-
-            {/* Stats */}
-            <div className="flex items-center gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-2xl text-primary">{videos.length}</span>
-                <span className="text-muted-foreground">Videos</span>
-              </div>
-              <a
-                href={channelUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 transition-all hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <Youtube size={18} />
-                <span>Subscribe</span>
-              </a>
             </div>
           </motion.div>
         </div>
@@ -305,7 +341,7 @@ export default function VideosPage() {
             <div
               className="text-center py-20"
             >
-              <Youtube className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
+              <Play className="w-20 h-20 text-muted-foreground/20 mx-auto mb-6" />
               <h3 className="font-semibold text-xl text-foreground mb-2">
                 {searchQuery ? 'No Videos Found' : 'No Videos Available'}
               </h3>
@@ -314,35 +350,6 @@ export default function VideosPage() {
               </p>
             </div>
           )}
-        </div>
-      </section>
-
-      {/* Subscribe CTA */}
-      <section className="py-16 bg-gradient-to-r from-red-500 to-red-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.3 }}
-          >
-            <Youtube className="w-16 h-16 text-white/80 mx-auto mb-6" />
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-              Stay Updated with Our Latest Videos
-            </h2>
-            <p className="text-white/80 text-lg max-w-2xl mx-auto mb-8">
-              Subscribe to our YouTube channel for the latest farmer training videos, success stories, and cocoa farming tips.
-            </p>
-            <a
-              href={channelUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-8 py-4 bg-white text-red-500 font-semibold rounded-xl hover:bg-white/90 transition-all shadow-lg hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <Youtube size={22} />
-              <span>Subscribe to Our Channel</span>
-            </a>
-          </motion.div>
         </div>
       </section>
 
