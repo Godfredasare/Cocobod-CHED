@@ -10,6 +10,8 @@ export async function GET() {
     const [eventsResult] = await pool.query('SELECT COUNT(*) as count FROM events');
     const [videosResult] = await pool.query('SELECT COUNT(*) as count FROM videos');
     const [galleryResult] = await pool.query('SELECT COUNT(*) as count FROM gallery');
+    const [documentsResult] = await pool.query('SELECT COUNT(*) as count FROM documents');
+    const [conversationsResult] = await pool.query('SELECT COUNT(*) as count FROM conversations');
 
     const getCount = (result: any) => (result as any[])[0]?.count || 0;
 
@@ -18,6 +20,8 @@ export async function GET() {
       eventsCount: getCount(eventsResult),
       videosCount: getCount(videosResult),
       galleryCount: getCount(galleryResult),
+      documentsCount: getCount(documentsResult),
+      conversationsCount: getCount(conversationsResult),
     });
   } catch (error: any) {
     if (error.message === 'Unauthorized') {

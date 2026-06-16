@@ -115,9 +115,7 @@ export default function AboutSection() {
   return (
     <section ref={sectionRef} id="about" className="py-20 lg:py-28 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main Content Grid */}
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-20">
-          {/* Left - Image with parallax effect */}
           <motion.div
             variants={slideIn}
             initial="hidden"
@@ -137,7 +135,6 @@ export default function AboutSection() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-primary/10 to-transparent" />
               
-              {/* Decorative elements */}
               <motion.div
                 className="absolute top-4 left-4 w-20 h-20 border-2 border-white/20 rounded-xl"
                 animate={{ rotate: [0, 5, 0, -5, 0] }}
@@ -150,7 +147,6 @@ export default function AboutSection() {
               />
             </motion.div>
 
-            {/* Floating Stats Card */}
             <motion.div
               initial={{ opacity: 0, y: 40, x: 20 }}
               animate={isInView ? { opacity: 1, y: 0, x: 0 } : { opacity: 0, y: 40, x: 20 }}
@@ -189,7 +185,6 @@ export default function AboutSection() {
             </motion.div>
           </motion.div>
 
-          {/* Right - Content */}
           <motion.div
             variants={slideInRight}
             initial="hidden"
@@ -243,7 +238,6 @@ export default function AboutSection() {
               farming practices that protect both their livelihoods and the environment.
             </motion.p>
 
-            {/* Mission & Vision */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -289,7 +283,6 @@ export default function AboutSection() {
           </motion.div>
         </div>
 
-        {/* Core Values */}
         <motion.div
           variants={staggerContainer}
           initial="hidden"
@@ -340,7 +333,6 @@ export default function AboutSection() {
           </div>
         </motion.div>
 
-        {/* Services Section */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -348,7 +340,6 @@ export default function AboutSection() {
           transition={{ type: 'spring', stiffness: 120, damping: 12 }}
           className="bg-gradient-to-br from-primary via-primary to-primary/95 rounded-3xl overflow-hidden relative"
         >
-          {/* Background decoration */}
           <div className="absolute inset-0 overflow-hidden">
             <motion.div
               className="absolute -top-20 -right-20 w-64 h-64 bg-accent/10 rounded-full blur-3xl"

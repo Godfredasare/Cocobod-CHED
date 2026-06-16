@@ -7,7 +7,6 @@ import Image from 'next/image';
 import type { Event } from '@/types/database';
 import { useState, useEffect } from 'react';
 
-// Format date to readable string
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-GB', {
@@ -18,7 +17,6 @@ function formatDate(dateString: string): string {
   });
 }
 
-// Get category color
 function getCategoryColor(category: string): string {
   const colors: Record<string, string> = {
     'Festival': 'bg-purple-500',
@@ -31,7 +29,6 @@ function getCategoryColor(category: string): string {
   return colors[category] || 'bg-primary';
 }
 
-// Get category text color
 function getCategoryTextColor(category: string): string {
   const colors: Record<string, string> = {
     'Festival': 'text-purple-500',
@@ -54,7 +51,6 @@ const staggerContainer = {
   visible: { opacity: 1, transition: { duration: 0.2 } }
 };
 
-// Event Modal Component
 function EventModal({
   event,
   isOpen,
@@ -89,7 +85,7 @@ function EventModal({
             <div className="relative h-56 sm:h-72 bg-gradient-to-br from-primary/30 to-primary/10 overflow-hidden">
               {hasImage ? (
                 <Image
-                  src={event.image}
+                  src={event.image!}
                   alt={event.title}
                   fill
                   className="object-cover"
@@ -110,7 +106,6 @@ function EventModal({
                 <X size={20} />
               </button>
 
-              {/* Category Badge */}
               <div className="absolute bottom-4 left-4">
                 <span className={`${getCategoryColor(event.category)} text-white text-sm font-semibold px-5 py-2 rounded-full shadow-lg`}>
                   {event.category}
@@ -118,7 +113,6 @@ function EventModal({
               </div>
             </div>
 
-            {/* Content */}
             <div className="p-6 sm:p-8 overflow-y-auto max-h-[50vh]">
               <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
                 {event.title}
@@ -178,7 +172,7 @@ function EventCard({
       <div className="relative h-44 bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden flex-shrink-0">
         {hasImage ? (
           <Image
-            src={event.image}
+            src={event.image!}
             alt={event.title}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"

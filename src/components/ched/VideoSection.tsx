@@ -175,10 +175,8 @@ function VideoCard({
             )}
           </div>
 
-          {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
-          {/* Play Button Overlay */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
               <Play className="w-7 h-7 text-white fill-white ml-1" />
@@ -198,13 +196,11 @@ function VideoCard({
             </motion.div>
           )}
 
-          {/* Platform Badge */}
           <div className={`absolute top-4 left-4 px-2.5 py-1 rounded-full text-xs font-semibold backdrop-blur-sm ${getPlatformBadgeColor(platform)}`}>
             {platform === 'youtube' ? 'YouTube' : platform === 'facebook' ? 'Facebook' : 'TikTok'}
           </div>
         </div>
 
-        {/* Content */}
         <div className="p-4 bg-white flex flex-col flex-grow">
           <h3 className="font-semibold text-base text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2 min-h-[2.75rem]">
             {video.title}
@@ -266,7 +262,6 @@ export default function VideoSection() {
 
   return (
     <section className="py-20 lg:py-24 bg-gradient-to-b from-white to-muted/20 relative overflow-hidden">
-      {/* Background decoration */}
       <div className="absolute top-0 left-1/4 w-80 h-80 bg-red-500/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
 
@@ -308,7 +303,6 @@ export default function VideoSection() {
           </motion.div>
         </div>
 
-        {/* Videos Grid */}
         {loading ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map((i) => (
@@ -338,7 +332,6 @@ export default function VideoSection() {
         )}
       </div>
 
-      {/* Video Modal */}
       {isModalOpen && selectedVideo && (
         <VideoModal video={selectedVideo} isOpen={isModalOpen} onClose={closeModal} />
       )}

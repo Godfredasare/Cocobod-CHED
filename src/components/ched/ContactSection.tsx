@@ -19,14 +19,12 @@ export default function ContactSection() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     setIsSubmitting(false);
     setIsSubmitted(true);
     setFormState({ name: '', email: '', phone: '', subject: '', message: '' });
     
-    // Reset success message after 5 seconds
     setTimeout(() => setIsSubmitted(false), 5000);
   };
 
@@ -37,7 +35,6 @@ export default function ContactSection() {
   return (
     <section id="contact" className="py-16 lg:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <div className="text-center mb-12 lg:mb-16">
           <motion.span
             initial={{ opacity: 0, y: 10 }}

@@ -3,13 +3,15 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import AdminShell from '@/components/admin/AdminShell';
-import { Newspaper, Calendar, Youtube, Image } from 'lucide-react';
+import { Newspaper, Calendar, Youtube, Image, BookOpen, MessageSquare } from 'lucide-react';
 
 interface Stats {
   newsCount: number;
   eventsCount: number;
   videosCount: number;
   galleryCount: number;
+  documentsCount: number;
+  conversationsCount: number;
 }
 
 const links = [
@@ -17,10 +19,12 @@ const links = [
   { label: 'Events', href: '/admin/events', count: (s: Stats) => s.eventsCount, icon: Calendar },
   { label: 'Videos', href: '/admin/videos', count: (s: Stats) => s.videosCount, icon: Youtube },
   { label: 'Gallery', href: '/admin/gallery', count: (s: Stats) => s.galleryCount, icon: Image },
+  { label: 'Documents', href: '/admin/knowledge-base', count: (s: Stats) => s.documentsCount, icon: BookOpen },
+  { label: 'Conversations', href: '/admin/conversations', count: (s: Stats) => s.conversationsCount, icon: MessageSquare },
 ];
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<Stats>({ newsCount: 0, eventsCount: 0, videosCount: 0, galleryCount: 0 });
+  const [stats, setStats] = useState<Stats>({ newsCount: 0, eventsCount: 0, videosCount: 0, galleryCount: 0, documentsCount: 0, conversationsCount: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

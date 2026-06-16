@@ -13,50 +13,50 @@
       "name": "Ashanti Region",
       "location": "Kumasi Bantama",
       "digitalAddress": "AK-066-8749",
-      "tel": ["+233 302 666 946", "0302 666 947"],
-      "email": "info@ched.com.gh"
+      "tel": ["+233 32 202 4364", "032 200 8263"],
+      "email": "hr.ashanti@ched.com.gh"
     },
     {
       "name": "Brong Ahafo Region",
-      "location": "Sunyani",
-      "digitalAddress": "EN-095-4463",
+      "location": "Sunyani-Township",
+      "digitalAddress": "BS-0007-6913",
       "tel": ["+233 302 666 946", "0302 666 947"],
-      "email": "info@ched.com.gh"
+      "email": "chedbrongahafo@ched.com.gh"
     },
     {
       "name": "Central Region",
       "location": "Agona Swedru",
-      "digitalAddress": "CO-0037-3802",
+      "digitalAddress": "CO-0037-4706",
       "tel": ["+233 302 666 946", "0302 666 947"],
-      "email": "info@ched.com.gh"
+      "email": "chedcentral@ched.com.gh"
     },
     {
       "name": "Eastern Region",
-      "location": "Koforidua",
+      "location": "Nana Boaitey Ave. New Juaben North",
       "digitalAddress": "EN-095-4463",
       "tel": ["+233 302 666 946", "0302 666 947"],
-      "email": "info@ched.com.gh"
+      "email": "chedeastern@ched.com.gh"
     },
     {
       "name": "Volta Region",
       "location": "Hohoe",
       "digitalAddress": "VC-0031-2905",
       "tel": ["+233 302 666 946", "0302 666 947"],
-      "email": "info@ched.com.gh"
+      "email": "chedvolta@ched.com.gh"
     },
     {
       "name": "Western North Region",
       "location": "Sefwi Wiaso",
-      "digitalAddress": "WG-0010-0319",
+      "digitalAddress": "WG-0010-0325",
       "tel": ["+233 302 666 946", "0302 666 947"],
-      "email": "info@ched.com.gh"
+      "email": "chedwesternnorth@ched.com.gh"
     },
     {
       "name": "Western South Region",
-      "location": "Dunkwa",
-      "digitalAddress": "CU-0013-3216",
+      "location": "Dunkwa On-Offin",
+      "digitalAddress": "CU-0013-4014",
       "tel": ["+233 302 666 946", "0302 666 947"],
-      "email": "info@ched.com.gh"
+      "email": "chedwesternsouth@ched.com.gh"
     },
     {
       "name": "Bunso Cocoa College",

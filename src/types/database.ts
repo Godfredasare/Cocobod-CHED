@@ -114,3 +114,52 @@ export interface Admin {
   password_hash: string;
   created_at: string;
 }
+
+// Documents (Knowledge Base)
+export interface Document {
+  id: number;
+  title: string;
+  file_type: string;
+  file_path: string;
+  file_size: number;
+  content: string | null;
+  status: 'processing' | 'ready' | 'failed';
+  error_message: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DocumentInput {
+  title: string;
+}
+
+// Conversations
+export interface Conversation {
+  id: string;
+  title: string;
+  message_count: number;
+  total_tokens: number;
+  sources_used: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// Messages
+export interface Message {
+  id: string;
+  conversation_id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  tokens: number;
+  sources: string | null;
+  confidence: number | null;
+  latency_ms: number | null;
+  created_at: string;
+}
+
+// Settings
+export interface Setting {
+  setting_key: string;
+  setting_value: string;
+  updated_at: string;
+}

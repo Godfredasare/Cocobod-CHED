@@ -10,8 +10,9 @@
     "hours": "Monday - Friday: 8:00 AM - 5:00 PM"
   },
   "socialMedia": [
-    { "platform": "Facebook", "url": "https://facebook.com/chedghana", "icon": "Facebook" },
-    { "platform": "Twitter", "url": "https://twitter.com/chedghana", "icon": "Twitter" },
+    { "platform": "Facebook", "url": "https://facebook.com/ched_ghana", "icon": "Facebook" },
+    { "platform": "Twitter", "url": "https://twitter.com/ched_ghana", "icon": "Twitter" },
+    { "platform": "Tiktok", "url": "https://tiktok.com/@ched_ghana", "icon": "Tiktok" },
     { "platform": "LinkedIn", "url": "https://linkedin.com/company/chedghana", "icon": "Linkedin" }
   ]
 }

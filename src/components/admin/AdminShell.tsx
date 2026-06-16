@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Newspaper, Calendar, Youtube, Image, LogOut, Menu, X, ChevronLeft } from 'lucide-react';
+import { LayoutDashboard, Newspaper, Calendar, Youtube, Image, LogOut, Menu, X, ChevronLeft, BookOpen, MessageSquare, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 const navItems = [
@@ -12,6 +12,9 @@ const navItems = [
   { name: 'Events', href: '/admin/events', icon: Calendar },
   { name: 'Videos', href: '/admin/videos', icon: Youtube },
   { name: 'Gallery', href: '/admin/gallery', icon: Image },
+  { name: 'Knowledge Base', href: '/admin/knowledge-base', icon: BookOpen },
+  { name: 'Conversations', href: '/admin/conversations', icon: MessageSquare },
+  { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
 interface AdminShellProps {
@@ -36,10 +39,8 @@ export default function AdminShell({ children }: AdminShellProps) {
         <div onClick={() => setSidebarOpen(false)} className="fixed inset-0 bg-black/40 z-40 lg:hidden" />
       )}
 
-      {/* Sidebar */}
       <aside className={`fixed top-0 left-0 z-50 h-full w-64 bg-card border-r border-border transform transition-transform lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full">
-          {/* Header */}
           <div className="h-14 flex items-center justify-between px-4 border-b border-border">
             <Link href="/admin" className="font-semibold text-sm text-foreground">
               CHED Admin
@@ -49,7 +50,6 @@ export default function AdminShell({ children }: AdminShellProps) {
             </button>
           </div>
 
-          {/* Nav */}
           <nav className="flex-1 px-3 py-4 space-y-0.5">
             {navItems.map((item) => {
               const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
@@ -70,7 +70,6 @@ export default function AdminShell({ children }: AdminShellProps) {
             })}
           </nav>
 
-          {/* Footer */}
           <div className="border-t border-border px-3 py-3 space-y-1">
             <Link href="/" target="_blank" className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:bg-secondary rounded-md transition-colors">
               <ChevronLeft size={14} />
@@ -84,9 +83,7 @@ export default function AdminShell({ children }: AdminShellProps) {
         </div>
       </aside>
 
-      {/* Main */}
       <div className="lg:ml-64">
-        {/* Top bar */}
         <header className="h-14 bg-card border-b border-border flex items-center px-4 sticky top-0 z-30">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-1 text-muted-foreground hover:text-foreground mr-3">
             <Menu size={20} />
@@ -94,7 +91,6 @@ export default function AdminShell({ children }: AdminShellProps) {
           <span className="text-xs text-muted-foreground ml-auto">{user?.email}</span>
         </header>
 
-        {/* Content */}
         <main className="p-6">
           {children}
         </main>

@@ -4,7 +4,7 @@
       "name": "Dr. Richard Adu-Acheampong",
       "title": "Ag. Executive Director",
       "description": "Leads the strategic direction and overall management of CHED operations across Ghana. Former Senior Researcher at Cocoa Research Institute of Ghana.",
-      "image": "/images/team/richard-adu-acheampong.jpg",
+      "image": "/images/team/ed.png",
       "linkedin": "https://gh.linkedin.com/in/richard-adu-acheampong-a1b9b49a",
       "researchgate": "https://www.researchgate.net/profile/Richard-Adu-Acheampong",
       "isExecutive": true
@@ -13,7 +13,7 @@
       "name": "Mr. Abdul-Majid Mumuni",
       "title": "Ag. Deputy Executive Director (Operations)",
       "description": "Oversees field operations and coordinates extension services across all regions. Responsible for operational efficiency and program implementation.",
-      "image": "/images/team/abdul-majid-mumuni.jpg",
+      "image": "/images/team/dedop.png",
       "facebook": "https://www.facebook.com/ched.cocobod",
       "isExecutive": true
     },
@@ -40,13 +40,13 @@
       "linkedin": "https://gh.linkedin.com/in/abukari-abdulai-abdulai-8155a0119"
     },
     {
-      "name": "Mrs. Yvonne",
+      "name": "Mrs. Yvonne Nana Oye Essuon",
       "title": "Deputy Director Finance",
       "description": "Manages financial operations and budgetary controls for the division.",
       "image": "/images/team/yvonne.jpg"
     },
     {
-      "name": "Mr. Ephraim Ahorlu",
+      "name": "Mr. Yaw Ofori",
       "title": "Deputy Audit Manager",
       "description": "Responsible for internal audit processes and compliance monitoring across all regional offices.",
       "image": "/images/team/ephraim-ahorlu.jpg"
@@ -71,7 +71,7 @@
     { "title": "Operations", "description": "Field operations and program implementation", "head": "Mr. Abdul-Majid Mumuni" },
     { "title": "Extension Services", "description": "Farmer education and field support", "head": "Mrs. Margaret Frimpong Ayerakwa" },
     { "title": "Human Resources", "description": "Talent management and administration", "head": "Mrs. Dorine Fanny Amartey" },
-    { "title": "Finance", "description": "Financial management and budgeting", "head": "Mrs. Yvonne" },
+    { "title": "Finance", "description": "Financial management and budgeting", "head": "Mrs. Yvonne Nana Oye Essuon" },
     { "title": "Information Systems", "description": "IT infrastructure and digital services", "head": "Mr. Ernest Ayivor" }
   ]
 }

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Bot, User, Loader2, Minimize2 } from 'lucide-react';
+import { X, Send, User, Loader2, Minimize2 } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -27,6 +27,8 @@ export default function Chatbot() {
   const [isConfigured, setIsConfigured] = useState<boolean | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const streamingMsgIdRef = useRef<string | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -42,7 +44,16 @@ export default function Chatbot() {
     }
   }, [isOpen, isMinimized]);
 
-  // Check if chatbot is configured and get initial greeting
+  // Cancel in-flight stream on unmount
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
+  const GREETING = 'Hello. I am the Cocoa Krachie, here to help with information about the Cocoa Health and Extension Division of Ghana Cocoa Board. How may I assist you today?';
+
+  // Initialize chat with greeting and check config
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       initializeChat();
@@ -50,61 +61,44 @@ export default function Chatbot() {
   }, [isOpen]);
 
   const initializeChat = async () => {
-    setIsLoading(true);
+    // Show greeting immediately
+    setMessages([{
+      id: Date.now().toString(),
+      role: 'assistant',
+      content: GREETING,
+      timestamp: new Date(),
+    }]);
+
+    // Check if AI is configured with a lightweight ping
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          message: 'Hello',
+        body: JSON.stringify({
+          message: 'ping',
           history: [],
           conversationId: null
         }),
       });
-
       const data = await response.json();
       setIsConfigured(response.ok);
-
-      if (response.ok && data.message) {
-        setMessages([{
-          id: Date.now().toString(),
-          role: 'assistant',
-          content: data.message,
-          timestamp: new Date(),
-        }]);
-        setConversationId(data.conversationId || null);
-        
-        // Set suggestions if provided
-        if (data.suggestions) {
-          setSuggestions(data.suggestions);
-        }
-      } else {
-        // Not configured or error
-        setMessages([{
-          id: Date.now().toString(),
-          role: 'assistant',
-          content: data.message || 'Chatbot is not configured. Please contact us at info@ched.com.gh',
-          timestamp: new Date(),
-        }]);
-        setIsConfigured(false);
+      if (response.ok && data.conversationId) {
+        setConversationId(data.conversationId);
       }
-    } catch (error) {
-      console.error('Failed to initialize chat:', error);
-      setMessages([{
-        id: Date.now().toString(),
-        role: 'assistant',
-        content: 'Unable to connect to the assistant. Please try again later.',
-        timestamp: new Date(),
-      }]);
+    } catch {
       setIsConfigured(false);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const sendMessage = async (messageText?: string) => {
     const text = messageText || input.trim();
     if (!text || isLoading) return;
+
+    // Cancel any in-flight stream
+    abortControllerRef.current?.abort();
+
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -118,12 +112,13 @@ export default function Chatbot() {
     setIsLoading(true);
     setSuggestions([]);
 
+    const assistantMsgId = (Date.now() + 1).toString();
+    streamingMsgIdRef.current = null;
+
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: text,
           history: messages.slice(-10).map((m) => ({
@@ -131,38 +126,120 @@ export default function Chatbot() {
             content: m.content,
           })),
           conversationId,
+          stream: true,
         }),
+        signal: abortController.signal,
       });
 
-      const data = await response.json();
-
-      if (response.ok && data.message) {
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: data.message,
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, assistantMessage]);
-        setConversationId(data.conversationId || conversationId);
-        
-        // Set suggestions if provided
-        if (data.suggestions) {
-          setSuggestions(data.suggestions);
-        }
-      } else {
-        throw new Error(data.error || 'Failed to get response');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to get response');
       }
-    } catch (error) {
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: 'I apologize, but I\'m having trouble connecting right now. Please try again or contact us at info@ched.com.gh',
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+
+      const contentType = response.headers.get('content-type') || '';
+
+      if (contentType.includes('text/event-stream')) {
+        const reader = response.body!.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let firstToken = true;
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            try {
+              const event = JSON.parse(line.slice(6));
+
+              if (event.type === 'token' && event.content) {
+                if (firstToken) {
+                  firstToken = false;
+                  setIsLoading(false);
+                  streamingMsgIdRef.current = assistantMsgId;
+                  setMessages((prev) => [
+                    ...prev,
+                    {
+                      id: assistantMsgId,
+                      role: 'assistant',
+                      content: event.content,
+                      timestamp: new Date(),
+                    },
+                  ]);
+                } else {
+                  setMessages((prev) =>
+                    prev.map((m) =>
+                      m.id === assistantMsgId
+                        ? { ...m, content: m.content + event.content }
+                        : m
+                    )
+                  );
+                }
+              } else if (event.type === 'done') {
+                if (event.conversationId) {
+                  setConversationId(event.conversationId);
+                }
+                // Handle off-topic: done event with content but no tokens
+                if (firstToken && event.content) {
+                  setIsLoading(false);
+                  setMessages((prev) => [
+                    ...prev,
+                    {
+                      id: assistantMsgId,
+                      role: 'assistant',
+                      content: event.content,
+                      timestamp: new Date(),
+                    },
+                  ]);
+                }
+              } else if (event.type === 'error') {
+                if (firstToken) {
+                  setIsLoading(false);
+                  setMessages((prev) => [
+                    ...prev,
+                    {
+                      id: assistantMsgId,
+                      role: 'assistant',
+                      content: 'I apologize, but I\'m having trouble connecting right now. Please try again or contact us at info@ched.com.gh',
+                      timestamp: new Date(),
+                    },
+                  ]);
+                } else {
+                  setMessages((prev) =>
+                    prev.map((m) =>
+                      m.id === assistantMsgId
+                        ? { ...m, content: m.content + '\n\n[Response interrupted. Please try again.]' }
+                        : m
+                    )
+                  );
+                }
+              }
+            } catch {
+              // Skip malformed SSE data
+            }
+          }
+        }
+      }
+    } catch (error: any) {
+      if (error.name === 'AbortError') return;
+      setIsLoading(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: assistantMsgId,
+          role: 'assistant',
+          content: 'I apologize, but I\'m having trouble connecting right now. Please try again or contact us at info@ched.com.gh',
+          timestamp: new Date(),
+        },
+      ]);
     } finally {
       setIsLoading(false);
+      abortControllerRef.current = null;
     }
   };
 
@@ -179,7 +256,6 @@ export default function Chatbot() {
 
   return (
     <>
-      {/* Floating Button */}
       <AnimatePresence>
         {!isOpen && (
           <motion.button
@@ -191,10 +267,9 @@ export default function Chatbot() {
             className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-primary rounded-full shadow-lg hover:shadow-xl flex items-center justify-center text-white hover:bg-primary/90 transition-colors group"
             aria-label="Open chat assistant"
           >
-            <MessageCircle className="w-6 h-6" />
+            <img src="/images/chatbot-logo.jpeg" alt="Chat" className="w-full h-full object-cover rounded-full" />
             <span className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-pulse" />
             
-            {/* Tooltip */}
             <span className="absolute right-full mr-3 px-3 py-1.5 bg-foreground text-white text-sm rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
               Chat with us
             </span>
@@ -202,7 +277,6 @@ export default function Chatbot() {
         )}
       </AnimatePresence>
 
-      {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -218,14 +292,13 @@ export default function Chatbot() {
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className="fixed bottom-6 right-6 z-50 w-full max-w-[380px] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-border"
           >
-            {/* Header */}
             <div className="bg-primary p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                  <img src="/images/chatbot-logo.jpeg" alt="Cocoa Krachie" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">CHED Assistant</h3>
+                  <h3 className="font-semibold text-white">Cocoa Krachie</h3>
                   <div className="flex items-center gap-1.5">
                     <span className={`w-2 h-2 rounded-full ${isConfigured === false ? 'bg-red-400' : 'bg-green-400 animate-pulse'}`} />
                     <span className="text-xs text-white/80">
@@ -255,7 +328,6 @@ export default function Chatbot() {
               </div>
             </div>
 
-            {/* Messages */}
             <AnimatePresence>
               {!isMinimized && (
                 <motion.div
@@ -274,8 +346,8 @@ export default function Chatbot() {
                       className={`flex gap-2 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       {message.role === 'assistant' && (
-                        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                          <Bot className="w-4 h-4 text-primary" />
+                        <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                          <img src="/images/chatbot-logo.jpeg" alt="Cocoa Krachie" className="w-full h-full object-cover" />
                         </div>
                       )}
                       <div className={`max-w-[80%] ${message.role === 'user' ? 'order-1' : ''}`}>
@@ -306,10 +378,11 @@ export default function Chatbot() {
                       animate={{ opacity: 1 }}
                       className="flex gap-2 justify-start"
                     >
-                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Bot className="w-4 h-4 text-primary" />
+                      <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                        <img src="/images/chatbot-logo.jpeg" alt="Cocoa Krachie" className="w-full h-full object-cover" />
                       </div>
                       <div className="bg-white border border-border px-4 py-3 rounded-2xl rounded-tl-sm">
+                        <p className="text-xs text-muted-foreground mb-1.5">Cocoa Krachie is thinking...</p>
                         <div className="flex items-center gap-1">
                           <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                           <span className="w-2 h-2 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -324,7 +397,6 @@ export default function Chatbot() {
               )}
             </AnimatePresence>
 
-            {/* Suggestions */}
             <AnimatePresence>
               {!isMinimized && suggestions.length > 0 && !isLoading && (
                 <motion.div
@@ -348,7 +420,6 @@ export default function Chatbot() {
               )}
             </AnimatePresence>
 
-            {/* Input */}
             <AnimatePresence>
               {!isMinimized && (
                 <motion.div
@@ -384,7 +455,7 @@ export default function Chatbot() {
                     </motion.button>
                   </div>
                   <p className="text-[10px] text-muted-foreground mt-2 text-center">
-                    Powered by Microsoft Copilot Studio
+                    Powered by KwesiKayAI (follow me on X)
                   </p>
                 </motion.div>
               )}
