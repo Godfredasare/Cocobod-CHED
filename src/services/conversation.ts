@@ -1,4 +1,3 @@
-
 import { v4 as uuidv4 } from 'uuid';
 import pool from '@/lib/db';
 import type { ChatMessage } from './types';
@@ -15,7 +14,6 @@ export async function getOrCreateConversation(
     if (results.length > 0) return results[0].id;
   }
 
-  // Create new
   const id = conversationId || uuidv4();
   await pool.query('INSERT INTO conversations (id) VALUES (?)', [id]);
   return id;
@@ -40,7 +38,6 @@ export async function addMessage(
     [tokens, conversationId]
   );
 
-  // Auto-title after first exchange
   const [countRows] = await pool.query(
     'SELECT message_count FROM conversations WHERE id = ?',
     [conversationId]
@@ -74,4 +71,14 @@ export async function updateConversationTitle(
   title: string
 ): Promise<void> {
   await pool.query('UPDATE conversations SET title = ? WHERE id = ?', [title, conversationId]);
+}
+
+export async function getMessageCount(conversationId?: string | null): Promise<number> {
+  if (!conversationId) return 0;
+  const [rows] = await pool.query(
+    'SELECT message_count FROM conversations WHERE id = ?',
+    [conversationId]
+  );
+  const results = rows as { message_count: number }[];
+  return results[0]?.message_count || 0;
 }

@@ -53,17 +53,17 @@ export default function Header() {
       <header
         className={clsx(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-         {
-    // When scrolled - transparent with slight blur for readability
-  "bg-white/10 dark:bg-navy-950/10 backdrop-blur-sm": isScrolled,
-  // At top - white with glass effect
-  "bg-white/90 dark:bg-navy-950/90 backdrop-blur-md shadow-nav dark:shadow-nav-dark": !isScrolled,
-}
+          {
+            // When scrolled
+            "bg-white/20 dark:bg-navy-950/10 backdrop-blur-sm": isScrolled,
+            // At top 
+            "bg-white/90 dark:bg-navy-950/90 backdrop-blur-md shadow-nav dark:shadow-nav-dark":
+              !isScrolled,
+          },
         )}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Logo */}
             <Link
               href="/"
               className="flex items-center gap-2 sm:gap-3 flex-shrink-0"
@@ -86,9 +86,7 @@ export default function Header() {
               </div>
             </Link>
 
-            {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1 flex-shrink-0">
-              {/* Home */}
               <Link
                 href="/"
                 className="flex items-center gap-2 px-3 xl:px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
@@ -123,7 +121,15 @@ export default function Header() {
                         stiffness: 400,
                         damping: 25,
                       }}
-                      className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-border py-2 z-50 overflow-hidden"
+                      className={clsx(
+                        "absolute top-full left-0 mt-1 w-48 rounded-xl shadow-xl border border-border py-2 z-50 overflow-hidden",
+                        {
+                          // When scrolled - match navbar transparency
+                          "bg-white/80 dark:bg-navy-950/80 backdrop-blur-xl": isScrolled,
+                          // At top - solid white
+                          "bg-white dark:bg-navy-950": !isScrolled,
+                        }
+                      )}
                     >
                       {aboutDropdown.map((item, i) => (
                         <motion.div
@@ -150,7 +156,6 @@ export default function Header() {
                 </AnimatePresence>
               </div>
 
-              {/* Management */}
               <Link
                 href="/management"
                 className="flex items-center gap-2 px-3 xl:px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
@@ -159,7 +164,6 @@ export default function Header() {
                 <span>Management</span>
               </Link>
 
-              {/* Operations */}
               <Link
                 href="/operations"
                 className="flex items-center gap-2 px-3 xl:px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
@@ -168,7 +172,6 @@ export default function Header() {
                 <span>Operations</span>
               </Link>
 
-              {/* Partnership */}
               <Link
                 href="/partnership"
                 className="flex items-center gap-2 px-3 xl:px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
@@ -203,7 +206,15 @@ export default function Header() {
                         stiffness: 400,
                         damping: 25,
                       }}
-                      className="absolute top-full left-0 mt-1 w-40 bg-white rounded-xl shadow-xl border border-border py-2 z-50 overflow-hidden"
+                      className={clsx(
+                        "absolute top-full left-0 mt-1 w-40 rounded-xl shadow-xl border border-border py-2 z-50 overflow-hidden",
+                        {
+                          // When scrolled - match navbar transparency
+                          "bg-white/80 dark:bg-navy-950/80 backdrop-blur-xl": isScrolled,
+                          // At top - solid white
+                          "bg-white dark:bg-navy-950": !isScrolled,
+                        }
+                      )}
                     >
                       {mediaDropdown.map((item, i) => (
                         <motion.div
@@ -226,7 +237,6 @@ export default function Header() {
                 </AnimatePresence>
               </div>
 
-              {/* Get in Touch Button */}
               <Link
                 href="/contact"
                 className="ml-2 xl:ml-4 flex items-center gap-2 px-4 xl:px-5 py-2 xl:py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-sm flex-shrink-0"
@@ -236,7 +246,6 @@ export default function Header() {
               </Link>
             </nav>
 
-            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="lg:hidden p-2 text-foreground hover:text-primary transition-colors flex-shrink-0"
@@ -248,7 +257,6 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -270,7 +278,6 @@ export default function Header() {
               className="absolute right-0 top-0 bottom-0 w-72 bg-white shadow-2xl overflow-y-auto"
             >
               <div className="p-6 pt-20 space-y-1">
-                {/* Logo in Mobile Menu */}
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
                   <div className="relative w-12 h-14 overflow-hidden">
                     <Image
@@ -290,7 +297,6 @@ export default function Header() {
                   </div>
                 </div>
 
-                {/* Home */}
                 <Link
                   href="/"
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -300,7 +306,6 @@ export default function Header() {
                   <span>Home</span>
                 </Link>
 
-                {/* About Us */}
                 <div>
                   <Link
                     href="/about"
@@ -325,7 +330,6 @@ export default function Header() {
                   </div>
                 </div>
 
-                {/* Management */}
                 <Link
                   href="/management"
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -335,7 +339,6 @@ export default function Header() {
                   <span>Management</span>
                 </Link>
 
-                {/* Operations */}
                 <Link
                   href="/operations"
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -345,7 +348,6 @@ export default function Header() {
                   <span>Operations</span>
                 </Link>
 
-                {/* Partnership */}
                 <Link
                   href="/partnership"
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -355,7 +357,6 @@ export default function Header() {
                   <span>Partnership</span>
                 </Link>
 
-                {/* Media */}
                 <div>
                   <Link
                     href="/news"
@@ -380,7 +381,6 @@ export default function Header() {
                   </div>
                 </div>
 
-                {/* Get in Touch */}
                 <div className="pt-4">
                   <Link
                     href="/contact"

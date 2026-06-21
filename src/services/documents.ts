@@ -62,9 +62,21 @@ export function buildDocumentContext(docs: StoredDocument[], maxChars = 100_000)
   return context.trim();
 }
 
+function enrichSearchQuery(query: string): string {
+  const lower = query.toLowerCase();
+  const contextTerms: string[] = [];
+  if (!lower.includes('ghana') && !lower.includes('ghanaian')) contextTerms.push('Ghana');
+  if (!lower.includes('cocobod') && !lower.includes('cocoa board')) contextTerms.push('COCOBOD');
+  if (!lower.includes('cocoa') && !lower.includes('cacao')) contextTerms.push('cocoa');
+  if (contextTerms.length === 0) return query;
+  return `${query} ${contextTerms.join(' ')}`.trim();
+}
+
 async function buildInternetContext(query: string): Promise<string> {
   try {
-    const results = await searchInternet(query, 3);
+    const enrichedQuery = enrichSearchQuery(query);
+    console.log(`[documents] Tavily search query: "${enrichedQuery.substring(0, 120)}"`);
+    const results = await searchInternet(enrichedQuery, 3);
     if (results.length > 0) {
       let ctx = '';
       for (const r of results) {
@@ -93,15 +105,16 @@ export async function searchOrLoadContext(
   internetFallbackEnabled: boolean,
   maxChars = 100_000
 ): Promise<{ context: string; internetContext: string; usedInternet: boolean }> {
-  // Load documents
-  const docContext = await getDocumentContext(maxChars);
+  const shouldFetchInternet = internetFallbackEnabled && isTavilyConfigured();
 
-  // Also search internet alongside documents (when Tavily is configured)
-  let internetContext = '';
-  if (internetFallbackEnabled && isTavilyConfigured()) {
-    console.log('[documents] Fetching internet results alongside documents');
-    internetContext = await buildInternetContext(query);
+  if (shouldFetchInternet) {
+    console.log('[documents] Fetching documents and internet results in parallel');
   }
+
+  const [docContext, internetContext] = await Promise.all([
+    getDocumentContext(maxChars),
+    shouldFetchInternet ? buildInternetContext(query) : Promise.resolve(''),
+  ]);
 
   const usedInternet = !docContext && !!internetContext;
 
