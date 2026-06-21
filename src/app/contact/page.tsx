@@ -7,7 +7,6 @@ import Header from '@/components/ched/Header';
 import Footer from '@/components/ched/Footer';
 import contactData from '@/data/contact.json';
 
-// Simplified animation variants
 const fadeInUp = {
   hidden: { opacity: 0 },
   visible: {

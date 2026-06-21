@@ -146,7 +146,6 @@ function EventModal({
   );
 }
 
-// Event Card Component
 function EventCard({
   event,
   index,

@@ -7,7 +7,6 @@ import Header from '@/components/ched/Header';
 import Footer from '@/components/ched/Footer';
 import type { Video, VideoPlatform } from '@/types/database';
 
-// Helpers
 function getEmbedUrl(video: Video): string {
   const platform: VideoPlatform = video.platform || 'youtube';
   switch (platform) {
@@ -49,7 +48,6 @@ function getPlatformBadgeColor(platform: VideoPlatform): string {
   }
 }
 
-// Video Modal Component
 function VideoModal({
   video,
   isOpen,
@@ -121,7 +119,6 @@ function VideoModal({
   );
 }
 
-// Video Card Component
 function VideoCard({
   video,
   onClick

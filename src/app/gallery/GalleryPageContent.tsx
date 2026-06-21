@@ -8,7 +8,6 @@ import Header from '@/components/ched/Header';
 import Footer from '@/components/ched/Footer';
 import type { GalleryImage } from '@/types/database';
 
-// Simplified animation variants
 const fadeInUp = {
   hidden: { opacity: 0 },
   visible: {

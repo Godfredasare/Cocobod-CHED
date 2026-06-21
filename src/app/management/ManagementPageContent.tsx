@@ -9,7 +9,6 @@ import Footer from '@/components/ched/Footer';
 import managementData from '@/data/management.json';
 import { useState } from 'react';
 
-// Helper function to get initials from name
 function getInitials(name: string): string {
   return name
     .split(' ')
@@ -19,7 +18,6 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-// Profile Image component with full container and initials fallback
 function ProfileImage({
   name,
   image

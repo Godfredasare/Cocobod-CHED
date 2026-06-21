@@ -5,8 +5,6 @@ import { getWebsiteDataContext } from './website-data';
 import { getOrCreateConversation, addMessage, getMessageCount } from './conversation';
 import type { ChatMessage, ChatPipelineParams, ChatPipelineResult, AppSettings, StreamEvent } from './types';
 
-// ─── Settings Cache (30s TTL) ───────────────────────────────────────────────
-
 let settingsCache: AppSettings | null = null;
 let settingsCacheTime = 0;
 const SETTINGS_TTL = 30_000;
@@ -36,8 +34,6 @@ async function loadSettings(): Promise<AppSettings> {
   return settingsCache;
 }
 
-
-// ─── Off-Topic Detection ────────────────────────────────────────────────────
 
 const OFF_TOPIC_RESPONSE =
   "I'm sorry, I am specialized only in cocoa farming and CHED-related topics. Please ask me about cocoa production, pest control, or extension services in Ghana.";
@@ -121,8 +117,6 @@ function isOffTopic(message: string): { offTopic: boolean; response?: string } {
   return { offTopic: false };
 }
 
-// ─── Time-Sensitive Question Detection ─────────────────────────────────────
-
 const TIME_SENSITIVE_PATTERNS = [
   /\bwho\s+is\b/i,
   /\bwho\s+are\b/i,
@@ -138,8 +132,6 @@ const TIME_SENSITIVE_PATTERNS = [
 function isTimeSensitive(message: string): boolean {
   return TIME_SENSITIVE_PATTERNS.some((p) => p.test(message));
 }
-
-// ─── Prompt Injection Detection ───────────────────────────────────────────────
 
 function detectInjection(message: string): boolean {
   const patterns = [
@@ -167,8 +159,6 @@ function sanitizeInput(message: string): string {
     .trim();
 }
 
-// ─── Output Sanitizer ───────────────────────────────────────────────────────
-
 function sanitizeOutput(text: string): string {
   let result = text.normalize('NFKC');
 
@@ -190,8 +180,6 @@ function sanitizeOutput(text: string): string {
 
   return result.trim();
 }
-
-// ─── System Prompt Builder ───────────────────────────────────────────────────
 
 function buildSystemPrompt(
   settings: AppSettings,
@@ -340,8 +328,6 @@ Respond in English ONLY.`;
   return prompt;
 }
 
-// ─── Main Processing ──────────────────────────────────────────────────────────
-
 export async function processChatMessage(
   params: ChatPipelineParams
 ): Promise<ChatPipelineResult> {
@@ -417,8 +403,6 @@ export async function processChatMessage(
     latencyMs,
   };
 }
-
-// ─── Streaming ────────────────────────────────────────────────────────────────
 
 function encodeSSE(event: StreamEvent): Uint8Array {
   return new TextEncoder().encode(`data: ${JSON.stringify(event)}\n\n`);

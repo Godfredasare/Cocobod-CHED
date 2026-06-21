@@ -8,9 +8,6 @@ import Footer from '@/components/ched/Footer';
 import type { Event } from '@/types/database';
 import { useState, useEffect } from 'react';
 
-// Simplified animation variants
-
-// Format date to readable string
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-GB', {
@@ -21,7 +18,6 @@ function formatDate(dateString: string): string {
   });
 }
 
-// Format date short
 function formatDateShort(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-GB', {
@@ -31,7 +27,6 @@ function formatDateShort(dateString: string): string {
   });
 }
 
-// Get category color
 function getCategoryColor(category: string): string {
   const colors: Record<string, string> = {
     'Festival': 'bg-purple-500',
@@ -44,7 +39,6 @@ function getCategoryColor(category: string): string {
   return colors[category] || 'bg-primary';
 }
 
-// Get category text color
 function getCategoryTextColor(category: string): string {
   const colors: Record<string, string> = {
     'Festival': 'text-purple-500',
@@ -57,7 +51,6 @@ function getCategoryTextColor(category: string): string {
   return colors[category] || 'text-primary';
 }
 
-// Event Modal Component
 function EventModal({
   event,
   isOpen,
@@ -171,7 +164,6 @@ function EventModal({
   );
 }
 
-// Event card component
 function EventCard({
   event,
   index,
@@ -280,7 +272,6 @@ function EventCard({
   );
 }
 
-// Featured event component
 function FeaturedEvent({
   event,
   onClick

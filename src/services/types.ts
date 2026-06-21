@@ -31,8 +31,6 @@ export interface StreamChunk {
   error?: string;
 }
 
-// --- Chat Pipeline ---
-
 export interface ChatPipelineParams {
   message: string;
   conversationId?: string | null;
@@ -51,8 +49,6 @@ export interface ChatPipelineResult {
   latencyMs: number;
 }
 
-// --- Settings ---
-
 export interface AppSettings {
   systemPrompt: string;
   maxHistoryMessages: number;
@@ -60,8 +56,6 @@ export interface AppSettings {
   temperature: number;
   maxTokens: number;
 }
-
-// --- Streaming ---
 
 export interface StreamEvent {
   type: 'token' | 'done' | 'error';
@@ -75,8 +69,6 @@ export interface StreamEvent {
   latencyMs?: number;
   error?: string;
 }
-
-// --- Internet Search ---
 
 export interface InternetSearchResult {
   title: string;

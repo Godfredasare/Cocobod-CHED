@@ -66,7 +66,6 @@ function getPlatformBadgeColor(platform: VideoPlatform): string {
   }
 }
 
-// Video Modal Component
 function VideoModal({
   video,
   isOpen,
@@ -126,7 +125,6 @@ function VideoModal({
   );
 }
 
-// Video Card Component
 function VideoCard({
   video,
   index,

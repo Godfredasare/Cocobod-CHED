@@ -38,7 +38,6 @@ const services = [
   'Youth in Cocoa Development',
 ];
 
-// Animation variants
 const slideIn = {
   hidden: { opacity: 0, x: -60 },
   visible: {
