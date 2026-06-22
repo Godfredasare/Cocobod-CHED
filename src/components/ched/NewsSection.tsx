@@ -122,7 +122,7 @@ export default function NewsSection() {
                 <Link href={`/news/${article.slug}`} className="flex flex-col h-full">
                   <div className="relative h-48 overflow-hidden flex-shrink-0">
                     <Image
-                      src={article.image}
+                      src={article.image || "/placeholder-news.jpg"}
                       alt={article.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
